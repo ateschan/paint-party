@@ -1,87 +1,145 @@
-use ::egui::debug_text::print;
 use macroquad::prelude::*;
 use std::vec::Vec;
-use reqwest;
 use egui_macroquad::egui;
+use std::collections::HashSet;
 
 pub mod state;
 use state::brush::{Brush, Dot};
 
 static mut BRUSH : Brush = Brush {
-    r : 1.0,
-    g : 1.0,
-    b : 1.0
+    r : 0.37,
+    g : 0.80,
+    b : 1.0,
+    size : 5.0,
+    sw : true,
+    room : 0000
 };
+
+fn get_unique_dots(dots: &mut Vec<Dot>) ->  Vec<Dot> {
+    let mut result = Vec::new();
+    for dot in dots {
+        if !result.contains(dot) {
+            result.push(dot.clone());
+        }
+    }
+    result
+}
 
 #[macroquad::main("Paint Party")]
 async fn main() {
     let mut lines : Vec<Dot> = Vec::new();
+    let mut cache : Vec<Dot> = Vec::new();
+    for val in get(&mut cache).await {
+        lines.push(val);
+    }
     let mut ct = 0;
     loop {
-        if ct == 600{
-            //lines = request_exchange(&lines);
+        if ct > 99 && (cache.len() > 0){
+            for val in get(&mut get_unique_dots(&mut cache)).await {
+                lines.push(val);
+            }
+            put(&mut lines, &mut cache).await;
             ct = 0;
         }
-    egui_macroquad::draw();
-        clear_background(WHITE);
-        unsafe {
-        if is_mouse_button_down(MouseButton::Left) {
-                let m_pos = mouse_position();
-                let dot = Dot {
-                x : m_pos.0,
-                y : m_pos.1,
-                color : macroquad::color::Color::from_rgba((BRUSH.r * 255.0) as u8, (BRUSH.g * 255.0) as u8, (BRUSH.b * 255.0) as u8, 255)
-                };
-            println!("{:?}", dot.color);
-            lines.push(dot)
-            }
+        while lines.len() > 1000 {
+            lines.pop().unwrap();
         }
-        render(&mut lines);
-        ct+=1;
-        render_gui();
+        egui_macroquad::draw();
+        clear_background(WHITE);
+        render_paint(&mut lines);
+        render_paint(&mut cache);
+        
+
+        unsafe {
+            if is_mouse_button_down(MouseButton::Left) && BRUSH.sw == true {
+                let dot = Dot {
+                    x : mouse_position().0,
+                    y : mouse_position().1,
+                    r : BRUSH.r,
+                    g : BRUSH.g,
+                    b : BRUSH.b,
+                    size : BRUSH.size,
+                    };
+                cache.push(dot);
+                }
+                draw_circle(mouse_position().0, mouse_position().1, BRUSH.size, macroquad::color::Color::from_rgba((BRUSH.r * 255.0) as u8, (BRUSH.g * 255.0) as u8, (BRUSH.b * 255.0) as u8, 255)
+            );
+        }
+
+        println!("{:?}", cache);
+        ct+=1; 
+        render_gui(&mut lines);
         next_frame().await
     }
 }
 
 
 
-// Query timer (Push and pull)
-// pub fn request_exchange(lines : &Vec<Dot>) -> Vec<Dot> {
-//     let mut lines = Vec::new();
-//         let resp = match reqwest::blocking::get("https://httpbin.org/ip") {
-//             Ok(resp) => resp.text().unwrap(),
-//             Err(err) => panic!("Error: {}", err)
-//             };
-//         println!("{}", resp);
-//     lines
-// }
+//Query timer (Push and pull)
+pub async fn get(lines : &mut Vec<Dot>) -> Vec<Dot> {
+        unsafe{
+        let client = reqwest::blocking::Client::new();
 
-pub fn render_gui(){ 
+        let resp = match reqwest::blocking::get("http://127.0.0.1:8000/".to_owned() + &BRUSH.room.to_string()) {
+            Ok(resp) => resp.text().unwrap(),
+            Err(err) => "Error: {}".to_owned() + &err.to_string()
+            };
+
+        match serde_json::from_str::<Vec<Dot>>(&resp) {
+            Ok(vec) => {
+                println!("RETREIVED");
+                for item in vec {
+                    lines.push(item)
+                }
+            },
+            Err(e) => {
+                //panic!("{:?}{:?}", resp, e);
+                return lines.clone();
+            }
+        }
+        lines.clone()
+    }
+}
+
+pub async fn put(lines : &mut Vec<Dot>, cache : &mut Vec<Dot>){
+    *cache = Vec::new();
+    unsafe {
+        let client = reqwest::blocking::Client::new();
+        if lines.len() > 0 {
+            let res = client.post("http://127.0.0.1:8000/".to_owned() + &BRUSH.room.to_string())
+            .json(lines).send();
+        }
+    }
+}
+
+
+
+
+pub fn render_gui(lines : &mut Vec<Dot>){ 
     unsafe {
     egui_macroquad::ui(|egui_ctx| {
 
-        egui::Window::new("egui + macroquad")
+        egui::Window::new("tooltip")
         .show(egui_ctx, |ui| {
-            if ui.ui_contains_pointer() {
-            color = []
-            ui.label("Pick a color:");
+            BRUSH.sw = match egui_ctx.is_pointer_over_area() {
+                        true => false,
+                        false => true
+                };
+            let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
+            let roomnumber = ui.add(egui::DragValue::new(&mut BRUSH.room).speed(0.5).clamp_range(0.0..=100.0));
+            let slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
+            slider.on_hover_text("Drag me!");
             ui.color_edit_button_rgb(&mut color);
-            if ui.button("SWAP").clicked() {
-                BRUSH.swapcolor(color);
-            }
-                    }
+            BRUSH = BRUSH.swapcolor(color);
 
-
-            // println!{"{}", color[0]}
-            
-            });
         });
+    });
     egui_macroquad::draw();
     }
 }
 
-pub fn render(lines : &mut Vec<Dot>){
+pub fn render_paint(lines : &mut Vec<Dot>){
     for circle in lines.iter_mut(){
-        draw_circle(circle.x, circle.y, 5.0, circle.color);
-    }
+        draw_circle(circle.x, circle.y, circle.size, macroquad::color::Color::from_rgba((circle.r * 255.0) as u8, (circle.g * 255.0) as u8, (circle.b * 255.0) as u8, 255));
+        }
 }
