@@ -5,10 +5,10 @@ pub mod state;
 use state::brush::{Brush, Dot};
 
 pub static mut BRUSH: Brush = Brush {
-    r: 0.37,
-    g: 0.80,
-    b: 1.0,
-    size: 5.0,
+    r: 0.01,
+    g: 0.01,
+    b: 0.01,
+    size: 15.0,
     sw: true,
     room: 0000,
 };
@@ -27,9 +27,7 @@ async fn main() {
 
         //Weird data race between the await and the timer.
         if ct > 200 && (!cache.is_empty()) {
-            for val in get(&mut cache).await {
-                lines.push(val);
-            }
+            lines.extend(cache.clone());
             put(&mut cache, &mut ct).await;
         }
 
