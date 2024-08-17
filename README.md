@@ -8,8 +8,13 @@
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
+# both MSVC and GNU target is supported:
+  ```
+rustup target add x86_64-pc-windows-msvc
+# or
+rustup target add x86_64-pc-windows-gnu
+
+cargo run --example quad
   npm install npm@latest -g
   ```
 
