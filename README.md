@@ -6,42 +6,26 @@
 ## Getting Started
 
 ### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-# both MSVC and GNU target is supported:
-  ```
-rustup target add x86_64-pc-windows-msvc
-# or
-rustup target add x86_64-pc-windows-gnu
-
-cargo run --example quad
-  npm install npm@latest -g
-  ```
+You need rust installed, follow directions on https://rustup.rs/
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone git@github.com:ateschan/paint-party.git
    ```
-3. Install NPM packages
+3. Change dir
    ```sh
-   npm install
+   cd paint-party
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+4. Build Project
    ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
+   cargo build --release
    ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+5. Run
+   ```sh
+   cd target/release && ./paint-party
+   ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
