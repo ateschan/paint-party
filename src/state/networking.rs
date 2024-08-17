@@ -4,8 +4,7 @@ use crate::BRUSH;
 pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
     unsafe {
         let resp = match reqwest::blocking::get(
-            "http://127.0.0.1:8000/".to_owned() + &BRUSH.room.to_string(),
-        ) {
+            format!("http://{}/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey)) {
             Ok(resp) => resp.text().unwrap(),
             Err(err) => "Error: {}".to_owned() + &err.to_string(),
         };
@@ -30,7 +29,7 @@ pub async fn put(cache: &mut Vec<Dot>, ct: &mut i32) {
     unsafe {
         let client = reqwest::blocking::Client::new();
         let _ = client
-            .post("http://127.0.0.1:8000/".to_owned() + &BRUSH.room.to_string())
+            .post(format!("http://{}/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey))
             .json(cache)
             .send();
     }
@@ -42,7 +41,7 @@ pub fn delete() {
     unsafe {
         let client = reqwest::blocking::Client::new();
         let resp = client
-            .get("http://127.0.0.1:8000/delete/".to_owned() + &BRUSH.room.to_string())
+            .get(format!("http://{}/delete/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey))
             .send();
         println!("{:?}", resp);
     }

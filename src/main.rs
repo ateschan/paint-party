@@ -11,6 +11,8 @@ pub static mut BRUSH: Brush = Brush {
     size: 15.0,
     sw: true,
     room: 0000,
+    ip : String::new(),
+    apikey : String::new()
 };
 
 use crate::state::networking::{delete, get, put};
@@ -24,7 +26,6 @@ async fn main() {
     }
     let mut ct = 0;
     loop {
-
         //Weird data race between the await and the timer.
         if ct > 200 && (!cache.is_empty()) {
             lines.extend(cache.clone());
@@ -75,24 +76,42 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
     unsafe {
         egui_macroquad::ui(|egui_ctx| {
             egui::Window::new("PAINT PARTY").show(egui_ctx, |ui| {
-                ui.horizontal(|ui| {
-                    BRUSH.sw = match egui_ctx.is_pointer_over_area() {
-                        true => false,
-                        false => true,
+                ui.vertical(|ui| {
+
+                    //Switch brush off if egui is using it 
+                    BRUSH.sw = match (egui_ctx.is_using_pointer(), egui_ctx.is_pointer_over_area()) {
+                        (true, _) | (_, true) => false,
+                        (false, false) => true,
                     };
+
+                    egui_ctx.set_visuals(egui::Visuals::light());
                     let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
-                    let _roomnumber = ui.add(
-                        egui::DragValue::new(&mut BRUSH.room)
-                            .speed(0.5)
-                            .clamp_range(0.0..=100.0),
-                    );
-                    let slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
-                    if ui.button("CLEAR").clicked() {
-                        delete();
-                        *lines = Vec::new()
-                    }
-                    slider.on_hover_text("Drag me!");
-                    ui.color_edit_button_rgb(&mut color);
+                    ui.horizontal(|ui| {
+                        ui.color_edit_button_rgb(&mut color);
+                        let roomnumber = ui.add(
+                            egui::DragValue::new(&mut BRUSH.room)
+                                .speed(0.5)
+                                .clamp_range(0.0..=100.0),
+                        );
+                        let clearbtn = ui.button("CLEAR");
+                        if clearbtn.clicked() {
+                            delete();
+                            *lines = Vec::new()
+                        }
+                        let apikey = ui.add(egui::TextEdit::singleline(&mut BRUSH.apikey));
+                        
+                        clearbtn.on_hover_text("Erase All");
+                        apikey.on_hover_text("Server Password");
+                        roomnumber.on_hover_text("Room #");
+                    });
+
+                    ui.horizontal(|ui| {
+                        let slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
+                        let server = ui.add(egui::TextEdit::singleline(&mut BRUSH.ip));
+                        server.on_hover_text("IP:Port/Hostname");
+                        slider.on_hover_text("Brush Size");
+                    });
+
                     BRUSH = BRUSH.swapcolor(color);
                 });
             });
