@@ -12,11 +12,11 @@ You need rust installed, follow directions on https://rustup.rs/
 
 ### Installation
 
-1. Clone the repo
+1. Clone the Repo
    ```sh
    git clone git@github.com:ateschan/paint-party.git
    ```
-2. Change dir
+2. Change Dir
    ```sh
    cd paint-party
    ```
@@ -62,5 +62,3 @@ Don't forget to give the project a star! Thanks again!
 ## License
 
 Distributed under the GPLv2 License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
