@@ -2,6 +2,8 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+Paint party is a small capstone project developed for my Computer Science degree at NVC
+
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -10,47 +12,37 @@ You need rust installed, follow directions on https://rustup.rs/
 
 ### Installation
 
-2. Clone the repo
+1. Clone the repo
    ```sh
    git clone git@github.com:ateschan/paint-party.git
    ```
-3. Change dir
+2. Change dir
    ```sh
    cd paint-party
    ```
-4. Build Project
+3. Build Project
    ```sh
    cargo build --release
    ```
-5. Run
+4. Run
    ```sh
    cd target/release && ./paint-party
    ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+1. Enter the designated server ip with the port
+2. Enter the correspnding password, if there is none set skip this step
+3. Select a canvas or "room" by entering a number between 0 and 9999
+4. Select a color and start painting!
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Erasal tool
+- [ ] Compile down to webassembly
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+See the [open issues](https://github.com/ateachan/paint-party/issues) for a full list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -66,41 +58,9 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Top contributors:
-
-<a href="https://github.com/github_username/repo_name/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=github_username/repo_name" alt="contrib.rocks image" />
-</a>
-
-
-
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
+Distributed under the GPLv2 License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
