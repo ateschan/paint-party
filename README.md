@@ -42,7 +42,7 @@ You need rust installed, follow directions on https://rustup.rs/
 - [ ] Eraser tool
 - [ ] Compile down to webassembly
 
-See the [open issues](https://github.com/ateachan/paint-party/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 ## Contributing
