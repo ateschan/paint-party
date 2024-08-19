@@ -48,7 +48,8 @@ async fn main() {
                     size: BRUSH.size,
                 };
                 cache.push(dot);
-                draw_circle(
+            }
+            draw_circle(
                     mouse_position().0,
                     mouse_position().1,
                     BRUSH.size,
@@ -59,8 +60,6 @@ async fn main() {
                         255,
                     ),
                 );
-            }
-
             frame_count += 1;
             let current_room = BRUSH.room;
             render_gui(&mut lines);
