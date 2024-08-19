@@ -49,13 +49,13 @@ async fn main() {
                 };
                 cache.push(dot);
                 draw_circle(
-                    dot.x,
-                    dot.y,
-                    dot.size,
+                    mouse_position().0,
+                    mouse_position().1,
+                    BRUSH.size,
                     macroquad::color::Color::from_rgba(
-                        (dot.r * 255.0) as u8,
-                        (dot.g * 255.0) as u8,
-                        (dot.b * 255.0) as u8,
+                        (BRUSH.r * 255.0) as u8,
+                        (BRUSH.g * 255.0) as u8,
+                        (BRUSH.b * 255.0) as u8,
                         255,
                     ),
                 );
