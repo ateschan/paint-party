@@ -1,48 +1,68 @@
 use crate::state::brush::Dot;
 use crate::BRUSH;
-//Query timer (Push and pull)
+use reqwest::blocking::{Client, Response};
+
 pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
     unsafe {
-        let resp = match reqwest::blocking::get(
-            format!("http://{}/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey)) {
-            Ok(resp) => resp.text().unwrap(),
-            Err(err) => "Error: {}".to_owned() + &err.to_string(),
-        };
+        let url = format!(
+            "http://{}/{}/{}",
+            BRUSH.ip.clone(),
+            BRUSH.room.to_string(),
+            BRUSH.apikey
+        );
 
-        match serde_json::from_str::<Vec<Dot>>(&resp) {
-            Ok(vec) => {
-                println!("RETREIVED");
-                for item in vec {
-                    lines.push(item)
-                }
-            }
-            Err(e) => {
-                println!("{:?}{:?}", resp, e);
-                return lines.clone();
-            }
+        match reqwest::blocking::get(&url) {
+            Ok(resp) => match resp.text() {
+                Ok(text) => match serde_json::from_str::<Vec<Dot>>(&text) {
+                    Ok(vec) => {
+                        println!("RETRIEVED");
+                        lines.extend(vec);
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to parse response: {:?}, error: {:?}", text, e);
+                    }
+                },
+                Err(e) => eprintln!("Failed to get response text: {:?}", e),
+            },
+            Err(err) => eprintln!("Request failed: {:?}", err),
         }
+
         lines.clone()
     }
 }
 
 pub async fn put(cache: &mut Vec<Dot>, ct: &mut i32) {
     unsafe {
-        let client = reqwest::blocking::Client::new();
-        let _ = client
-            .post(format!("http://{}/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey))
-            .json(cache)
-            .send();
+        let client = Client::new();
+        let url = format!(
+            "http://{}/{}/{}",
+            BRUSH.ip.clone(),
+            BRUSH.room.to_string(),
+            BRUSH.apikey
+        );
+
+        if let Err(e) = client.post(&url).json(cache).send() {
+            eprintln!("Failed to send PUT request: {:?}", e);
+        }
+
+        *ct = 0;
+        cache.clear();
     }
-    *ct = 0;
-    *cache = Vec::new();
 }
 
 pub fn delete() {
     unsafe {
-        let client = reqwest::blocking::Client::new();
-        let resp = client
-            .get(format!("http://{}/delete/{}/{}",  BRUSH.ip.clone(), &BRUSH.room.to_string(),BRUSH.apikey))
-            .send();
-        println!("{:?}", resp);
+        let client = Client::new();
+        let url = format!(
+            "http://{}/delete/{}/{}",
+            BRUSH.ip.clone(),
+            BRUSH.room.to_string(),
+            BRUSH.apikey
+        );
+
+        match client.get(&url).send() {
+            Ok(resp) => println!("Delete request response: {:?}", resp),
+            Err(e) => eprintln!("Failed to send DELETE request: {:?}", e),
+        }
     }
 }

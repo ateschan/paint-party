@@ -1,8 +1,10 @@
 use egui_macroquad::egui;
 use macroquad::prelude::*;
 use std::vec::Vec;
+
 pub mod state;
 use state::brush::{Brush, Dot};
+use state::networking::{delete, get, put};
 
 pub static mut BRUSH: Brush = Brush {
     r: 0.01,
@@ -11,31 +13,29 @@ pub static mut BRUSH: Brush = Brush {
     size: 15.0,
     sw: true,
     room: 0000,
-    ip : String::new(),
-    apikey : String::new()
+    ip: String::new(),
+    apikey: String::new(),
 };
-
-use crate::state::networking::{delete, get, put};
 
 #[macroquad::main("Paint Party")]
 async fn main() {
     let mut lines: Vec<Dot> = Vec::new();
     let mut cache: Vec<Dot> = Vec::new();
-    for val in get(&mut cache).await {
-        lines.push(val);
-    }
-    let mut ct = 0;
+    lines.extend(get(&mut cache).await);
+
+    let mut frame_count = 0;
+
     loop {
-        //Weird data race between the await and the timer.
-        if ct > 200 && (!cache.is_empty()) {
+        if frame_count > 200 && !cache.is_empty() {
             lines.extend(cache.clone());
-            put(&mut cache, &mut ct).await;
+            put(&mut cache, &mut frame_count).await;
         }
 
         egui_macroquad::draw();
         clear_background(WHITE);
-        render_paint(&mut lines[..]);
-        render_paint(&mut cache[..]);
+
+        render_paint(&lines);
+        render_paint(&cache);
 
         unsafe {
             if is_mouse_button_down(MouseButton::Left) && BRUSH.sw {
@@ -49,67 +49,66 @@ async fn main() {
                 };
                 cache.push(dot);
                 draw_circle(
-                    mouse_position().0,
-                    mouse_position().1,
-                    BRUSH.size,
+                    dot.x,
+                    dot.y,
+                    dot.size,
                     macroquad::color::Color::from_rgba(
-                        (BRUSH.r * 255.0) as u8,
-                        (BRUSH.g * 255.0) as u8,
-                        (BRUSH.b * 255.0) as u8,
+                        (dot.r * 255.0) as u8,
+                        (dot.g * 255.0) as u8,
+                        (dot.b * 255.0) as u8,
                         255,
                     ),
                 );
             }
 
-            ct += 1;
-            let currentrm = BRUSH.room;
+            frame_count += 1;
+            let current_room = BRUSH.room;
             render_gui(&mut lines);
-            if BRUSH.room != currentrm {
-                lines = get(&mut Vec::new()).await
+
+            if BRUSH.room != current_room {
+                lines = get(&mut Vec::new()).await;
             }
-            next_frame().await
         }
+
+        next_frame().await;
     }
 }
 
-pub fn render_gui(lines: &mut Vec<Dot>) {
+fn render_gui(lines: &mut Vec<Dot>) {
     unsafe {
         egui_macroquad::ui(|egui_ctx| {
             egui::Window::new("PAINT PARTY").show(egui_ctx, |ui| {
                 ui.vertical(|ui| {
-
-                    //Switch brush off if egui is using it 
-                    BRUSH.sw = match (egui_ctx.is_using_pointer(), egui_ctx.is_pointer_over_area()) {
-                        (true, _) | (_, true) => false,
-                        (false, false) => true,
-                    };
+                    BRUSH.sw = !egui_ctx.is_using_pointer() && !egui_ctx.is_pointer_over_area();
 
                     egui_ctx.set_visuals(egui::Visuals::light());
+
                     let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
                     ui.horizontal(|ui| {
                         ui.color_edit_button_rgb(&mut color);
-                        let roomnumber = ui.add(
+
+                        let room_number = ui.add(
                             egui::DragValue::new(&mut BRUSH.room)
                                 .speed(0.5)
                                 .clamp_range(0.0..=100.0),
                         );
-                        let clearbtn = ui.button("CLEAR");
-                        if clearbtn.clicked() {
+                        let clear_button = ui.button("CLEAR");
+                        if clear_button.clicked() {
                             delete();
-                            *lines = Vec::new()
+                            *lines = Vec::new();
                         }
-                        let apikey = ui.add(egui::TextEdit::singleline(&mut BRUSH.apikey));
-                        
-                        clearbtn.on_hover_text("Erase All");
-                        apikey.on_hover_text("Server Password");
-                        roomnumber.on_hover_text("Room #");
+
+                        let apikey_input = ui.add(egui::TextEdit::singleline(&mut BRUSH.apikey));
+                        clear_button.on_hover_text("Erase All");
+                        apikey_input.on_hover_text("Server Password");
+                        room_number.on_hover_text("Room #");
                     });
 
                     ui.horizontal(|ui| {
-                        let slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
-                        let server = ui.add(egui::TextEdit::singleline(&mut BRUSH.ip));
-                        server.on_hover_text("IP:Port/Hostname");
-                        slider.on_hover_text("Brush Size");
+                        let size_slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
+                        let server_input = ui.add(egui::TextEdit::singleline(&mut BRUSH.ip));
+                        server_input.on_hover_text("IP:Port/Hostname");
+                        size_slider.on_hover_text("Brush Size");
                     });
 
                     BRUSH = BRUSH.swapcolor(color);
@@ -120,8 +119,8 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
     }
 }
 
-pub fn render_paint(lines: &mut [Dot]) {
-    for circle in lines.iter_mut() {
+fn render_paint(lines: &[Dot]) {
+    for circle in lines.iter() {
         draw_circle(
             circle.x,
             circle.y,
