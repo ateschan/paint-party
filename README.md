@@ -1,5 +1,5 @@
 # paint-party client
-
+[![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml)
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 Paint party is a small capstone project developed for my Computer Science degree at NVC
