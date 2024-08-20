@@ -26,10 +26,7 @@ async fn main() {
     let mut frame_count = 0;
 
     loop {
-        if frame_count > 200 && !cache.is_empty() {
-            lines.extend(cache.clone());
-            put(&mut cache, &mut frame_count).await;
-        }
+
 
         egui_macroquad::draw();
         clear_background(WHITE);
@@ -48,6 +45,10 @@ async fn main() {
                     size: BRUSH.size,
                 };
                 cache.push(dot);
+            }
+            else if frame_count > 200 && !cache.is_empty() {
+                lines.extend(cache.clone());
+                put(&mut cache, &mut frame_count).await;
             }
             draw_circle(
                     mouse_position().0,
