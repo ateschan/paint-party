@@ -6,6 +6,7 @@ pub mod state;
 use state::brush::{Brush, Dot};
 use state::networking::{delete, get, put};
 
+//Global object for state
 pub static mut BRUSH: Brush = Brush {
     r: 0.01,
     g: 0.01,
@@ -26,8 +27,6 @@ async fn main() {
     let mut frame_count = 0;
 
     loop {
-
-
         egui_macroquad::draw();
         clear_background(WHITE);
 
@@ -46,7 +45,7 @@ async fn main() {
                 };
                 cache.push(dot);
             }
-            else if frame_count > 200 && !cache.is_empty() {
+            else if !cache.is_empty() {
                 lines.extend(cache.clone());
                 put(&mut cache, &mut frame_count).await;
             }
@@ -64,8 +63,9 @@ async fn main() {
             frame_count += 1;
             let current_room = BRUSH.room;
             render_gui(&mut lines);
-
-            if BRUSH.room != current_room {
+            
+            //recieve data from server
+            if BRUSH.room != current_room || frame_count >= 1800{
                 lines = get(&mut Vec::new()).await;
             }
         }
@@ -90,7 +90,7 @@ fn render_gui(lines: &mut Vec<Dot>) {
                         let room_number = ui.add(
                             egui::DragValue::new(&mut BRUSH.room)
                                 .speed(0.5)
-                                .clamp_range(0.0..=100.0),
+                                .clamp_range(0.0..=9999.0),
                         );
                         let clear_button = ui.button("CLEAR");
                         if clear_button.clicked() {
@@ -105,7 +105,7 @@ fn render_gui(lines: &mut Vec<Dot>) {
                     });
 
                     ui.horizontal(|ui| {
-                        let size_slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=100.0));
+                        let size_slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=300.0));
                         let server_input = ui.add(egui::TextEdit::singleline(&mut BRUSH.ip));
                         server_input.on_hover_text("IP:Port/Hostname");
                         size_slider.on_hover_text("Brush Size");
