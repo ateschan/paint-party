@@ -40,6 +40,7 @@ You need rust installed, follow directions on https://rustup.rs/
 ## Roadmap
 
 - [ ] Eraser tool
+- [ ] Opacity slider
 - [ ] Camera zoom
 - [ ] Compile into webassembly
 
