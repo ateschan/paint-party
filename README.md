@@ -40,7 +40,8 @@ You need rust installed, follow directions on https://rustup.rs/
 ## Roadmap
 
 - [ ] Eraser tool
-- [ ] Compile down to webassembly
+- [ ] Camera zoom
+- [ ] Compile into webassembly
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
