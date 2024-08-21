@@ -1,13 +1,13 @@
 use crate::state::brush::Dot;
 use crate::BRUSH;
-use reqwest::blocking::{Client, Response};
+use reqwest::blocking::Client;
 
 pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
     unsafe {
         let url = format!(
             "http://{}/{}/{}",
             BRUSH.ip.clone(),
-            BRUSH.room.to_string(),
+            BRUSH.room,
             BRUSH.apikey
         );
 
@@ -37,7 +37,7 @@ pub async fn put(cache: &mut Vec<Dot>, ct: &mut i32) {
         let url = format!(
             "http://{}/{}/{}",
             BRUSH.ip.clone(),
-            BRUSH.room.to_string(),
+            BRUSH.room,
             BRUSH.apikey
         );
 
@@ -56,7 +56,7 @@ pub fn delete() {
         let url = format!(
             "http://{}/delete/{}/{}",
             BRUSH.ip.clone(),
-            BRUSH.room.to_string(),
+            BRUSH.room,
             BRUSH.apikey
         );
 

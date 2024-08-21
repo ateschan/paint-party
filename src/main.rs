@@ -16,6 +16,7 @@ pub static mut BRUSH: Brush = Brush {
     room: 0000,
     ip: String::new(),
     apikey: String::new(),
+    frame_counter : 0
 };
 
 #[macroquad::main("Paint Party")]
@@ -60,20 +61,20 @@ async fn main() {
                         255,
                     ),
                 );
-            frame_count += 1;
             let current_room = BRUSH.room;
             render_gui(&mut lines);
             
             //recieve data from server
-            if BRUSH.room != current_room || frame_count >= 1800{
+            if BRUSH.room != current_room || BRUSH.frame_counter >= 1800{
                 lines = get(&mut Vec::new()).await;
+                BRUSH.frame_counter = 0
             }
+            BRUSH.frame_counter += 1;
         }
 
         next_frame().await;
     }
 }
-
 fn render_gui(lines: &mut Vec<Dot>) {
     unsafe {
         egui_macroquad::ui(|egui_ctx| {
@@ -87,21 +88,25 @@ fn render_gui(lines: &mut Vec<Dot>) {
                     ui.horizontal(|ui| {
                         ui.color_edit_button_rgb(&mut color);
 
-                        let room_number = ui.add(
+                        let refresh_button = ui.button("↺");
+                        if refresh_button.clicked() {
+                            BRUSH.frame_counter = 1800;
+                        }
+                        let room_button = ui.add(
                             egui::DragValue::new(&mut BRUSH.room)
                                 .speed(0.5)
                                 .clamp_range(0.0..=9999.0),
                         );
                         let clear_button = ui.button("CLEAR");
                         if clear_button.clicked() {
-                            delete();
                             *lines = Vec::new();
+                            delete();
                         }
 
                         let apikey_input = ui.add(egui::TextEdit::singleline(&mut BRUSH.apikey));
                         clear_button.on_hover_text("Erase All");
                         apikey_input.on_hover_text("Server Password");
-                        room_number.on_hover_text("Room #");
+                        room_button.on_hover_text("Room #");
                     });
 
                     ui.horizontal(|ui| {
