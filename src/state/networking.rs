@@ -1,6 +1,10 @@
 use crate::state::brush::Dot;
 use crate::BRUSH;
-use reqwest::blocking::Client;
+use quad_net::http_request;
+
+
+
+//TODO: Write out support for quad net, remove reqwest
 
 pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
     unsafe {
