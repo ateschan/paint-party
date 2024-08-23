@@ -38,7 +38,7 @@ You need rust installed, follow directions on https://rustup.rs/
 
 <!-- ROADMAP -->
 ## Roadmap
-- [✓] Hide api key
+- [X] Hide api key
 - [ ] Eraser tool
 - [ ] Opacity slider
 - [ ] Camera zoom
