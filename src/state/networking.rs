@@ -1,6 +1,7 @@
 use crate::state::brush::Dot;
 use crate::BRUSH;
-use quad_net::http_request;
+use quad_net::http_request::{self, RequestBuilder};
+use quad_net::quad_socket::client;
 
 
 
@@ -15,21 +16,26 @@ pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
             BRUSH.apikey
         );
 
-        match reqwest::blocking::get(&url) {
-            Ok(resp) => match resp.text() {
-                Ok(text) => match serde_json::from_str::<Vec<Dot>>(&text) {
-                    Ok(vec) => {
-                        println!("RETRIEVED");
-                        lines.extend(vec);
-                    }
-                    Err(e) => {
-                        eprintln!("Failed to parse response: {:?}, error: {:?}", text, e);
-                    }
-                },
-                Err(e) => eprintln!("Failed to get response text: {:?}", e),
-            },
-            Err(err) => eprintln!("Request failed: {:?}", err),
+        match RequestBuilder::new(&url).try_into() {
+            Ok()
+
         }
+
+        // match quad_net::http_request::Method::Get:(&url) {
+        //     Ok(resp) => match resp.text() {
+        //         Ok(text) => match serde_json::from_str::<Vec<Dot>>(&text) {
+        //             Ok(vec) => {
+        //                 println!("RETRIEVED");
+        //                 lines.extend(vec);
+        //             }
+        //             Err(e) => {
+        //                 eprintln!("Failed to parse response: {:?}, error: {:?}", text, e);
+        //             }
+        //         },
+        //         Err(e) => eprintln!("Failed to get response text: {:?}", e),
+        //     },
+        //     Err(err) => eprintln!("Request failed: {:?}", err),
+        // }
 
         lines.clone()
     }
