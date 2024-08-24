@@ -18,7 +18,7 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
                     let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
                     ui.horizontal(|ui| {
 
-                        ui.color_edit_button_rgb(&mut color);
+                        ui.color_edit_button_srgb(&mut color);
 
                         let refresh_button = ui.button("↺");
                         if refresh_button.clicked() {
