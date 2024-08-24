@@ -5,6 +5,7 @@ pub struct Brush {
     pub r: u8,
     pub g: u8,
     pub b: u8,
+    pub a : u8,
     pub size: f32,
     pub sw: bool,
     pub room: i32,
@@ -13,11 +14,12 @@ pub struct Brush {
     pub frame_counter : i32
 }
 impl Brush {
-    pub fn swapcolor(&self, new_color: [u8; 3]) -> Self {
+    pub fn swapcolor(&self, new_color: [u8; 4]) -> Self {
         Self {
             r: new_color[0],
             g: new_color[1],
             b: new_color[2],
+            a: new_color[3],
             size: self.size,
             sw: self.sw,
             room: self.room,
@@ -35,5 +37,6 @@ pub struct Dot {
     pub r: u8,
     pub g: u8,
     pub b: u8,
+    pub a: u8,
     pub size: f32,
 }
