@@ -8,9 +8,9 @@ pub struct Brush {
     pub size: f32,
     pub sw: bool,
     pub room: i32,
-    pub ip : String,
-    pub apikey : String,
-    pub frame_counter : i32
+    pub ip: String,
+    pub apikey: String,
+    pub frame_counter: i32,
 }
 impl Brush {
     pub fn swapcolor(&self, new_color: [f32; 3]) -> Self {
@@ -21,9 +21,9 @@ impl Brush {
             size: self.size,
             sw: self.sw,
             room: self.room,
-            ip : self.ip.clone(),
-            apikey : self.apikey.clone(),
-            frame_counter : self.frame_counter
+            ip: self.ip.clone(),
+            apikey: self.apikey.clone(),
+            frame_counter: self.frame_counter,
         }
     }
 }

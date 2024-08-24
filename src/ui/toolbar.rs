@@ -1,10 +1,9 @@
-use crate::BRUSH;
 use crate::state::brush::Dot;
 use crate::state::networking::delete;
 use crate::ui::password::password;
 use crate::ui::serveraddress::server_address;
+use crate::BRUSH;
 use egui_macroquad::egui;
-
 
 pub fn render_gui(lines: &mut Vec<Dot>) {
     unsafe {
@@ -17,14 +16,12 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
 
                     let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
                     ui.horizontal(|ui| {
-
                         ui.color_edit_button_rgb(&mut color);
 
                         let refresh_button = ui.button("↺");
                         if refresh_button.clicked() {
                             BRUSH.frame_counter = 600;
                         }
-
 
                         let clear_button = ui.button("CLEAR");
                         if clear_button.clicked() {
@@ -39,7 +36,7 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
                     ui.horizontal(|ui| {
                         let mut tmp_room = BRUSH.room;
                         let size_slider = ui.add(egui::Slider::new(&mut BRUSH.size, 0.0..=300.0));
-                        
+
                         ui.add(server_address(&mut BRUSH.ip, &mut tmp_room));
 
                         size_slider.on_hover_text("Brush Size");

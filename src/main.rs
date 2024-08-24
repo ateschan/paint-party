@@ -2,10 +2,10 @@ pub mod state;
 pub mod ui;
 
 use macroquad::prelude::*;
-use std::vec::Vec;
 use state::brush::{Brush, Dot};
-use ui::toolbar::render_gui;
 use state::networking::{get, put};
+use std::vec::Vec;
+use ui::toolbar::render_gui;
 
 //Global object for state
 pub static mut BRUSH: Brush = Brush {
@@ -17,7 +17,7 @@ pub static mut BRUSH: Brush = Brush {
     room: 0000,
     ip: String::new(),
     apikey: String::new(),
-    frame_counter : -999999
+    frame_counter: -999999,
 };
 
 #[macroquad::main("Paint Party")]
@@ -46,27 +46,29 @@ async fn main() {
                     size: BRUSH.size,
                 };
                 cache.push(dot);
-            }
-            else if !cache.is_empty() {
+            } else if !cache.is_empty() {
                 lines.extend(cache.clone());
                 put(&mut cache, &mut frame_count).await;
             }
             draw_circle(
-                    mouse_position().0,
-                    mouse_position().1,
-                    BRUSH.size,
-                    macroquad::color::Color::from_rgba(
-                        (BRUSH.r * 255.0) as u8,
-                        (BRUSH.g * 255.0) as u8,
-                        (BRUSH.b * 255.0) as u8,
-                        255,
-                    ),
-                );
+                mouse_position().0,
+                mouse_position().1,
+                BRUSH.size,
+                macroquad::color::Color::from_rgba(
+                    (BRUSH.r * 255.0) as u8,
+                    (BRUSH.g * 255.0) as u8,
+                    (BRUSH.b * 255.0) as u8,
+                    255,
+                ),
+            );
             let current_room = BRUSH.room;
             render_gui(&mut lines);
-            
+
             //recieve data from server
-            if (BRUSH.room != current_room || BRUSH.frame_counter >= 600 ) && !is_mouse_button_down(MouseButton::Left) && (!BRUSH.apikey.eq("") || !BRUSH.ip.eq("")){
+            if (BRUSH.room != current_room || BRUSH.frame_counter >= 600)
+                && !is_mouse_button_down(MouseButton::Left)
+                && (!BRUSH.apikey.eq("") || !BRUSH.ip.eq(""))
+            {
                 lines = get(&mut Vec::new()).await;
                 BRUSH.frame_counter = 0
             }
@@ -76,7 +78,6 @@ async fn main() {
         next_frame().await;
     }
 }
-
 
 fn render_paint(lines: &[Dot]) {
     for circle in lines.iter() {
