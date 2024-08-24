@@ -16,7 +16,7 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
 
                     egui_ctx.set_visuals(egui::Visuals::light());
 
-                    let mut color : egui_macroquad::egui::Color32 = egui_macroquad::egui::Color32::from_rgba_unmultiplied(BRUSH.r, BRUSH.b, BRUSH.g, BRUSH.a);
+                    let mut color : egui_macroquad::egui::Color32 = egui_macroquad::egui::Color32::from_rgba_unmultiplied(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a);
                     ui.horizontal(|ui| {
 
                         ui.color_edit_button_srgba(&mut color);
