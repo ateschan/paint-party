@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use serde::{Deserialize, Serialize};
 
 pub struct Brush {
+
     pub r: u8,
     pub g: u8,
     pub b: u8,
