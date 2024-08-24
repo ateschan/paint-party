@@ -6,6 +6,7 @@ use crate::ui::serveraddress::server_address;
 use egui_macroquad::egui;
 
 
+
 pub fn render_gui(lines: &mut Vec<Dot>) {
     unsafe {
         egui_macroquad::ui(|egui_ctx| {
@@ -15,10 +16,10 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
 
                     egui_ctx.set_visuals(egui::Visuals::light());
 
-                    let mut color = [BRUSH.r, BRUSH.g, BRUSH.b];
+                    let mut color : egui_macroquad::egui::Color32 = egui_macroquad::egui::Color32::from_rgba_unmultiplied(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a);
                     ui.horizontal(|ui| {
 
-                        ui.color_edit_button_rgb(&mut color);
+                        ui.color_edit_button_srgba(&mut color);
 
                         let refresh_button = ui.button("↺");
                         if refresh_button.clicked() {
@@ -44,8 +45,9 @@ pub fn render_gui(lines: &mut Vec<Dot>) {
 
                         size_slider.on_hover_text("Brush Size");
                     });
-
-                    BRUSH = BRUSH.swapcolor(color);
+                    
+                    BRUSH = BRUSH.swapcolor(egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color));
+                    println!("{:?}",egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color));
                 });
             });
         });

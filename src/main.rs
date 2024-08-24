@@ -9,9 +9,10 @@ use state::networking::{get, put};
 
 //Global object for state
 pub static mut BRUSH: Brush = Brush {
-    r: 0.01,
-    g: 0.01,
-    b: 0.01,
+    r: 0,
+    g: 0,
+    b: 0,
+    a: 0,
     size: 15.0,
     sw: true,
     room: 0000,
@@ -43,6 +44,7 @@ async fn main() {
                     r: BRUSH.r,
                     g: BRUSH.g,
                     b: BRUSH.b,
+                    a: BRUSH.a,
                     size: BRUSH.size,
                 };
                 cache.push(dot);
@@ -56,10 +58,10 @@ async fn main() {
                     mouse_position().1,
                     BRUSH.size,
                     macroquad::color::Color::from_rgba(
-                        (BRUSH.r * 255.0) as u8,
-                        (BRUSH.g * 255.0) as u8,
-                        (BRUSH.b * 255.0) as u8,
-                        255,
+                        BRUSH.r,
+                        BRUSH.g,
+                        BRUSH.b,
+                        BRUSH.a,
                     ),
                 );
             let current_room = BRUSH.room;
@@ -85,10 +87,10 @@ fn render_paint(lines: &[Dot]) {
             circle.y,
             circle.size,
             macroquad::color::Color::from_rgba(
-                (circle.r * 255.0) as u8,
-                (circle.g * 255.0) as u8,
-                (circle.b * 255.0) as u8,
-                255,
+                circle.r,
+                circle.g,
+                circle.b,
+                circle.a,
             ),
         );
     }
