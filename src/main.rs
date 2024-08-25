@@ -91,6 +91,7 @@ async fn main() {
                     Ok(res) => println!("{}", res),
                     Err(e) => println!("ERROR {e}"),
                 }
+                BRUSH.refresh_flag = !BRUSH.refresh_flag;
             }
 
             render_paint(&lines);
