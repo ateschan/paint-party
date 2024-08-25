@@ -86,7 +86,7 @@ async fn main() {
                 BRUSH.clear = !BRUSH.clear;
             }
             
-            if BRUSH.refresh_flag {
+            if BRUSH.refresh_flag || BRUSH.room != current_room{
                 match get(&mut socket).await {
                     Ok(res) => println!("{}", res),
                     Err(e) => println!("ERROR {e}"),
