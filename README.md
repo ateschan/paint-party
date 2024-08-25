@@ -24,7 +24,11 @@ You need rust installed, follow directions on https://rustup.rs/
    ```sh
    cargo build --release
    ```
-4. Run
+4. Set env var
+   ```sh
+   export PARTY_SERVER=ws://{SERVER HOSTNAME/IP:PORT}/ws
+   ```
+5. Run
    ```sh
    cd target/release && ./paint-party
    ```
