@@ -1,11 +1,14 @@
 pub mod state;
 pub mod ui;
 
+use crate::state::networking::{delete, get, put, web_socket_handler};
 use macroquad::prelude::*;
-use std::vec::Vec;
+use quad_net::web_socket::WebSocket;
 use state::brush::{Brush, Dot};
+use std::env;
+use std::vec::Vec;
 use ui::toolbar::render_gui;
-use state::networking::{get, put};
+
 
 //Global object for state
 pub static mut BRUSH: Brush = Brush {
@@ -15,28 +18,38 @@ pub static mut BRUSH: Brush = Brush {
     a: 0,
     size: 15.0,
     sw: true,
+    clear: false,
     room: 0000,
-    ip: String::new(),
     apikey: String::new(),
-    frame_counter : -999999
+    refresh_flag :  false
 };
 
 #[macroquad::main("Paint Party")]
 async fn main() {
-    let mut lines: Vec<Dot> = Vec::new();
-    let mut cache: Vec<Dot> = Vec::new();
-    lines.extend(get(&mut cache).await);
 
-    let mut frame_count = 0;
+    unsafe {
+        let mut socket = WebSocket::connect(env::var("PARTY_SERVER").unwrap()).unwrap();
+        let mut lines = Vec::new();
+        let mut cache: Vec<Dot> = Vec::new();
+        let mut frame_count = 0;
 
-    loop {
-        egui_macroquad::draw();
-        clear_background(WHITE);
+        loop {
+            web_socket_handler(&mut socket, &mut lines).await;
 
-        render_paint(&lines);
-        render_paint(&cache);
+            clear_background(WHITE);
 
-        unsafe {
+            draw_circle(
+                mouse_position().0,
+                mouse_position().1,
+                BRUSH.size,
+                macroquad::color::Color::from_rgba(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a),
+            );
+
+            let current_room = BRUSH.room;
+            render_gui(&mut lines).await;
+            while !socket.connected() {
+                next_frame().await;
+            }
             if is_mouse_button_down(MouseButton::Left) && BRUSH.sw {
                 let dot = Dot {
                     x: mouse_position().0,
@@ -47,38 +60,45 @@ async fn main() {
                     a: BRUSH.a,
                     size: BRUSH.size,
                 };
-                cache.push(dot);
-            }
-            else if !cache.is_empty() {
+                cache.push(dot.clone());
+            } else if !cache.is_empty() {
                 lines.extend(cache.clone());
-                put(&mut cache, &mut frame_count).await;
+                println!("EXTENDING LINES");
+                match put(&cache.clone(), &mut frame_count, &mut socket).await {
+                    Ok(res) => {
+                        println!("{:?}", res);
+                        cache.clear();
+                    }
+                    Err(e) => println!("{:?}", e),
+                }
+                println!("CLEARING CACHE");
             }
-            draw_circle(
-                    mouse_position().0,
-                    mouse_position().1,
-                    BRUSH.size,
-                    macroquad::color::Color::from_rgba(
-                        BRUSH.r,
-                        BRUSH.g,
-                        BRUSH.b,
-                        BRUSH.a,
-                    ),
-                );
-            let current_room = BRUSH.room;
-            render_gui(&mut lines);
-            
-            //recieve data from server
-            if (BRUSH.room != current_room || BRUSH.frame_counter >= 600 ) && !is_mouse_button_down(MouseButton::Left) && (!BRUSH.apikey.eq("") || !BRUSH.ip.eq("")){
-                lines = get(&mut Vec::new()).await;
-                BRUSH.frame_counter = 0
-            }
-            BRUSH.frame_counter += 1;
-        }
 
-        next_frame().await;
+            // DEL REQUEST TO WEBSOCKET
+            if BRUSH.clear && socket.connected() {
+                lines = Vec::new();
+                match delete(&mut socket).await {
+                    Ok(l) => {
+                        println!("{l}");
+                    }
+                    Err(e) => println!("ERROR {e}"),
+                }
+                BRUSH.clear = !BRUSH.clear;
+            }
+            
+            if BRUSH.refresh_flag {
+                match get(&mut socket).await {
+                    Ok(res) => println!("{}", res),
+                    Err(e) => println!("ERROR {e}"),
+                }
+            }
+
+            render_paint(&lines);
+            render_paint(&cache);
+            next_frame().await;
+        }
     }
 }
-
 
 fn render_paint(lines: &[Dot]) {
     for circle in lines.iter() {
@@ -86,12 +106,7 @@ fn render_paint(lines: &[Dot]) {
             circle.x,
             circle.y,
             circle.size,
-            macroquad::color::Color::from_rgba(
-                circle.r,
-                circle.g,
-                circle.b,
-                circle.a,
-            ),
+            macroquad::color::Color::from_rgba(circle.r, circle.g, circle.b, circle.a),
         );
     }
 }
