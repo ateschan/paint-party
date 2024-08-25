@@ -39,7 +39,7 @@ You need rust installed, follow directions on https://rustup.rs/
 <!-- ROADMAP -->
 ## Roadmap
 - [X] Hide api key
-- [ ] Websockets
+- [X] Websockets
 - [ ] Chat
 - [ ] Eraser tool
 - [X] Opacity slider
