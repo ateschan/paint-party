@@ -1,68 +1,71 @@
+use std::str::from_utf8;
+
 use crate::state::brush::Dot;
 use crate::BRUSH;
-use reqwest::blocking::Client;
+use quad_net::web_socket::WebSocket;
 
-pub async fn get(lines: &mut Vec<Dot>) -> Vec<Dot> {
+pub async fn get(socket: &mut WebSocket)  -> Result<String, Box<dyn std::error::Error>> {
     unsafe {
-        let url = format!(
-            "http://{}/{}/{}",
-            BRUSH.ip.clone(),
-            BRUSH.room,
-            BRUSH.apikey
-        );
-
-        match reqwest::blocking::get(&url) {
-            Ok(resp) => match resp.text() {
-                Ok(text) => match serde_json::from_str::<Vec<Dot>>(&text) {
-                    Ok(vec) => {
-                        println!("RETRIEVED");
-                        lines.extend(vec);
-                    }
-                    Err(e) => {
-                        eprintln!("Failed to parse response: {:?}, error: {:?}", text, e);
-                    }
-                },
-                Err(e) => eprintln!("Failed to get response text: {:?}", e),
-            },
-            Err(err) => eprintln!("Request failed: {:?}", err),
-        }
-
-        lines.clone()
+        // Attempt to receive bytes from the socket
+        let request = format!("{} {} {}", "GET", BRUSH.room, BRUSH.apikey);
+        socket.send_text(&request);
     }
+    Ok(String::from("GET Success!"))
 }
 
-pub async fn put(cache: &mut Vec<Dot>, ct: &mut i32) {
+pub async fn put(
+    cache: &Vec<Dot>,
+    ct: &mut i32,
+    socket: &mut WebSocket,
+) -> Result<String, Box<dyn std::error::Error>> {
     unsafe {
-        let client = Client::new();
-        let url = format!(
-            "http://{}/{}/{}",
-            BRUSH.ip.clone(),
+        // Attempt to receive bytes from the socket
+        let request = format!(
+            "{} {} {} {}",
+            "PUT",
             BRUSH.room,
-            BRUSH.apikey
+            BRUSH.apikey,
+            serde_json::to_string(&cache).unwrap()
         );
-
-        if let Err(e) = client.post(&url).json(cache).send() {
-            eprintln!("Failed to send PUT request: {:?}", e);
-        }
+        socket.send_text(&request);
 
         *ct = 0;
-        cache.clear();
+        Ok(String::from("PUT Success!"))
     }
 }
 
-pub fn delete() {
+pub async fn delete(socket: &mut WebSocket) -> Result<String, Box<dyn std::error::Error>> {
     unsafe {
-        let client = Client::new();
-        let url = format!(
-            "http://{}/delete/{}/{}",
-            BRUSH.ip.clone(),
-            BRUSH.room,
-            BRUSH.apikey
-        );
+        let request = format!("{} {} {}", "DEL", BRUSH.room, BRUSH.apikey);
+        socket.send_text(&request);
+    }
+    Ok(String::from("DEL Success!"))
+}
 
-        match client.get(&url).send() {
-            Ok(resp) => println!("Delete request response: {:?}", resp),
-            Err(e) => eprintln!("Failed to send DELETE request: {:?}", e),
+pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
+    unsafe {
+    if let Some(res) = socket.try_recv() {
+        let res_text: &str = from_utf8(&res).unwrap();
+        let message: Vec<&str> = res_text.split(' ').collect();
+
+        match message[0] {
+            "GET_RES" => {
+                let new : Vec<Dot> = serde_json::from_str(message[1]).unwrap();
+                //println!("THIS SHOULD BE VEC DOT {:?}", new);
+                lines.clear();
+                lines.extend(new);
+            }
+            "UPD_RES" => {
+                if message[1] == BRUSH.room.to_string() {
+                println!("REVIEVED UPDATE: {:?}", message[2]);
+                let new : Vec<Dot> = serde_json::from_str(message[2]).unwrap();
+                lines.extend(new);
+                }
+            },
+            "PUT_RES" => println!("{}", message[1]),
+            "DEL_RES" => println!("{}", message[1]),
+            _ => println!("UNDEFINED RES"),
         }
+    }
     }
 }

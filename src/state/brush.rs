@@ -2,17 +2,17 @@ use macroquad::prelude::*;
 use serde::{Deserialize, Serialize};
 
 pub struct Brush {
-
     pub r: u8,
     pub g: u8,
     pub b: u8,
-    pub a : u8,
+    pub a: u8,
     pub size: f32,
     pub sw: bool,
     pub room: i32,
-    pub ip : String,
-    pub apikey : String,
-    pub frame_counter : i32
+    pub clear: bool,
+    pub apikey: String,
+    pub refresh_flag: bool,
+
 }
 impl Brush {
     pub fn swapcolor(&self, new_color: [u8; 4]) -> Self {
@@ -23,10 +23,10 @@ impl Brush {
             a: new_color[3],
             size: self.size,
             sw: self.sw,
+            clear: self.clear,
             room: self.room,
-            ip : self.ip.clone(),
-            apikey : self.apikey.clone(),
-            frame_counter : self.frame_counter
+            apikey: self.apikey.clone(),
+            refresh_flag: self.refresh_flag,
         }
     }
 }
