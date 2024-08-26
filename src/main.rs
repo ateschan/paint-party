@@ -9,7 +9,6 @@ use std::env;
 use std::vec::Vec;
 use ui::toolbar::render_gui;
 
-
 //Global object for state
 pub static mut BRUSH: Brush = Brush {
     r: 0,
@@ -18,38 +17,35 @@ pub static mut BRUSH: Brush = Brush {
     a: 0,
     size: 15.0,
     sw: true,
-    clear: false,
+    clear_flag: false,
     room: 0000,
     apikey: String::new(),
-    refresh_flag :  false
+    refresh_flag: false,
 };
 
 #[macroquad::main("Paint Party")]
 async fn main() {
-
     unsafe {
-        let mut socket = WebSocket::connect(env::var("PARTY_SERVER").unwrap()).unwrap();
+        let mut socket = WebSocket::connect(
+            env::var("PARTY_SERVER")
+                .expect("ERROR: Failed to find environment variable, ensure it is set"),
+        )
+        .expect("ERROR: Failed to connect to websocket, validate address");
+        while !socket.connected() {}
         let mut lines = Vec::new();
         let mut cache: Vec<Dot> = Vec::new();
         let mut frame_count = 0;
 
         loop {
-            web_socket_handler(&mut socket, &mut lines).await;
-
-            clear_background(WHITE);
-
-            draw_circle(
-                mouse_position().0,
-                mouse_position().1,
-                BRUSH.size,
-                macroquad::color::Color::from_rgba(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a),
-            );
-
             let current_room = BRUSH.room;
+            web_socket_handler(&mut socket, &mut lines).await;
+            clear_background(WHITE);
+            render_paint(&lines);
+            render_paint(&cache);
+            render_cursor();
             render_gui(&mut lines).await;
-            while !socket.connected() {
-                next_frame().await;
-            }
+
+            //PAINT FUNC
             if is_mouse_button_down(MouseButton::Left) && BRUSH.sw {
                 let dot = Dot {
                     x: mouse_position().0,
@@ -75,7 +71,7 @@ async fn main() {
             }
 
             // DEL REQUEST TO WEBSOCKET
-            if BRUSH.clear && socket.connected() {
+            if BRUSH.clear_flag && socket.connected() {
                 lines = Vec::new();
                 match delete(&mut socket).await {
                     Ok(l) => {
@@ -83,21 +79,30 @@ async fn main() {
                     }
                     Err(e) => println!("ERROR {e}"),
                 }
-                BRUSH.clear = !BRUSH.clear;
+                BRUSH.clear_flag = !BRUSH.clear_flag;
             }
-            
-            if BRUSH.refresh_flag || BRUSH.room != current_room{
+
+            // GET REFRESH BUTTON
+            if BRUSH.refresh_flag || BRUSH.room != current_room {
                 match get(&mut socket).await {
                     Ok(res) => println!("{}", res),
                     Err(e) => println!("ERROR {e}"),
                 }
                 BRUSH.refresh_flag = !BRUSH.refresh_flag;
             }
-
-            render_paint(&lines);
-            render_paint(&cache);
             next_frame().await;
         }
+    }
+}
+
+fn render_cursor() {
+    unsafe {
+        draw_circle(
+            mouse_position().0,
+            mouse_position().1,
+            BRUSH.size,
+            macroquad::color::Color::from_rgba(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a),
+        );
     }
 }
 

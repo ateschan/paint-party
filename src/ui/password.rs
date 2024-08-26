@@ -9,14 +9,14 @@ pub fn password_ui(
     let result = ui.with_layout(
         egui_macroquad::egui::Layout::right_to_left(egui_macroquad::egui::Align::Center),
         |ui| {
-            let response = ui
+            if ui
                 .add(egui_macroquad::egui::SelectableLabel::new(
                     show_plaintext,
                     "👁",
                 ))
-                .on_hover_text("Show/hide server password");
-
-            if response.clicked() {
+                .on_hover_text("Show/hide server password")
+                .clicked()
+            {
                 show_plaintext = !show_plaintext;
             }
             // Show the password field:

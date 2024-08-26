@@ -9,10 +9,9 @@ pub struct Brush {
     pub size: f32,
     pub sw: bool,
     pub room: i32,
-    pub clear: bool,
+    pub clear_flag: bool,
     pub apikey: String,
     pub refresh_flag: bool,
-
 }
 impl Brush {
     pub fn swapcolor(&self, new_color: [u8; 4]) -> Self {
@@ -23,7 +22,7 @@ impl Brush {
             a: new_color[3],
             size: self.size,
             sw: self.sw,
-            clear: self.clear,
+            clear_flag: self.clear_flag,
             room: self.room,
             apikey: self.apikey.clone(),
             refresh_flag: self.refresh_flag,
