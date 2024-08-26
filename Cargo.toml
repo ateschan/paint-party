@@ -9,7 +9,6 @@ edition = "2021"
 macroquad = "=0.3.26"
 egui-macroquad = "=0.15.0"
 egui = "=0.28.1"
-serde = { version = "1.0.207", features = ["derive"] }
-serde_json = "1.0.124"
+nanoserde = "0.1.37"
 quad-net = "0.1.1"
-
+quad-url = "0.1.1"

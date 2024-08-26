@@ -1,5 +1,4 @@
 use std::str::from_utf8;
-
 use crate::state::brush::Dot;
 use crate::BRUSH;
 use quad_net::web_socket::WebSocket;
@@ -25,7 +24,7 @@ pub async fn put(
             "PUT",
             BRUSH.room,
             BRUSH.apikey,
-            serde_json::to_string(&cache).unwrap()
+            nanoserde::SerJson::serialize_json(cache)
         );
         socket.send_text(&request);
 
@@ -59,7 +58,7 @@ pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
 
             match message[0] {
                 "GET_RES" => {
-                    let new: Vec<Dot> = serde_json::from_str(message[1]).unwrap();
+                    let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                     //println!("THIS SHOULD BE VEC DOT {:?}", new);
                     lines.clear();
                     lines.extend(new);
@@ -67,7 +66,7 @@ pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
                 "UPD_RES" => {
                     if message[1] == BRUSH.room.to_string() {
                         println!("REVIEVED UPDATE: {:?}", message[2]);
-                        let new: Vec<Dot> = serde_json::from_str(message[2]).unwrap();
+                        let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
                         lines.extend(new);
                     }
                 }

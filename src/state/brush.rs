@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use serde::{Deserialize, Serialize};
+use nanoserde::{DeJson, SerJson};
 
 pub struct Brush {
     pub r: u8,
@@ -30,7 +30,7 @@ impl Brush {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, SerJson, DeJson, PartialEq)]
 pub struct Dot {
     pub x: f32,
     pub y: f32,
