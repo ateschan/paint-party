@@ -10,8 +10,6 @@ Paint party is a small capstone project developed for my Computer Science degree
 ### Prerequisites
 You need rust installed, follow directions on https://rustup.rs/
 
-### Installation
-
 ## Linux 
 If you are using linux you will require additional dependencies
 ```
@@ -24,23 +22,6 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
 # arch linux system dependencies
  pacman -S pkg-config libx11 libxi mesa-libgl alsa-lib
 ```
-
-1. Clone the Repo
-   ```sh
-   git clone git@github.com:ateschan/paint-party.git
-   ```
-2. Change Dir
-   ```sh
-   cd paint-party
-   ```
-3. Build Project
-   ```sh
-   cargo build --release
-   ```
-4. Run
-   ```sh
-   cd target/release && ./paint-party
-   ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
