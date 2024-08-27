@@ -38,8 +38,11 @@ pub async fn render_gui(lines: &mut Vec<Dot>) {
                                 BRUSH.clear_flag = true;
                             }
 
-                            ui.add_sized(ui.available_size(), egui::Slider::new(&mut BRUSH.size, 0.0..=300.0))
-                                .on_hover_text("Brush Size");
+                            ui.add_sized(
+                                ui.available_size(),
+                                egui::Slider::new(&mut BRUSH.size, 0.0..=300.0),
+                            )
+                            .on_hover_text("Brush Size");
                         });
 
                         ui.horizontal(|ui| {

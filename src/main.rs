@@ -22,7 +22,6 @@ pub static mut BRUSH: Brush = Brush {
     refresh_flag: false,
 };
 
-
 #[macroquad::main("Paint Party")]
 async fn main() {
     unsafe {

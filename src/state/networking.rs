@@ -1,7 +1,7 @@
-use std::str::from_utf8;
 use crate::state::brush::Dot;
 use crate::BRUSH;
 use quad_net::web_socket::WebSocket;
+use std::str::from_utf8;
 
 pub async fn get(socket: &mut WebSocket) -> Result<String, Box<dyn std::error::Error>> {
     unsafe {
@@ -58,7 +58,6 @@ pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
 
             match message[0] {
                 "GET_RES" => {
-
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                     //println!("THIS SHOULD BE VEC DOT {:?}", new);
                     lines.clear();
@@ -67,7 +66,8 @@ pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
                 "UPD_RES" => {
                     if message[1] == BRUSH.room.to_string() {
                         println!("REVIEVED UPDATE: {:?}", message[2]);
-                        let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
+                        let new: Vec<Dot> =
+                            nanoserde::DeJson::deserialize_json(message[2]).unwrap();
                         lines.extend(new);
                     }
                 }
