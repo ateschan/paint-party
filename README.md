@@ -25,8 +25,8 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-1. Enter the designated server ip/hostname with the port
-2. Enter the correspnding password, if there is none set skip this step
+1. Enter the designated server in menu
+2. Enter the correspnding password in toolbar, if there is none set skip this step
 3. Select a canvas or "room" by entering a number between 0 and 9999
 4. Select a color and start painting!
 
