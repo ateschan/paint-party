@@ -44,7 +44,6 @@ You need rust installed, follow directions on https://rustup.rs/
 ## Roadmap
 - [X] Hide api key
 - [X] Websockets
-- [ ] Theme Swapping
 - [ ] Chat
 - [ ] Eraser tool
 - [X] Opacity slider

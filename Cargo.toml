@@ -5,11 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
+https://github.com/ateschan/paint-party/pull/10/conflict?name=README.md&ancestor_oid=fded6eb227dc98b6cbb30314ca15a7945dae78ba&base_oid=e0dad7c9de768d61a51eadf8b10506bae4d9239d&head_oid=32be4f740b8fd9185030621e97934332a2af9d7d[dependencies]
 macroquad = "=0.3.26"
 egui-macroquad = "=0.15.0"
 egui = "=0.28.1"
-serde = { version = "1.0.207", features = ["derive"] }
-serde_json = "1.0.124"
+nanoserde = "0.1.37"
 quad-net = "0.1.1"
+quad-url = "0.1.1"
 
+[profile.dev.package.'*']
+opt-level = 3
