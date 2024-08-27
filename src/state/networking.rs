@@ -58,6 +58,7 @@ pub async fn web_socket_handler(socket: &mut WebSocket, lines: &mut Vec<Dot>) {
 
             match message[0] {
                 "GET_RES" => {
+
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                     //println!("THIS SHOULD BE VEC DOT {:?}", new);
                     lines.clear();
