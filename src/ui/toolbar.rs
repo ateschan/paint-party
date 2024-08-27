@@ -15,7 +15,7 @@ pub async fn render_gui(lines: &mut Vec<Dot>) {
                         .inner_margin(4.0)
                         .shadow(Shadow::NONE)
                         .fill(Color32::TRANSPARENT)
-                        .stroke(egui_macroquad::egui::Stroke::new(4.0, Color32::BLACK)),
+                        .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::TRANSPARENT)),
                 )
                 .show(egui_ctx, |ui| {
                     ui.vertical(|ui| {
@@ -40,7 +40,7 @@ pub async fn render_gui(lines: &mut Vec<Dot>) {
 
                             ui.add_sized(
                                 ui.available_size(),
-                                egui::Slider::new(&mut BRUSH.size, 0.0..=300.0),
+                                egui::Slider::new(&mut BRUSH.size, 0.0..=300.0).trailing_fill(true),
                             )
                             .on_hover_text("Brush Size");
                         });
@@ -49,7 +49,8 @@ pub async fn render_gui(lines: &mut Vec<Dot>) {
                             if ui
                                 .add(
                                     egui_macroquad::egui::DragValue::new(&mut tmp_room)
-                                        .speed(0.01)
+                                    .update_while_editing(false)
+                                        .speed(1.00)
                                         .clamp_range(0.0..=9999.0),
                                 )
                                 .lost_focus()
