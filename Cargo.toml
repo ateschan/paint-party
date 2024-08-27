@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "=0.3.26"
-egui-macroquad = "=0.15.0"
+egui-macroquad = { git = "https://github.com/ateschan/egui-macroquad.git" }
+macroquad = "0.4.4"
 egui = "=0.28.1"
 nanoserde = "0.1.37"
 quad-net = "0.1.1"

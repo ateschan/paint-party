@@ -1,6 +1,5 @@
 pub mod state;
 pub mod ui;
-
 use crate::state::networking::{delete, get, put, web_socket_handler};
 use macroquad::prelude::*;
 use quad_net::web_socket::WebSocket;
@@ -22,6 +21,7 @@ pub static mut BRUSH: Brush = Brush {
     apikey: String::new(),
     refresh_flag: false,
 };
+
 
 #[macroquad::main("Paint Party")]
 async fn main() {
@@ -103,6 +103,7 @@ fn render_cursor() {
             BRUSH.size,
             macroquad::color::Color::from_rgba(BRUSH.r, BRUSH.g, BRUSH.b, BRUSH.a),
         );
+        draw_cube_wires(vec3(0., 1., -6.), vec3(2., 2., 2.), DARKGREEN);
     }
 }
 
