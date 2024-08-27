@@ -12,3 +12,6 @@ egui = "=0.28.1"
 nanoserde = "0.1.37"
 quad-net = "0.1.1"
 quad-url = "0.1.1"
+
+[profile.dev.package.'*']
+opt-level = 3
