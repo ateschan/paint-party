@@ -1,4 +1,3 @@
-
 use egui_macroquad::egui::{self, Align2, TextEdit};
 use egui_macroquad::egui::{epaint::Shadow, Color32, RichText};
 use quad_storage::LocalStorage;
@@ -6,7 +5,9 @@ use quad_storage::LocalStorage;
 pub async fn render_intro(storage: &mut LocalStorage) {
     let mut tmp_socket = storage.get("socket").unwrap();
     egui_macroquad::ui(|egui_ctx| {
-        egui::Window::new(RichText::new("PAINT PARTY").size(60.0).strong()).anchor(Align2::CENTER_CENTER,[0.0, 0.0]).collapsible(false)
+        egui::Window::new(RichText::new("PAINT PARTY").size(60.0).strong())
+            .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
+            .collapsible(false)
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -16,7 +17,7 @@ pub async fn render_intro(storage: &mut LocalStorage) {
             )
             .show(egui_ctx, |ui| {
                 ui.horizontal(|ui| {
-                                        ui.add(TextEdit::singleline(&mut tmp_socket));
+                    ui.add(TextEdit::singleline(&mut tmp_socket));
 
                     if ui
                         .add(egui_macroquad::egui::Button::new("→"))
