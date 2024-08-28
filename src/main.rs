@@ -7,6 +7,8 @@ use state::brush::{init_state, Dot};
 use std::vec::Vec;
 use ui::{intro::render_intro, toolbar::render_gui};
 
+//TODO Implement Hashmap instead of Vec<Dot>
+
 #[macroquad::main("Paint Party")]
 async fn main() {
     let storage = &mut quad_storage::STORAGE.lock().unwrap();
@@ -69,6 +71,7 @@ async fn main() {
                 b: storage.get("brush_b").unwrap().parse::<u8>().unwrap(),
                 a: storage.get("brush_a").unwrap().parse::<u8>().unwrap(),
                 size: storage.get("brush_size").unwrap().parse::<f32>().unwrap(),
+                id : nanoid::nanoid!()
             };
             cache.push(dot);
         } else if !cache.is_empty() {
@@ -83,10 +86,6 @@ async fn main() {
             }
             println!("CLEARING CACHE");
         }
-
-
-
-
 
         // DEL REQUEST TO WEBSOCKET
         if storage

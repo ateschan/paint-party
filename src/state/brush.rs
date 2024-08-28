@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 use nanoserde::{DeJson, SerJson};
 use quad_storage::LocalStorage;
 
-#[derive(Copy, Clone, Debug, SerJson, DeJson, PartialEq)]
+#[derive(Clone, Debug, SerJson, DeJson, PartialEq)]
 pub struct Dot {
     pub x: f32,
     pub y: f32,
@@ -11,7 +11,9 @@ pub struct Dot {
     pub b: u8,
     pub a: u8,
     pub size: f32,
+    pub id : String
 }
+
 
 pub fn init_state(storage: &mut LocalStorage) {
     storage.set("brush_r", "255");
