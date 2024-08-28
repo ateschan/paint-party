@@ -1,12 +1,12 @@
 use crate::state::brush::Dot;
 use crate::ui::password::password;
-use egui_macroquad::egui::{self};
-use egui_macroquad::egui::{epaint::Shadow, Color32, RichText};
+use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use quad_storage::LocalStorage;
 
 pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
     let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
     let mut tmp_pass = storage.get("apikey").unwrap();
+    let mut tmp_size = storage.get("brush_size").unwrap().parse::<f32>().unwrap();
 
     egui_macroquad::ui(|egui_ctx| {
         egui::Window::new(RichText::new("PAINT PARTY").size(15.0).strong())
@@ -49,11 +49,7 @@ pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
 
                         ui.add_sized(
                             ui.available_size(),
-                            egui::Slider::new(
-                                &mut storage.get("brush_size").unwrap().parse::<f32>().unwrap(),
-                                0.0..=300.0,
-                            )
-                            .trailing_fill(true),
+                            egui::Slider::new(&mut tmp_size, 0.0..=300.0).trailing_fill(true),
                         )
                         .on_hover_text("Brush Size");
                     });
@@ -74,7 +70,7 @@ pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
 
                         ui.add(password(&mut tmp_pass));
                     });
-
+                    storage.set("brush_size", &tmp_size.to_string());
                     storage.set("apikey", &tmp_pass);
                     storage.set(
                         "brush_r",

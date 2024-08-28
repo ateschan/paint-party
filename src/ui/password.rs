@@ -23,7 +23,7 @@ pub fn password_ui(
             ui.add_sized(
                 ui.available_size(),
                 egui_macroquad::egui::TextEdit::singleline(password).password(!show_plaintext),
-            )
+            ).highlight()
             .on_hover_text("Server password");
         },
     );
