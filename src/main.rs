@@ -42,10 +42,19 @@ async fn main() {
     let mut cache: Vec<Dot> = Vec::new();
     let mut frame_count = 0;
     loop {
+
+        //RENDER & INIT
         set_default_camera();
         clear_background(WHITE);
+
         render_paint(&lines);
         render_paint(&cache);
+        render_cursor(storage);
+
+        web_socket_handler(&mut socket, &mut lines, storage).await;
+
+        let current_room = storage.get("room").unwrap().parse::<i32>().unwrap();
+        render_gui(storage).await;
 
         //INPUT
         if is_mouse_button_down(MouseButton::Left)
@@ -75,10 +84,9 @@ async fn main() {
             println!("CLEARING CACHE");
         }
 
-        web_socket_handler(&mut socket, &mut lines, storage).await;
-        let current_room = storage.get("room").unwrap().parse::<i32>().unwrap();
-        render_cursor(storage);
-        render_gui(&mut lines, storage).await;
+
+
+
 
         // DEL REQUEST TO WEBSOCKET
         if storage
@@ -86,7 +94,6 @@ async fn main() {
             .unwrap()
             .parse::<bool>()
             .unwrap()
-            && socket.connected()
         {
             lines = Vec::new();
             match delete(&mut socket, storage).await {
@@ -95,12 +102,7 @@ async fn main() {
                 }
                 Err(e) => println!("ERROR {e}"),
             }
-            let res = !storage
-                .get("clear_local_flag")
-                .unwrap()
-                .parse::<bool>()
-                .unwrap();
-            storage.set("clear_local_flage", &res.to_string());
+            storage.set("clear_local_flag", "false");
         }
 
         // GET REFRESH BUTTON

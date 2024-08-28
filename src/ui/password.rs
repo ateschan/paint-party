@@ -1,3 +1,5 @@
+//Abstraction for the password bar
+
 pub fn password_ui(
     ui: &mut egui_macroquad::egui::Ui,
     password: &mut String,

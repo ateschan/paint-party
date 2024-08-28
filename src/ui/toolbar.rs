@@ -1,15 +1,20 @@
 use crate::state::brush::Dot;
 use crate::ui::password::password;
-use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
+use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, RichText};
 use quad_storage::LocalStorage;
 
-pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
+
+//Main toolbar for painting
+
+pub async fn render_gui(storage: &mut LocalStorage) {
     let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
     let mut tmp_pass = storage.get("apikey").unwrap();
     let mut tmp_size = storage.get("brush_size").unwrap().parse::<f32>().unwrap();
 
     egui_macroquad::ui(|egui_ctx| {
-        egui::Window::new(RichText::new("PAINT PARTY").size(15.0).strong())
+        egui::Window::new(RichText::new("PAINT PARTY @ ".to_owned() + &storage.get("socket").unwrap()).size(14.0).strong())
+            .resizable(false)
+            .anchor(Align2::LEFT_TOP, [10.0, 10.0])
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -35,16 +40,16 @@ pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
                             storage.get("brush_b").unwrap().parse::<u8>().unwrap(),
                             storage.get("brush_a").unwrap().parse::<u8>().unwrap(),
                         );
-                    ui.horizontal(|ui| {
-                        ui.color_edit_button_srgba(&mut color_button);
 
-                        if ui.button("↺").clicked() {
+                    ui.horizontal(|ui| {
+                        ui.color_edit_button_srgba(&mut color_button).on_hover_text("Change color");
+
+                        if ui.button("↺").on_hover_text("Refresh").clicked() {
                             storage.set("refresh_flag", "true");
                         }
 
                         if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
-                            *lines = Vec::new();
-                            storage.set("clear_flag", "true");
+                            storage.set("clear_local_flag", "true");
                         }
 
                         ui.add_sized(
@@ -61,10 +66,9 @@ pub async fn render_gui(lines: &mut Vec<Dot>, storage: &mut LocalStorage) {
                                     .update_while_editing(false)
                                     .speed(1.00)
                                     .clamp_range(0.0..=9999.0),
-                            )
+                            ).on_hover_text("Server room").on_hover_cursor(egui::CursorIcon::Default)
                             .lost_focus()
-                            || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
-                        {
+                            || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter)) {
                             storage.set("room", &tmp_room.to_string());
                         }
 

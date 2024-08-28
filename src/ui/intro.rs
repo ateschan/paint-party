@@ -1,6 +1,9 @@
 use egui_macroquad::egui::{self, Align2, TextEdit, epaint::Shadow, Color32};
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
+use crate::state::brush::Dot;
+
+//Intro screen to enter the websocket address
 
 pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_angle: &mut f32, party_logo : &Texture2D, frame_accel : &mut f32) {
     let mut tmp_socket = storage.get("socket").unwrap();
@@ -9,11 +12,11 @@ pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_
     clear_background(WHITE);
     set_camera(cam);
     update_camera(cam, orbit_angle);
-    let bytes: Vec<u8> = vec![255, 0, 0, 192, 0, 255, 0, 192, 0, 0, 255, 192, 255, 255, 255, 192];
-    let texture = Texture2D::from_rgba8(2, 2, &bytes);
-    draw_cube(vec3(0., 5., -0.), vec3(8., 8., 8.),Some(party_logo), WHITE);
-    draw_cube(vec3(0., 10., -0.), vec3(9., 1., 9.),Some(&texture),WHITE);
-    draw_cube(vec3(0., 0., 0.), vec3(9., 1., 9.),Some(&texture),WHITE);
+    //let bytes: Vec<u8> = vec![255, 0, 0, 192, 0, 255, 0, 192, 0, 0, 255, 192, 255, 255, 255, 192];
+    //let texture = Texture2D::from_rgba8(2, 2, &bytes);
+    draw_cube(vec3(0., 5., -0.), vec3(10., 10., 10.),Some(party_logo), WHITE);
+    //draw_cube(vec3(0., 10., -0.), vec3(9., 1., 9.),Some(&texture),WHITE);
+    //draw_cube(vec3(0., 0., 0.), vec3(9., 1., 9.),Some(&texture),WHITE);
     //draw_grid(40, 1., BLACK, GRAY);
 
     //intro gui
@@ -51,6 +54,15 @@ pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_
         *frame_accel += 0.20;
     }
 
+    if tmp_socket.len() < cube_spin.len() {
+        *frame_accel -= 0.20;
+    }
+
+    if *frame_accel < 0.0 {
+        *orbit_angle -= *frame_accel;
+        *frame_accel += 0.02;
+    }
+
     if *frame_accel > 0.0 {
         *orbit_angle += *frame_accel;
         *frame_accel -= 0.02;
@@ -78,3 +90,4 @@ fn update_camera(camera: &mut Camera3D, orbit_angle: &mut f32) {
     // Increment the orbit angle for the next frame
      // Adjust the increment rate as needed
 }
+

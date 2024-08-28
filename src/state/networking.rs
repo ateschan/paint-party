@@ -79,13 +79,12 @@ pub async fn web_socket_handler(
             }
             "UPD_RES" => {
                 if message[1] == storage.get("room").unwrap() {
-                    println!("REVIEVED UPDATE: {:?}", message[2]);
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
                     lines.extend(new);
                 }
             }
-            "PUT_RES" => println!("{}", message[1]),
-            "DEL_RES" => println!("{}", message[1]),
+            "PUT_RES" => println!("SERVER PUT RES: {}", message[1]),
+            "DEL_RES" => println!("SERVER DEL RES: {}", message[1]),
             _ => println!("UNDEFINED RES"),
         }
     }

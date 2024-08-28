@@ -34,10 +34,10 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
 ## Roadmap
 - [X] Hide api key
 - [X] Websockets
+- [ ] Intro Animation
 - [ ] Chat
 - [ ] Eraser tool
 - [X] Opacity slider
-- [ ] Camera zoom
 - [ ] Compile into webassembly
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
