@@ -1,4 +1,3 @@
-use crate::state::brush::Dot;
 use crate::ui::password::password;
 use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, RichText};
 use quad_storage::LocalStorage;

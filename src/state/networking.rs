@@ -71,6 +71,11 @@ pub async fn web_socket_handler(
         let message: Vec<&str> = res_text.split(' ').collect();
 
         match message[0] {
+
+
+
+
+            // Server response abstractions
             "GET_RES" => {
                 let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                 //println!("THIS SHOULD BE VEC DOT {:?}", new);
@@ -85,6 +90,9 @@ pub async fn web_socket_handler(
             }
             "PUT_RES" => println!("SERVER PUT RES: {}", message[1]),
             "DEL_RES" => println!("SERVER DEL RES: {}", message[1]),
+            "RMV_RES" => {
+                lines.clear();
+            },
             _ => println!("UNDEFINED RES"),
         }
     }

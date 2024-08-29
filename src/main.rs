@@ -38,15 +38,16 @@ async fn main() {
         next_frame().await
     }
 
+    macroquad::window::set_fullscreen(true);
     let mut socket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
 
-    while !socket.connected() {}
     let mut lines = Vec::new();
     let mut cache: Vec<Dot> = Vec::new();
     let mut frame_count = 0;
     loop {
 
+        while !socket.connected() {}
         //RENDER & INIT
         set_default_camera();
         clear_background(WHITE);

@@ -1,7 +1,6 @@
 use egui_macroquad::egui::{self, Align2, TextEdit, epaint::Shadow, Color32};
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
-use crate::state::brush::Dot;
 
 //Intro screen to enter the websocket address
 
