@@ -38,7 +38,6 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
 - [ ] Chat
 - [ ] Eraser tool
 - [X] Opacity slider
-- [ ] Compile into webassembly
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
