@@ -9,8 +9,10 @@ use ui::{intro::render_intro, toolbar::render_gui};
 
 //TODO Implement Hashmap instead of Vec<Dot>
 
+
 #[macroquad::main("Paint Party")]
 async fn main() {
+
     let storage = &mut quad_storage::STORAGE.lock().unwrap();
     init_state(storage);
     let mut cam = Camera3D {
