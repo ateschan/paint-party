@@ -11,7 +11,8 @@ pub async fn render_gui(storage: &mut LocalStorage) {
     let mut tmp_size = storage.get("brush_size").unwrap().parse::<f32>().unwrap();
 
     egui_macroquad::ui(|egui_ctx| {
-        egui::Window::new(RichText::new("PAINT PARTY @ ".to_owned() + &storage.get("socket").unwrap()).size(14.0).strong())
+        egui::Window::new(RichText::new("PAINT PARTY"))
+            //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
             .resizable(false)
             .anchor(Align2::LEFT_TOP, [10.0, 10.0])
             .frame(
@@ -43,9 +44,7 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                     ui.horizontal(|ui| {
                         ui.color_edit_button_srgba(&mut color_button).on_hover_text("Change color");
 
-                        if ui.button("↺").on_hover_text("Refresh").clicked() {
-                            storage.set("refresh_flag", "true");
-                        }
+
 
                         if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
                             storage.set("clear_local_flag", "true");
@@ -70,8 +69,11 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                             || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter)) {
                             storage.set("room", &tmp_room.to_string());
                         }
+                        if ui.button("↺").on_hover_text("Refresh").clicked() {
+                            storage.set("refresh_flag", "true");
+                        }
 
-                        ui.add(password(&mut tmp_pass));
+                        ui.add_sized(ui.available_size(), password(&mut tmp_pass));
                     });
                     storage.set("brush_size", &tmp_size.to_string());
                     storage.set("apikey", &tmp_pass);
