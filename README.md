@@ -1,9 +1,5 @@
 # paint-party client [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml)
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
-Paint party is a small capstone project developed for my Computer Science degree at NVC
-
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -23,9 +19,15 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
  pacman -S pkg-config libx11 libxi mesa-libgl alsa-lib
 ```
 
+## Windows 
+Openssl is a required dependency of quad-net, to compile on windows you need openssl installed
+```
+choco install openssl
+```
+
 <!-- USAGE EXAMPLES -->
 ## Usage
-1. Enter the designated server in menu
+1. Enter the designated server in main menu
 2. Enter the correspnding password in toolbar, if there is none set skip this step
 3. Select a canvas or "room" by entering a number between 0 and 9999
 4. Select a color and start painting!
