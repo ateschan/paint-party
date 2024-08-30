@@ -6,7 +6,7 @@
 ### Prerequisites
 You need rust installed, follow directions on https://rustup.rs/
 
-## Linux 
+### Linux 
 If you are using linux you will require additional dependencies
 ```
 # ubuntu system dependencies
@@ -19,7 +19,7 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
  pacman -S pkg-config libx11 libxi mesa-libgl alsa-lib
 ```
 
-## Windows 
+### Windows 
 Openssl is a required dependency of quad-net, to compile on windows you need openssl installed
 ```
 choco install openssl
