@@ -23,7 +23,7 @@ jobs:
           override: true
 
       - name: Build
-        run: sudo apt-get install pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev && cargo build --all --release && strip target/release/PROJECT_NAME && mv target/release/$PROJECT_NAME target/release/PROJECT_NAME_amd64
+        run: sudo apt-get install pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev && cargo build --all --release && strip target/release/paint-party && mv target/release/paint-party target/release/paint-party_amd64
 
       - name: Release
         uses: softprops/action-gh-release@v1
