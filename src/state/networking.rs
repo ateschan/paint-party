@@ -52,6 +52,22 @@ pub async fn delete(
     Ok(String::from("DEL Sent!"))
 }
 
+pub async fn remove(
+    socket: &mut WebSocket,
+    storage: &mut LocalStorage,
+    garbage: &Vec<String>,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let request = format!(
+        "{} {} {} {}",
+        "RMV",
+        storage.get("room").unwrap().parse::<i32>().unwrap(),
+        &storage.get("apikey").unwrap(),
+        nanoserde::SerJson::serialize_json(garbage)
+
+    );
+    socket.send_text(&request);
+    Ok(String::from("RMV Sent!"))
+}
 // pub async fn chat_out(
 //     socket: &mut WebSocket,
 //     chat: String,
@@ -71,29 +87,37 @@ pub async fn web_socket_handler(
         let message: Vec<&str> = res_text.split(' ').collect();
 
         match message[0] {
-
-
-
-
             // Server response abstractions
             "GET_RES" => {
+                println!("SERVER GET RES RECIEVED");
                 let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                 //println!("THIS SHOULD BE VEC DOT {:?}", new);
                 lines.clear();
                 lines.extend(new);
             }
             "UPD_RES" => {
+                println!("SERVER UPD RES RECIEVED");
                 if message[1] == storage.get("room").unwrap() {
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
                     lines.extend(new);
                 }
             }
-            "PUT_RES" => println!("SERVER PUT RES: {}", message[1]),
-            "DEL_RES" => println!("SERVER DEL RES: {}", message[1]),
-            "RMV_RES" => {
+            "CLR_RES" => {
+                println!("SERVER CLR RES RECIEVED");
                 lines.clear();
-            },
+            }
+            "PUT_RES" => println!("SERVER PUT RES RECIEVED: {}", message[1]),
+            "DEL_RES" => println!("SERVER DEL RES RECIEVED: {}", message[1]),
+            "RMV_RES" => {
+                println!("SERVER RMV RES RECIEVED: {}", message[1]);
+                let ids: Vec<String> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
+                remove_dots_by_id(lines, &ids);
+            }
             _ => println!("UNDEFINED RES"),
         }
     }
+}
+
+fn remove_dots_by_id(dots: &mut Vec<Dot>, ids_to_remove: &[String]) {
+    dots.retain(|dot| !ids_to_remove.contains(&dot.id));
 }

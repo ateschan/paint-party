@@ -1,10 +1,16 @@
-use egui_macroquad::egui::{self, Align2, TextEdit, epaint::Shadow, Color32};
+use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, TextEdit};
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
 
 //Intro screen to enter the websocket address
 
-pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_angle: &mut f32, party_logo : &Texture2D, frame_accel : &mut f32) {
+pub async fn render_intro(
+    storage: &mut LocalStorage,
+    cam: &mut Camera3D,
+    orbit_angle: &mut f32,
+    party_logo: &Texture2D,
+    frame_accel: &mut f32,
+) {
     let mut tmp_socket = storage.get("socket").unwrap();
     let cube_spin = tmp_socket.clone();
     //intro macroquad instance
@@ -13,7 +19,12 @@ pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_
     update_camera(cam, orbit_angle);
     //let bytes: Vec<u8> = vec![255, 0, 0, 192, 0, 255, 0, 192, 0, 0, 255, 192, 255, 255, 255, 192];
     //let texture = Texture2D::from_rgba8(2, 2, &bytes);
-    draw_cube(vec3(0., 5., -0.), vec3(10., 10., 10.),Some(party_logo), WHITE);
+    draw_cube(
+        vec3(0., 5., -0.),
+        vec3(10., 10., 10.),
+        Some(party_logo),
+        WHITE,
+    );
     //draw_cube(vec3(0., 10., -0.), vec3(9., 1., 9.),Some(&texture),WHITE);
     //draw_cube(vec3(0., 0., 0.), vec3(9., 1., 9.),Some(&texture),WHITE);
     //draw_grid(40, 1., BLACK, GRAY);
@@ -42,12 +53,11 @@ pub async fn render_intro(storage: &mut LocalStorage, cam: &mut Camera3D, orbit_
                         .on_hover_text("Connect to server")
                         .clicked()
                     {
-                        storage.set("intro_complete", "true");
+                        storage.set("intro_complete_flag", "true");
                     }
                 });
             });
     });
-    
 
     if tmp_socket.len() > cube_spin.len() {
         *frame_accel += 0.20;
@@ -87,6 +97,5 @@ fn update_camera(camera: &mut Camera3D, orbit_angle: &mut f32) {
     }
 
     // Increment the orbit angle for the next frame
-     // Adjust the increment rate as needed
+    // Adjust the increment rate as needed
 }
-

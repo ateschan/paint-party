@@ -22,8 +22,9 @@ pub fn password_ui(
                 show_plaintext = !show_plaintext;
             }
             // Show the password field:
-            ui.add(egui_macroquad::egui::TextEdit::singleline(password).password(!show_plaintext)).highlight()
-            .on_hover_text("Server password");
+            ui.add(egui_macroquad::egui::TextEdit::singleline(password).password(!show_plaintext))
+                .highlight()
+                .on_hover_text("Server password");
         },
     );
 

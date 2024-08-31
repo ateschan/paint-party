@@ -2,7 +2,6 @@ use crate::ui::password::password;
 use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, RichText};
 use quad_storage::LocalStorage;
 
-
 //Main toolbar for painting
 
 pub async fn render_gui(storage: &mut LocalStorage) {
@@ -24,13 +23,13 @@ pub async fn render_gui(storage: &mut LocalStorage) {
             )
             .show(egui_ctx, |ui| {
                 ui.vertical(|ui| {
-                    storage.set(
-                        "brush_state",
-                        &format!(
-                            "{}",
-                            !egui_ctx.is_using_pointer() && !egui_ctx.is_pointer_over_area()
-                        ),
-                    );
+                    if egui_ctx.is_using_pointer() || egui_ctx.is_pointer_over_area() {
+                        storage.set("brush_hamper", "false");
+                    }
+                    else {
+                        storage.set("brush_hamper", "true")
+                    }
+
                     egui_ctx.set_visuals(egui::Visuals::light());
 
                     let mut color_button: egui_macroquad::egui::Color32 =
@@ -42,14 +41,19 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                         );
 
                     ui.horizontal(|ui| {
-                        ui.color_edit_button_srgba(&mut color_button).on_hover_text("Change color");
-
-
+                        ui.color_edit_button_srgba(&mut color_button)
+                            .on_hover_text("Change color");
 
                         if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
                             storage.set("clear_local_flag", "true");
                         }
-
+                        if ui.button("[]").on_hover_text("Eraser").clicked() {
+                            storage.set("brush_state", "Erase");
+                        }
+                        if ui.button("/").on_hover_text("Paintbrush").clicked() {
+                            storage.set("brush_state", "On");
+                        }
+                        
                         ui.add_sized(
                             ui.available_size(),
                             egui::Slider::new(&mut tmp_size, 0.0..=300.0).trailing_fill(true),
@@ -64,9 +68,12 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                                     .update_while_editing(false)
                                     .speed(1.00)
                                     .clamp_range(0.0..=9999.0),
-                            ).on_hover_text("Server room").on_hover_cursor(egui::CursorIcon::Default)
+                            )
+                            .on_hover_text("Server room")
+                            .on_hover_cursor(egui::CursorIcon::Default)
                             .lost_focus()
-                            || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter)) {
+                            || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
+                        {
                             storage.set("room", &tmp_room.to_string());
                         }
                         if ui.button("↺").on_hover_text("Refresh").clicked() {
