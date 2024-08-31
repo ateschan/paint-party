@@ -1,7 +1,7 @@
 # paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml)
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Building
 
 ### Prerequisites
 You need rust installed, follow directions on https://rustup.rs/
