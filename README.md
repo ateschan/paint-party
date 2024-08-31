@@ -38,6 +38,7 @@ choco install openssl
 - [X] Websockets
 - [ ] Intro Animation
 - [ ] Chat
+- [ ] Graceful error handling
 - [x] Eraser tool
 - [X] Opacity slider
 
