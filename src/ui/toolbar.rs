@@ -25,8 +25,7 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                 ui.vertical(|ui| {
                     if egui_ctx.is_using_pointer() || egui_ctx.is_pointer_over_area() {
                         storage.set("brush_hamper", "false");
-                    }
-                    else {
+                    } else {
                         storage.set("brush_hamper", "true")
                     }
 
@@ -53,7 +52,7 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                         if ui.button("/").on_hover_text("Paintbrush").clicked() {
                             storage.set("brush_state", "On");
                         }
-                        
+
                         ui.add_sized(
                             ui.available_size(),
                             egui::Slider::new(&mut tmp_size, 0.0..=300.0).trailing_fill(true),

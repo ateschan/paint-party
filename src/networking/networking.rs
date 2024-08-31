@@ -1,4 +1,4 @@
-use crate::state::brush::Dot;
+use crate::state::dot::Dot;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 use std::str::from_utf8;
@@ -7,7 +7,6 @@ pub async fn get(
     socket: &mut WebSocket,
     storage: &mut LocalStorage,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    // Attempt to receive bytes from the socket
     let request = format!(
         "{} {} {}",
         "GET",
@@ -24,7 +23,6 @@ pub async fn put(
     socket: &mut WebSocket,
     storage: &mut LocalStorage,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    // Attempt to receive bytes from the socket
     let request = format!(
         "{} {} {} {}",
         "PUT",
@@ -63,19 +61,10 @@ pub async fn remove(
         storage.get("room").unwrap().parse::<i32>().unwrap(),
         &storage.get("apikey").unwrap(),
         nanoserde::SerJson::serialize_json(garbage)
-
     );
     socket.send_text(&request);
     Ok(String::from("RMV Sent!"))
 }
-// pub async fn chat_out(
-//     socket: &mut WebSocket,
-//     chat: String,
-// ) -> Result<String, Box<dyn std::error::Error>> {
-//     let request = format!("{} {}", "CHAT", chat);
-//     socket.send_text(&request);
-//     Ok(String::from("CHAT Success!"))
-// }
 
 pub async fn web_socket_handler(
     socket: &mut WebSocket,
