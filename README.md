@@ -33,11 +33,14 @@ choco install openssl
 ## Roadmap
 - [X] Hide api key
 - [X] Websockets
+- [x] Eraser tool
+- [X] Opacity slider
+- [ ] Particles
+- [ ] Camera zoom
 - [ ] Intro Animation
 - [ ] Chat
 - [ ] Graceful error handling
-- [x] Eraser tool
-- [X] Opacity slider
+
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
