@@ -40,6 +40,7 @@ choco install openssl
 - [ ] Intro Animation
 - [ ] Chat
 - [ ] Graceful error handling
+- [ ] Showcase website
 
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
