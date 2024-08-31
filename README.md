@@ -38,7 +38,7 @@ choco install openssl
 - [X] Websockets
 - [ ] Intro Animation
 - [ ] Chat
-- [ ] Eraser tool
+- [x] Eraser tool
 - [X] Opacity slider
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
