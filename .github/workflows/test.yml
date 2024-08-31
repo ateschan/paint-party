@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Lines of Code Badge (emi)
+        uses: MikhailEpatko/loc-badge-action@v4.0.0
+            
       - name: Checkout
         uses: actions/checkout@v1
 
