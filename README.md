@@ -33,10 +33,9 @@ choco install openssl
 ## Roadmap
 - [X] Hide api key
 - [X] Websockets
-- [x] Eraser tool
 - [X] Opacity slider
-- [ ] Particles
-- [ ] Camera zoom
+- [x] Eraser tool
+- [X] Particles
 - [ ] Intro Animation
 - [ ] Chat
 - [ ] Graceful error handling
