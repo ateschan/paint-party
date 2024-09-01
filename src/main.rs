@@ -29,6 +29,7 @@ async fn main() {
     let mut orbit_angle: f32 = 0.0;
     let party_logo = load_texture("assets/party.png").await.unwrap();
     let mut frame_accel = 0.0;
+    request_new_screen_size(1920.0, 1080.0);
 
     loop {
         render_intro(
