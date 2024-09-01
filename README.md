@@ -1,4 +1,4 @@
-# paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/ateschan/paint-party/latest?include_prereleases)![](https://tokei.rs/b1/github/ateschan/paint-party)
+# paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/ateschan/paint-party/latest?include_prereleases) ![](https://tokei.rs/b1/github/ateschan/paint-party)
 
 ### Prerequisites
 You need rust installed, follow directions on https://rustup.rs/
@@ -41,6 +41,7 @@ choco install openssl
 - [ ] Chat
 - [ ] Graceful error handling
 - [ ] Showcase website
+- [ ] Deploy to steam
 
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
