@@ -1,9 +1,9 @@
-use super::paintbrush::PaintBrush;
+use super::{paintbrush::PaintBrush, particles::explosion};
 use crate::networking::networking::remove;
 use crate::state::dot::Dot;
 use crate::state::particles::paint_seep;
 use crate::LocalStorage;
-use macroquad::prelude::*;
+use macroquad::{math, prelude::*};
 use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
 use quad_net::web_socket::WebSocket;
 
@@ -102,8 +102,32 @@ impl Canvas {
                         id: "0".to_string(),
                     };
 
-                    self.garbage.extend(is_overlapping(&dot, &self.lines));
-                    self.lines.retain(|dot| !self.garbage.contains(&dot.id));
+                    self.garbage.extend(self.is_overlapping(&dot));
+                    self.lines.retain(|dot| {
+                        if !self.garbage.contains(&dot.id) {
+                            true
+                        } else {
+                            // self.brush.spawn_emitter(
+                            //     Emitter::new(EmitterConfig {
+                            //         size: dot.size,
+                            //         colors_curve: ColorCurve {
+                            //             start: macroquad::color::Color::from_rgba(
+                            //                 dot.r, dot.g, dot.b, dot.a,
+                            //             ),
+                            //             mid: macroquad::color::Color::from_rgba(
+                            //                 dot.r, dot.g, dot.b, dot.a,
+                            //             ),
+                            //             end: macroquad::color::Color::from_rgba(
+                            //                 dot.r, dot.g, dot.b, dot.a,
+                            //             ),
+                            //         },
+                            //         ..explosion()
+                            //     }),
+                            //     Vec2 { x: dot.x, y: dot.y },
+                            // );
+                            false
+                        }
+                    });
                     if self.brush.eraser_rot <= 360.0 {
                         self.brush.eraser_rot += 5.0;
                     } else {
@@ -116,6 +140,7 @@ impl Canvas {
                         self.garbage.clear();
                     }
                 }
+
                 if self.brush.eraser_rot <= 360.0 {
                     self.brush.eraser_rot += 1.0;
                 } else {
@@ -126,17 +151,16 @@ impl Canvas {
                 println!("UNABLE TO PARSE {} ", storage.get("brush_state").unwrap())
             }
         }
-        fn is_overlapping(circle1: &Dot, circles: &[Dot]) -> Vec<String> {
-            let mut res: Vec<String> = Vec::new();
-            for circle2 in circles {
-                let distance_squared =
-                    (circle1.x - circle2.x).powi(2) + (circle1.y - circle2.y).powi(2);
-                if distance_squared <= (circle1.size + circle2.size).powi(2) {
-                    res.push(circle2.id.to_owned());
-                }
+    }
+    fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
+        let mut res: Vec<String> = Vec::new();
+        for dot in self.lines.iter() {
+            let distance_squared = (circle1.x - dot.x).powi(2) + (circle1.y - dot.y).powi(2);
+            if distance_squared <= (circle1.size + dot.size).powi(2) {
+                res.push(dot.id.to_owned());
             }
-            res
         }
+        res
     }
     pub fn init_state(&self, storage: &mut LocalStorage) {
         //Brush

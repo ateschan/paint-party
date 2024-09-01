@@ -62,7 +62,7 @@ async fn main() {
 
         canvas.render_paint();
         canvas.brush_handler(storage, &mut socket).await;
-        web_socket_handler(&mut socket, &mut canvas.lines, storage).await;
+        web_socket_handler(&mut socket, &mut canvas, storage).await;
         render_gui(storage).await;
         handle_flags(&mut canvas, storage, &mut socket, current_room).await;
         next_frame().await;

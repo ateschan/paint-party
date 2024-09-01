@@ -1,7 +1,11 @@
 use crate::state::dot::Dot;
+use crate::Canvas;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 use std::str::from_utf8;
+// use crate::state::particles::paint_seep;
+// use macroquad_particles::{EmitterConfig, Emitter, ColorCurve};
+// use macroquad::math::Vec2;
 
 pub async fn get(
     socket: &mut WebSocket,
@@ -68,7 +72,7 @@ pub async fn remove(
 
 pub async fn web_socket_handler(
     socket: &mut WebSocket,
-    lines: &mut Vec<Dot>,
+    canvas: &mut Canvas,
     storage: &mut LocalStorage,
 ) {
     if let Some(res) = socket.try_recv() {
@@ -81,26 +85,53 @@ pub async fn web_socket_handler(
                 println!("SERVER GET RES RECIEVED");
                 let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                 //println!("THIS SHOULD BE VEC DOT {:?}", new);
-                lines.clear();
-                lines.extend(new);
+                canvas.lines.clear();
+                canvas.lines.extend(new);
             }
             "UPD_RES" => {
                 println!("SERVER UPD RES RECIEVED");
                 if message[1] == storage.get("room").unwrap() {
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
-                    lines.extend(new);
+                    canvas.lines.extend(new.clone());
+                    // if storage
+                    //     .get("brush_particles")
+                    //     .unwrap()
+                    //     .parse::<bool>()
+                    //     .unwrap()
+                    // {
+                    // for dot in new.iter() {
+                    //     canvas.brush.spawn_emitter(
+                    //         Emitter::new(EmitterConfig {
+                    //             size: dot.size,
+                    //             colors_curve: ColorCurve {
+                    //                 start: macroquad::color::Color::from_rgba(
+                    //                     dot.r, dot.g, dot.b, dot.a,
+                    //                 ),
+                    //                 mid: macroquad::color::Color::from_rgba(
+                    //                     dot.r, dot.g, dot.b, dot.a,
+                    //                 ),
+                    //                 end: macroquad::color::Color::from_rgba(
+                    //                     dot.r, dot.g, dot.b, dot.a,
+                    //                 ),
+                    //             },
+                    //             ..paint_seep()
+                    //         }),
+                    //         Vec2 { x: dot.x, y: dot.y },
+                    //     );
+                    //     }
+                    //}
                 }
             }
             "CLR_RES" => {
                 println!("SERVER CLR RES RECIEVED");
-                lines.clear();
+                canvas.lines.clear();
             }
             "PUT_RES" => println!("SERVER PUT RES RECIEVED: {}", message[1]),
             "DEL_RES" => println!("SERVER DEL RES RECIEVED: {}", message[1]),
             "RMV_RES" => {
                 println!("SERVER RMV RES RECIEVED: {}", message[1]);
                 let ids: Vec<String> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
-                remove_dots_by_id(lines, &ids);
+                remove_dots_by_id(&mut canvas.lines, &ids);
             }
             _ => println!("UNDEFINED RES"),
         }
