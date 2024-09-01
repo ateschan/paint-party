@@ -1,5 +1,6 @@
 use crate::ui::password::password;
-use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, RichText};
+use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
+use macroquad::math::bool;
 use quad_storage::LocalStorage;
 
 //Main toolbar for painting
@@ -13,7 +14,7 @@ pub async fn render_gui(storage: &mut LocalStorage) {
         egui::Window::new(RichText::new("PAINT PARTY"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
             .resizable(false)
-            .anchor(Align2::LEFT_TOP, [10.0, 10.0])
+            .default_pos([10.0, 10.0])
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -43,14 +44,33 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                         ui.color_edit_button_srgba(&mut color_button)
                             .on_hover_text("Change color");
 
-                        if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
-                            storage.set("clear_local_flag", "true");
-                        }
                         if ui.button("[]").on_hover_text("Eraser").clicked() {
                             storage.set("brush_state", "Erase");
                         }
                         if ui.button("/").on_hover_text("Paintbrush").clicked() {
                             storage.set("brush_state", "On");
+                        }
+                        if ui
+                            .add(egui_macroquad::egui::SelectableLabel::new(
+                                !storage
+                                    .get("brush_particles")
+                                    .unwrap()
+                                    .parse::<bool>()
+                                    .unwrap(),
+                                "*",
+                            ))
+                            .on_hover_text("Particles Toggle")
+                            .clicked()
+                        {
+                            storage.set(
+                                "brush_particles",
+                                &(!storage
+                                    .get("brush_particles")
+                                    .unwrap()
+                                    .parse::<bool>()
+                                    .unwrap())
+                                .to_string(),
+                            );
                         }
 
                         ui.add_sized(
@@ -74,6 +94,9 @@ pub async fn render_gui(storage: &mut LocalStorage) {
                             || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
                         {
                             storage.set("room", &tmp_room.to_string());
+                        }
+                        if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
+                            storage.set("clear_local_flag", "true");
                         }
                         if ui.button("↺").on_hover_text("Refresh").clicked() {
                             storage.set("refresh_flag", "true");

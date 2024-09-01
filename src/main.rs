@@ -8,8 +8,6 @@ use macroquad::prelude::*;
 use networking::handler::handle_flags;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
-use state::paintbrush::PaintBrush;
-use std::vec::Vec;
 use ui::{intro::render_intro, toolbar::render_gui};
 
 //TODO Implement Hashmap instead of Vec<Dot>
@@ -19,13 +17,7 @@ async fn main() {
     //Init for sub main menu
     //Storage singleton
     let storage = &mut quad_storage::STORAGE.lock().unwrap();
-    let mut canvas: Canvas = Canvas {
-        lines: Vec::new(),
-        cache: Vec::new(),
-        garbage: Vec::new(),
-        brush: PaintBrush { eraser_rot: 0.0 },
-        frame_count: 0,
-    };
+    let mut canvas: Canvas = Canvas::default();
     canvas.init_state(storage);
 
     let mut cam = Camera3D {
@@ -61,7 +53,9 @@ async fn main() {
 
     let mut socket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
+
     loop {
+        let current_room = storage.get("room").unwrap().parse::<i32>().unwrap();
         while !socket.connected() {}
         set_default_camera();
         clear_background(WHITE);
@@ -69,7 +63,6 @@ async fn main() {
         canvas.render_paint();
         canvas.brush_handler(storage, &mut socket).await;
         web_socket_handler(&mut socket, &mut canvas.lines, storage).await;
-        let current_room = storage.get("room").unwrap().parse::<i32>().unwrap();
         render_gui(storage).await;
         handle_flags(&mut canvas, storage, &mut socket, current_room).await;
         next_frame().await;
