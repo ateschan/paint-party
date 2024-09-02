@@ -13,6 +13,21 @@ pub struct Dot {
     pub id: String,
 }
 
+impl Default for Dot {
+   fn default() -> Self {
+       Dot {
+        x : 0.0,
+        y : 0.0,
+        r : 0,
+        g : 0,
+        b : 0,
+        a : 255,
+        size : 15.0,
+        id : "0".to_owned()
+      }
+   }
+}
+
 impl Dot {
     pub fn render(&self) {
         draw_circle(

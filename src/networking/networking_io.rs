@@ -1,18 +1,18 @@
 use crate::state::dot::Dot;
 use crate::state::canvas::Canvas;
+use crate::state::user::User;
 use quad_net::web_socket::WebSocket;
-use quad_storage::LocalStorage;
 use std::str::from_utf8;
 
 pub async fn get(
     socket: &mut WebSocket,
-    storage: &mut LocalStorage,
+    user : &User,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
         "{} {} {}",
         "GET",
-        storage.get("room").unwrap().parse::<i32>().unwrap(),
-        &storage.get("apikey").unwrap()
+        user.room,
+        user.apikey
     );
     socket.send_text(&request);
     Ok(String::from("GET Sent!"))
@@ -22,13 +22,13 @@ pub async fn put(
     cache: &Vec<Dot>,
     ct: &mut i32,
     socket: &mut WebSocket,
-    storage: &mut LocalStorage,
+    user : &User
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
         "{} {} {} {}",
         "PUT",
-        storage.get("room").unwrap().parse::<i32>().unwrap(),
-        &storage.get("apikey").unwrap(),
+        user.room,
+        user.apikey,
         nanoserde::SerJson::serialize_json(cache)
     );
     socket.send_text(&request);
@@ -39,13 +39,13 @@ pub async fn put(
 
 pub async fn delete(
     socket: &mut WebSocket,
-    storage: &mut LocalStorage,
+    user : &User
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
         "{} {} {}",
         "DEL",
-        storage.get("room").unwrap().parse::<i32>().unwrap(),
-        &storage.get("apikey").unwrap(),
+        user.room,
+        user.apikey,
     );
     socket.send_text(&request);
     Ok(String::from("DEL Sent!"))
@@ -53,14 +53,14 @@ pub async fn delete(
 
 pub async fn remove(
     socket: &mut WebSocket,
-    storage: &mut LocalStorage,
+    user : &User,
     garbage: &Vec<String>,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
         "{} {} {} {}",
         "RMV",
-        storage.get("room").unwrap().parse::<i32>().unwrap(),
-        &storage.get("apikey").unwrap(),
+        user.room,
+        user.apikey,
         nanoserde::SerJson::serialize_json(garbage)
     );
     socket.send_text(&request);
@@ -70,7 +70,6 @@ pub async fn remove(
 pub async fn web_socket_handler(
     socket: &mut WebSocket,
     canvas: &mut Canvas,
-    storage: &mut LocalStorage,
 ) {
     if let Some(res) = socket.try_recv() {
         let res_text: &str = from_utf8(&res).unwrap();
@@ -87,7 +86,7 @@ pub async fn web_socket_handler(
             }
             "UPD_RES" => {
                 println!("SERVER UPD RES RECIEVED");
-                if message[1] == storage.get("room").unwrap() {
+                if message[1] == canvas.user.room.to_string() {
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
                     canvas.lines.extend(new.clone());
                 }
@@ -101,13 +100,10 @@ pub async fn web_socket_handler(
             "RMV_RES" => {
                 println!("SERVER RMV RES RECIEVED: {}", message[1]);
                 let ids: Vec<String> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
-                remove_dots_by_id(&mut canvas.lines, &ids);
+                canvas.remove_dots_by_id(&ids);
             }
             _ => println!("UNDEFINED RES"),
         }
     }
 }
 
-fn remove_dots_by_id(dots: &mut Vec<Dot>, ids_to_remove: &[String]) {
-    dots.retain(|dot| !ids_to_remove.contains(&dot.id));
-}

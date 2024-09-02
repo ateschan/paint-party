@@ -1,4 +1,4 @@
-use super::{brush::Brush, /* particles::explosion */};
+use super::{brush::Brush, user::User /* particles::explosion */};
 use crate::networking::networking_io::remove;
 use crate::state::dot::Dot;
 use crate::state::particles::paint_seep;
@@ -6,6 +6,8 @@ use quad_storage::LocalStorage;
 use macroquad::prelude::*;
 use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
 use quad_net::web_socket::WebSocket;
+use crate::state::brush::BrushState::{Paint,Erase,Off};
+
 
 #[derive(Default)]
 pub struct Canvas {
@@ -14,6 +16,7 @@ pub struct Canvas {
     pub garbage: Vec<String>,
     pub frame_count: i32,
     pub brush: Brush,
+    pub user : User
 }
 
 impl Canvas {
@@ -27,34 +30,27 @@ impl Canvas {
         self.brush.render_emitters();
     }
 
-    pub async fn brush_handler(&mut self, storage: &mut LocalStorage, socket: &mut WebSocket) {
-        match storage.get("brush_state").unwrap().as_str() {
-            "On" => {
-                self.brush.render_paintbrush(storage);
+    pub async fn brush_handler(&mut self, socket: &mut WebSocket) {
+        match self.brush.state {
+            Paint => {
+                self.brush.render_paintbrush();
                 if is_mouse_button_down(MouseButton::Left)
                     && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
-                    && storage
-                        .get("brush_hamper")
-                        .unwrap()
-                        .parse::<bool>()
-                        .unwrap()
+                    && !self.brush.hamper_self
+                    
                 {
                     let dot = Dot {
                         x: mouse_position().0,
                         y: mouse_position().1,
-                        r: storage.get("brush_r").unwrap().parse::<u8>().unwrap(),
-                        g: storage.get("brush_g").unwrap().parse::<u8>().unwrap(),
-                        b: storage.get("brush_b").unwrap().parse::<u8>().unwrap(),
-                        a: storage.get("brush_a").unwrap().parse::<u8>().unwrap(),
-                        size: storage.get("brush_size").unwrap().parse::<f32>().unwrap(),
+                        r: self.brush.r,
+                        g: self.brush.g,
+                        b: self.brush.b,
+                        a: self.brush.a,
+                        size: self.brush.size,
                         id: nanoid::nanoid!(),
                     };
 
-                    if storage
-                        .get("brush_particles")
-                        .unwrap()
-                        .parse::<bool>()
-                        .unwrap()
+                    if !self.brush.hamper_particles
                     {
                         self.brush.spawn_emitter(
                             Emitter::new(EmitterConfig {
@@ -75,32 +71,26 @@ impl Canvas {
                             Vec2 { x: dot.x, y: dot.y },
                         );
                     }
-
                     self.cache.push(dot);
                 }
             }
-            "Off" => {}
-            "Erase" => {
-                self.brush.render_eraser(storage);
+            Off => {}
+            Erase => {
+                self.brush.render_eraser();
 
                 if is_mouse_button_down(MouseButton::Left)
                     && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
-                    && storage
-                        .get("brush_hamper")
-                        .unwrap()
-                        .parse::<bool>()
-                        .unwrap()
-                {
+                    && !self.brush.hamper_self {
                     let dot = Dot {
                         x: mouse_position().0,
                         y: mouse_position().1,
-                        r: storage.get("brush_r").unwrap().parse::<u8>().unwrap(),
-                        g: storage.get("brush_g").unwrap().parse::<u8>().unwrap(),
-                        b: storage.get("brush_b").unwrap().parse::<u8>().unwrap(),
-                        a: storage.get("brush_a").unwrap().parse::<u8>().unwrap(),
-                        size: storage.get("brush_size").unwrap().parse::<f32>().unwrap(),
-                        id: "0".to_string(),
-                    };
+                        r: self.brush.r,
+                        g: self.brush.g,
+                        b: self.brush.b,
+                        a: self.brush.a,
+                        size: self.brush.size,
+                        .. Dot::default()
+                   };
 
                     self.garbage.extend(self.is_overlapping(&dot));
                     if !self.garbage.is_empty() {
@@ -130,30 +120,21 @@ impl Canvas {
                             }
                         });
                     }
-                    if self.brush.eraser_rot <= 360.0 {
-                        self.brush.eraser_rot += 5.0;
-                    } else {
-                        self.brush.eraser_rot = 0.0;
-                    }
+                    self.brush.eraser_update(5.0); 
                 } else {
                     let comp: Vec<String> = Vec::new();
                     if self.garbage != comp {
-                        remove(socket, storage, &self.garbage).await.unwrap();
+                        remove(socket, &self.user, &self.garbage).await.unwrap();
                         self.garbage.clear();
                     }
                 }
-
-                if self.brush.eraser_rot <= 360.0 {
-                    self.brush.eraser_rot += 1.0;
-                } else {
-                    self.brush.eraser_rot = 0.0;
-                }
-            }
-            &_ => {
-                println!("UNABLE TO PARSE {} ", storage.get("brush_state").unwrap())
+                self.brush.eraser_update(1.0);
             }
         }
     }
+
+
+
     fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
         let mut res: Vec<String> = Vec::new();
         for dot in self.lines.iter() {
@@ -164,23 +145,15 @@ impl Canvas {
         }
         res
     }
+
+    pub fn remove_dots_by_id(&mut self, ids_to_remove: &[String]) {
+        self.lines.retain(|dot| !ids_to_remove.contains(&dot.id));
+    }
+
     pub fn init_state(&self, storage: &mut LocalStorage) {
-        //Brush
-        storage.set("brush_r", "255");
-        storage.set("brush_g", "255");
-        storage.set("brush_b", "255");
-        storage.set("brush_a", "255");
-        storage.set("brush_size", "15.0");
-        storage.set("brush_particles", "true");
-
-        //On Off Erase
-        storage.set("brush_state", "On");
-        storage.set("brush_hamper", "true");
-
         //Networking
-        storage.set("room", "0");
-        storage.set("apikey", "");
         storage.set("socket", "");
+        storage.set("apikey", "");
 
         //State flags
         storage.set("clear_local_flag", "false");

@@ -4,7 +4,7 @@ use macroquad::prelude::*;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 
-pub async fn handle_ws_flags(
+pub async fn ws_flags_handler(
     canvas: &mut Canvas,
     storage: &mut LocalStorage,
     socket: &mut WebSocket,
@@ -18,7 +18,7 @@ pub async fn handle_ws_flags(
             &canvas.cache.clone(),
             &mut canvas.frame_count,
             socket,
-            storage,
+            &canvas.user
         )
         .await
         {
@@ -39,7 +39,7 @@ pub async fn handle_ws_flags(
         .unwrap()
     {
         canvas.lines = Vec::new();
-        match delete(socket, storage).await {
+        match delete(socket, &canvas.user).await {
             Ok(l) => {
                 println!("{l}");
             }
@@ -54,9 +54,9 @@ pub async fn handle_ws_flags(
         .unwrap()
         .parse::<bool>()
         .unwrap()
-        || storage.get("room").unwrap().parse::<i32>().unwrap() != current_room
+        || canvas.user.room != current_room
     {
-        match get(socket, storage).await {
+        match get(socket, &canvas.user).await {
             Ok(res) => println!("{}", res),
             Err(e) => println!("ERROR {e}"),
         }

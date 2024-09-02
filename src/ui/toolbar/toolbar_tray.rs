@@ -1,12 +1,13 @@
-use crate::ui::toolbar::password::password;
+use crate::{state::canvas::{self, Canvas}, ui::toolbar::password::password};
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use macroquad::math::bool;
 use quad_storage::LocalStorage;
+use crate::state::brush::BrushState::*;
     
-pub fn toolbar(storage : &mut LocalStorage) {
-let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
-    let mut tmp_pass = storage.get("apikey").unwrap();
-    let mut tmp_size = storage.get("brush_size").unwrap().parse::<f32>().unwrap();
+pub fn toolbar(storage : &mut LocalStorage, canvas : &mut Canvas) {
+    let mut tmp_room = canvas.user.room;
+    let mut tmp_pass = canvas.user.apikey.clone();
+    let mut tmp_size = canvas.brush.size;
 
     egui_macroquad::ui(|egui_ctx| {
         egui::Window::new(RichText::new("PAINT PARTY"))
@@ -22,20 +23,16 @@ let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
             )
             .show(egui_ctx, |ui| {
                 ui.vertical(|ui| {
-                    if egui_ctx.is_using_pointer() || egui_ctx.is_pointer_over_area() {
-                        storage.set("brush_hamper", "false");
-                    } else {
-                        storage.set("brush_hamper", "true")
-                    }
+                    canvas.brush.hamper_self = egui_ctx.is_using_pointer() || egui_ctx.is_pointer_over_area();
 
                     egui_ctx.set_visuals(egui::Visuals::light());
 
                     let mut color_button: egui_macroquad::egui::Color32 =
                         egui_macroquad::egui::Color32::from_rgba_unmultiplied(
-                            storage.get("brush_r").unwrap().parse::<u8>().unwrap(),
-                            storage.get("brush_g").unwrap().parse::<u8>().unwrap(),
-                            storage.get("brush_b").unwrap().parse::<u8>().unwrap(),
-                            storage.get("brush_a").unwrap().parse::<u8>().unwrap(),
+                            canvas.brush.r,
+                            canvas.brush.g,
+                            canvas.brush.b,
+                            canvas.brush.a,
                         );
 
                     ui.horizontal(|ui| {
@@ -43,32 +40,20 @@ let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
                             .on_hover_text("Change color");
 
                         if ui.button("[]").on_hover_text("Eraser").clicked() {
-                            storage.set("brush_state", "Erase");
+                            canvas.brush.state = Erase;
                         }
                         if ui.button("/").on_hover_text("Paintbrush").clicked() {
-                            storage.set("brush_state", "On");
+                            canvas.brush.state = Paint;
                         }
                         if ui
                             .add(egui_macroquad::egui::SelectableLabel::new(
-                                !storage
-                                    .get("brush_particles")
-                                    .unwrap()
-                                    .parse::<bool>()
-                                    .unwrap(),
+                                canvas.brush.hamper_particles,
                                 "*",
                             ))
                             .on_hover_text("Particles Toggle")
                             .clicked()
                         {
-                            storage.set(
-                                "brush_particles",
-                                &(!storage
-                                    .get("brush_particles")
-                                    .unwrap()
-                                    .parse::<bool>()
-                                    .unwrap())
-                                .to_string(),
-                            );
+                            canvas.brush.hamper_particles = !canvas.brush.hamper_particles;
                         }
 
                         ui.add_sized(
@@ -91,7 +76,7 @@ let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
                             .lost_focus()
                             || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
                         {
-                            storage.set("room", &tmp_room.to_string());
+                            canvas.user.room = tmp_room;
                         }
                         if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
                             storage.set("clear_local_flag", "true");
@@ -102,28 +87,13 @@ let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
 
                         ui.add_sized(ui.available_size(), password(&mut tmp_pass));
                     });
-                    storage.set("brush_size", &tmp_size.to_string());
-                    storage.set("apikey", &tmp_pass);
-                    storage.set(
-                        "brush_r",
-                        &egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[0]
-                            .to_string(),
-                    );
-                    storage.set(
-                        "brush_g",
-                        &egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[1]
-                            .to_string(),
-                    );
-                    storage.set(
-                        "brush_b",
-                        &egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[2]
-                            .to_string(),
-                    );
-                    storage.set(
-                        "brush_a",
-                        &egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[3]
-                            .to_string(),
-                    );
+
+                    canvas.user.apikey = tmp_pass;
+                    canvas.brush.size = tmp_size;
+                    canvas.brush.r = egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[0];
+                    canvas.brush.g = egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[1];
+                    canvas.brush.b = egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[2];
+                    canvas.brush.a = egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[3];
                 });
             });
     });

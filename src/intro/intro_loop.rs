@@ -12,6 +12,7 @@ pub async fn render_intro(
     frame_accel: &mut f32,
 ) {
     let mut tmp_socket = storage.get("socket").unwrap();
+    let mut tmp_pass = storage.get("apikey").unwrap();
     let cube_spin = tmp_socket.clone();
     //intro macroquad instance
     clear_background(WHITE);
@@ -47,6 +48,7 @@ pub async fn render_intro(
                 egui_ctx.set_visuals(egui::Visuals::light());
                 ui.horizontal(|ui| {
                     ui.add(TextEdit::singleline(&mut tmp_socket)).highlight();
+                    ui.add(TextEdit::singleline(&mut tmp_pass)).highlight();
 
                     if ui
                         .add(egui_macroquad::egui::Button::new("connect"))
