@@ -8,6 +8,8 @@ use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 
+use crate::ui::notifications::notification_tray::NotificationFlag;
+
 #[derive(Default)]
 pub struct Canvas {
     pub lines: Vec<Dot>,
@@ -19,6 +21,7 @@ pub struct Canvas {
 
     pub refresh_flag: bool,
     pub clear_flag: bool,
+    pub notification_flags: Vec<NotificationFlag>,
 }
 
 impl Canvas {
