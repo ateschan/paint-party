@@ -36,13 +36,18 @@ choco install openssl
 - [X] Opacity slider
 - [x] Eraser tool
 - [X] Particles
+- [ ] Hotkey support
+- [ ] Undo
 - [ ] Intro Animation
 - [ ] Chat
 - [ ] Graceful error handling
 - [ ] Showcase website
 - [ ] Deploy to steam
 
-- [ ] Extend Paint Toolkit x10
+ # Extend Paint Toolkit x10 
+- [ ] Color Shifting
+- [ ] Size Oscillator
+
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
