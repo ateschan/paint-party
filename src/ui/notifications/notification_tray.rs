@@ -1,4 +1,3 @@
-use std::usize;
 use crate::ui::ui_driver::Render;
 use crate::state::canvas::Canvas;
 use egui::Align2;
@@ -12,6 +11,7 @@ pub enum NotificationFlag {
     UpdSuccess,
     ClrSuccess,
     RmvSuccess,
+    InvApi,
     Fail(String),
 }
 
@@ -34,9 +34,10 @@ impl Render for NotificationTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas) {
         egui::Window::new(RichText::new("Notifications"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .anchor(Align2::CENTER_TOP, (0.0, 0.0))
+            .anchor(Align2::CENTER_TOP, (0.0, 10.0))
             .resizable(false)
             .movable(false)
+            .default_open(false)
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -85,6 +86,9 @@ impl NotificationTray {
             NotificationFlag::DelSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
                 &mut "Del recieved!",
             )),
+            NotificationFlag::InvApi => ui.add(egui_macroquad::egui::TextEdit::singleline(
+                &mut "Inavlid Credentials",
+            )),
             NotificationFlag::Fail(e) => ui.add_sized(
                 ui.available_size(),
                 egui_macroquad::egui::TextEdit::singleline(&mut format!(
@@ -92,7 +96,6 @@ impl NotificationTray {
                     e
                 )),
             ),
-            _ => todo!(),
         };
     }
 

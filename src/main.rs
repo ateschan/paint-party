@@ -22,7 +22,7 @@ async fn main() {
 
     let mut socket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
-
+    canvas.user.apikey = storage.get("apikey").unwrap();
     std::mem::drop(storage);
 
     loop {

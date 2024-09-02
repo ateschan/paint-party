@@ -1,12 +1,11 @@
 use crate::state::brush::BrushState::*;
 use crate::ui::ui_driver::Render;
-use crate::{state::canvas::Canvas, ui::toolbar::password::password};
+use crate::state::canvas::Canvas;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
 #[derive(Default)]
 pub struct ToolbarTray {
     pub tmp_room: i32,
-    pub tmp_pass: String,
     pub tmp_size: f32,
 }
 
@@ -33,7 +32,6 @@ impl Render for ToolbarTray {
 
                 ui.vertical(|ui| self.server_1(ui, canvas));
 
-                canvas.user.apikey = self.tmp_pass.clone();
                 canvas.brush.size = self.tmp_size;
             });
     }
@@ -42,7 +40,6 @@ impl Render for ToolbarTray {
 impl ToolbarTray {
     fn init(&mut self, canvas: &mut Canvas) {
         self.tmp_room = canvas.user.room;
-        self.tmp_pass = canvas.user.apikey.clone();
         self.tmp_size = canvas.brush.size;
     }
 
@@ -122,7 +119,7 @@ impl ToolbarTray {
                 canvas.refresh_flag = true;
             }
 
-            ui.add_sized(ui.available_size(), password(&mut self.tmp_pass));
+            //ui.add_sized(ui.available_size(), password(&mut self.tmp_pass));
         });
         result.response
     }

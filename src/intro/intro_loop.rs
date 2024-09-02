@@ -1,6 +1,7 @@
 use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, TextEdit};
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
+use super::password::password;
 
 //Intro screen to enter the websocket address
 //
@@ -65,7 +66,7 @@ pub async fn render_intro(
     frame_accel: &mut f32,
 ) {
     let mut tmp_socket = storage.get("socket").unwrap();
-    //let mut tmp_pass = storage.get("apikey").unwrap();
+    let mut tmp_pass = storage.get("apikey").unwrap();
     let cube_spin = tmp_socket.clone();
 
     clear_background(WHITE);
@@ -102,9 +103,10 @@ pub async fn render_intro(
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
                 ui.horizontal(|ui| {
+                    ui.vertical( |ui| {
                     ui.add(TextEdit::singleline(&mut tmp_socket)).highlight();
-                    //ui.add(TextEdit::singleline(&mut tmp_pass)).highlight();
-
+                    ui.add(password(&mut tmp_pass)).highlight();
+            });
                     if ui
                         .add(egui_macroquad::egui::Button::new("connect"))
                         .on_hover_text("Connect to server")
@@ -135,6 +137,7 @@ pub async fn render_intro(
     }
 
     storage.set("socket", &tmp_socket);
+    storage.set("apikey", &tmp_pass);
     egui_macroquad::draw();
 }
 

@@ -99,6 +99,11 @@ pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
                 canvas.remove_dots_by_id(&ids);
                 canvas.notification_flags.push(RmvSuccess);
             }
+            //TODO
+            "INV_API" => {
+                canvas.notification_flags.push(InvApi);
+            }
+            //TODO
             "ERR_RES " => {
                 println!("SERVER ERR RES RECIEVED: {}", message[1]);
                 canvas.notification_flags.push(Fail(message[1].to_owned()));
