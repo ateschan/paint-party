@@ -56,8 +56,8 @@ impl Render for NotificationTray {
                         self.notificaton_module(ui, not);
                     }
                 });
-                self.check_size(canvas)
             });
+        self.check_size(canvas)
     }
 }
 
