@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use macroquad_particles::{self as particles, AtlasConfig, BlendMode, Curve};
+use macroquad_particles::{self as particles, AtlasConfig, BlendMode};
 
 pub fn paint_seep() -> particles::EmitterConfig {
     particles::EmitterConfig {
@@ -29,10 +29,10 @@ pub fn explosion() -> particles::EmitterConfig {
         lifetime: 900.0,
         lifetime_randomness: 0.8,
 
-        explosiveness : 0.999,
+        explosiveness: 0.999,
         initial_velocity: 150.0,
         amount: 2,
-        initial_direction_spread: 1.5* std::f32::consts::PI,
+        initial_direction_spread: 1.5 * std::f32::consts::PI,
         gravity: vec2(0.0, 200.0),
         atlas: Some(AtlasConfig::new(4, 4, 8..)),
         blend_mode: BlendMode::Alpha,

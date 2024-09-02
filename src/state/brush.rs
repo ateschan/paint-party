@@ -1,22 +1,22 @@
 use macroquad::prelude::*;
 use macroquad_particles::Emitter;
 
-pub struct PaintBrush {
+pub struct Brush {
     pub eraser_rot: f32,
     //pub emitter: Emitter,
     pub emitters: Vec<(Emitter, Vec2)>,
 }
 
-impl Default for PaintBrush {
+impl Default for Brush {
     fn default() -> Self {
-        PaintBrush {
+        Brush {
             eraser_rot: 0.0,
             emitters: Vec::new(), //emitter: Emitter::new(EmitterConfig { ..explosion() }),
         }
     }
 }
 
-impl PaintBrush {
+impl Brush {
     pub fn render_paintbrush(&self, storage: &mut quad_storage::LocalStorage) {
         draw_circle(
             mouse_position().0,

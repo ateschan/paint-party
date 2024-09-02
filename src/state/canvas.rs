@@ -1,9 +1,9 @@
-use super::{paintbrush::PaintBrush, particles::explosion};
-use crate::networking::networking::remove;
+use super::{brush::Brush, /* particles::explosion */};
+use crate::networking::networking_io::remove;
 use crate::state::dot::Dot;
 use crate::state::particles::paint_seep;
-use crate::LocalStorage;
-use macroquad::{math, prelude::*};
+use quad_storage::LocalStorage;
+use macroquad::prelude::*;
 use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
 use quad_net::web_socket::WebSocket;
 
@@ -13,7 +13,7 @@ pub struct Canvas {
     pub cache: Vec<Dot>,
     pub garbage: Vec<String>,
     pub frame_count: i32,
-    pub brush: PaintBrush,
+    pub brush: Brush,
 }
 
 impl Canvas {
@@ -103,31 +103,33 @@ impl Canvas {
                     };
 
                     self.garbage.extend(self.is_overlapping(&dot));
-                    self.lines.retain(|dot| {
-                        if !self.garbage.contains(&dot.id) {
-                            true
-                        } else {
-                            // self.brush.spawn_emitter(
-                            //     Emitter::new(EmitterConfig {
-                            //         size: dot.size,
-                            //         colors_curve: ColorCurve {
-                            //             start: macroquad::color::Color::from_rgba(
-                            //                 dot.r, dot.g, dot.b, dot.a,
-                            //             ),
-                            //             mid: macroquad::color::Color::from_rgba(
-                            //                 dot.r, dot.g, dot.b, dot.a,
-                            //             ),
-                            //             end: macroquad::color::Color::from_rgba(
-                            //                 dot.r, dot.g, dot.b, dot.a,
-                            //             ),
-                            //         },
-                            //         ..explosion()
-                            //     }),
-                            //     Vec2 { x: dot.x, y: dot.y },
-                            // );
-                            false
-                        }
-                    });
+                    if !self.garbage.is_empty() {
+                        self.lines.retain(|dot| {
+                            if !self.garbage.contains(&dot.id) {
+                                true
+                            } else {
+                                // self.brush.spawn_emitter(
+                                //     Emitter::new(EmitterConfig {
+                                //         size: dot.size,
+                                //         colors_curve: ColorCurve {
+                                //             start: macroquad::color::Color::from_rgba(
+                                //                 dot.r, dot.g, dot.b, dot.a,
+                                //             ),
+                                //             mid: macroquad::color::Color::from_rgba(
+                                //                 dot.r, dot.g, dot.b, dot.a,
+                                //             ),
+                                //             end: macroquad::color::Color::from_rgba(
+                                //                 dot.r, dot.g, dot.b, dot.a,
+                                //             ),
+                                //         },
+                                //         ..explosion()
+                                //     }),
+                                //     Vec2 { x: dot.x, y: dot.y },
+                                // );
+                                false
+                            }
+                        });
+                    }
                     if self.brush.eraser_rot <= 360.0 {
                         self.brush.eraser_rot += 5.0;
                     } else {

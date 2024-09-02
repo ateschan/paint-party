@@ -1,12 +1,10 @@
-use crate::ui::password::password;
+use crate::ui::toolbar::password::password;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use macroquad::math::bool;
 use quad_storage::LocalStorage;
-
-//Main toolbar for painting
-
-pub async fn render_gui(storage: &mut LocalStorage) {
-    let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
+    
+pub fn toolbar(storage : &mut LocalStorage) {
+let mut tmp_room = storage.get("room").unwrap().parse::<i32>().unwrap();
     let mut tmp_pass = storage.get("apikey").unwrap();
     let mut tmp_size = storage.get("brush_size").unwrap().parse::<f32>().unwrap();
 

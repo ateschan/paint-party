@@ -1,10 +1,10 @@
-use crate::networking::networking::{delete, get, put};
+use crate::networking::networking_io::{delete, get, put};
 use crate::state::canvas::Canvas;
 use macroquad::prelude::*;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 
-pub async fn handle_flags(
+pub async fn handle_ws_flags(
     canvas: &mut Canvas,
     storage: &mut LocalStorage,
     socket: &mut WebSocket,
