@@ -1,13 +1,12 @@
 use super::{brush::Brush, user::User /* particles::explosion */};
 use crate::networking::networking_io::remove;
+use crate::state::brush::BrushState::{Erase, Off, Paint};
 use crate::state::dot::Dot;
 use crate::state::particles::paint_seep;
-use quad_storage::LocalStorage;
 use macroquad::prelude::*;
 use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
 use quad_net::web_socket::WebSocket;
-use crate::state::brush::BrushState::{Paint,Erase,Off};
-
+use quad_storage::LocalStorage;
 
 #[derive(Default)]
 pub struct Canvas {
@@ -16,7 +15,10 @@ pub struct Canvas {
     pub garbage: Vec<String>,
     pub frame_count: i32,
     pub brush: Brush,
-    pub user : User
+    pub user: User,
+
+    pub refresh_flag: bool,
+    pub clear_flag: bool,
 }
 
 impl Canvas {
@@ -34,10 +36,10 @@ impl Canvas {
         match self.brush.state {
             Paint => {
                 self.brush.render_paintbrush();
+
                 if is_mouse_button_down(MouseButton::Left)
                     && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
                     && !self.brush.hamper_self
-                    
                 {
                     let dot = Dot {
                         x: mouse_position().0,
@@ -50,8 +52,7 @@ impl Canvas {
                         id: nanoid::nanoid!(),
                     };
 
-                    if !self.brush.hamper_particles
-                    {
+                    if !self.brush.hamper_particles {
                         self.brush.spawn_emitter(
                             Emitter::new(EmitterConfig {
                                 size: dot.size,
@@ -74,13 +75,14 @@ impl Canvas {
                     self.cache.push(dot);
                 }
             }
-            Off => {}
+
             Erase => {
                 self.brush.render_eraser();
 
                 if is_mouse_button_down(MouseButton::Left)
                     && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
-                    && !self.brush.hamper_self {
+                    && !self.brush.hamper_self
+                {
                     let dot = Dot {
                         x: mouse_position().0,
                         y: mouse_position().1,
@@ -89,8 +91,8 @@ impl Canvas {
                         b: self.brush.b,
                         a: self.brush.a,
                         size: self.brush.size,
-                        .. Dot::default()
-                   };
+                        ..Dot::default()
+                    };
 
                     self.garbage.extend(self.is_overlapping(&dot));
                     if !self.garbage.is_empty() {
@@ -120,7 +122,7 @@ impl Canvas {
                             }
                         });
                     }
-                    self.brush.eraser_update(5.0); 
+                    self.brush.eraser_update(5.0);
                 } else {
                     let comp: Vec<String> = Vec::new();
                     if self.garbage != comp {
@@ -130,10 +132,10 @@ impl Canvas {
                 }
                 self.brush.eraser_update(1.0);
             }
+
+            Off => {}
         }
     }
-
-
 
     fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
         let mut res: Vec<String> = Vec::new();
@@ -156,8 +158,6 @@ impl Canvas {
         storage.set("apikey", "");
 
         //State flags
-        storage.set("clear_local_flag", "false");
-        storage.set("refresh_flag", "false");
         storage.set("intro_complete_flag", "false");
     }
 }

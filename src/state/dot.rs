@@ -1,4 +1,4 @@
-use macroquad::prelude::*;
+use macroquad::{prelude::*, rand::gen_range};
 use nanoserde::{DeJson, SerJson};
 
 #[derive(Clone, Debug, SerJson, DeJson, PartialEq)]
@@ -14,18 +14,18 @@ pub struct Dot {
 }
 
 impl Default for Dot {
-   fn default() -> Self {
-       Dot {
-        x : 0.0,
-        y : 0.0,
-        r : 0,
-        g : 0,
-        b : 0,
-        a : 255,
-        size : 15.0,
-        id : "0".to_owned()
-      }
-   }
+    fn default() -> Self {
+        Dot {
+            x: gen_range(0.0, 1920.0),
+            y: gen_range(0.0, 1080.0),
+            r: gen_range(0, 255),
+            g: gen_range(0, 255),
+            b: gen_range(0, 255),
+            a: gen_range(0, 255),
+            size: rand::gen_range(0.0, 300.0),
+            id: "0".to_owned(),
+        }
+    }
 }
 
 impl Dot {

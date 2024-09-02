@@ -3,6 +3,59 @@ use macroquad::prelude::*;
 use quad_storage::LocalStorage;
 
 //Intro screen to enter the websocket address
+//
+//
+pub async fn enter_intro(storage: &mut LocalStorage) {
+    let mut cam = Camera3D {
+        position: vec3(-20., 15., 0.),
+        up: vec3(0., 1., 0.),
+        target: vec3(0., 0., 0.),
+        ..Default::default()
+    };
+
+    let mut orbit_angle: f32 = 0.0;
+    let party_logo = load_texture("assets/party.png").await.unwrap();
+    let mut frame_accel = 0.3;
+
+    request_new_screen_size(1920.0, 1080.0);
+
+    storage.set("intro_complete_flag", "false");
+
+    match storage.get("socket") {
+        Some(_) => {}
+        None => {
+            storage.set("socket", "");
+        }
+    }
+
+    match storage.get("apikey") {
+        Some(_) => {}
+        None => {
+            storage.set("apikey", "");
+        }
+    }
+
+    loop {
+        render_intro(
+            storage,
+            &mut cam,
+            &mut orbit_angle,
+            &party_logo,
+            &mut frame_accel,
+        )
+        .await;
+
+        if storage
+            .get("intro_complete_flag")
+            .unwrap()
+            .parse::<bool>()
+            .unwrap()
+        {
+            break;
+        }
+        next_frame().await
+    }
+}
 
 pub async fn render_intro(
     storage: &mut LocalStorage,
@@ -12,14 +65,16 @@ pub async fn render_intro(
     frame_accel: &mut f32,
 ) {
     let mut tmp_socket = storage.get("socket").unwrap();
-    let mut tmp_pass = storage.get("apikey").unwrap();
+    //let mut tmp_pass = storage.get("apikey").unwrap();
     let cube_spin = tmp_socket.clone();
-    //intro macroquad instance
+
     clear_background(WHITE);
     set_camera(cam);
     update_camera(cam, orbit_angle);
+
     //let bytes: Vec<u8> = vec![255, 0, 0, 192, 0, 255, 0, 192, 0, 0, 255, 192, 255, 255, 255, 192];
     //let texture = Texture2D::from_rgba8(2, 2, &bytes);
+
     draw_cube(
         vec3(0., 5., -0.),
         vec3(10., 10., 10.),
@@ -48,7 +103,7 @@ pub async fn render_intro(
                 egui_ctx.set_visuals(egui::Visuals::light());
                 ui.horizontal(|ui| {
                     ui.add(TextEdit::singleline(&mut tmp_socket)).highlight();
-                    ui.add(TextEdit::singleline(&mut tmp_pass)).highlight();
+                    //ui.add(TextEdit::singleline(&mut tmp_pass)).highlight();
 
                     if ui
                         .add(egui_macroquad::egui::Button::new("connect"))
@@ -97,7 +152,4 @@ fn update_camera(camera: &mut Camera3D, orbit_angle: &mut f32) {
     if *orbit_angle == 360.0 {
         *orbit_angle = 0.0;
     }
-
-    // Increment the orbit angle for the next frame
-    // Adjust the increment rate as needed
 }

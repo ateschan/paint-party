@@ -42,6 +42,7 @@ choco install openssl
 - [ ] Showcase website
 - [ ] Deploy to steam
 
+- [ ] Extend Paint Toolkit x10
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 

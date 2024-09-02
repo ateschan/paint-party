@@ -1,19 +1,14 @@
-use crate::state::dot::Dot;
 use crate::state::canvas::Canvas;
+use crate::state::dot::Dot;
 use crate::state::user::User;
 use quad_net::web_socket::WebSocket;
 use std::str::from_utf8;
 
 pub async fn get(
     socket: &mut WebSocket,
-    user : &User,
+    user: &User,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    let request = format!(
-        "{} {} {}",
-        "GET",
-        user.room,
-        user.apikey
-    );
+    let request = format!("{} {} {}", "GET", user.room, user.apikey);
     socket.send_text(&request);
     Ok(String::from("GET Sent!"))
 }
@@ -22,7 +17,7 @@ pub async fn put(
     cache: &Vec<Dot>,
     ct: &mut i32,
     socket: &mut WebSocket,
-    user : &User
+    user: &User,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
         "{} {} {} {}",
@@ -39,21 +34,16 @@ pub async fn put(
 
 pub async fn delete(
     socket: &mut WebSocket,
-    user : &User
+    user: &User,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    let request = format!(
-        "{} {} {}",
-        "DEL",
-        user.room,
-        user.apikey,
-    );
+    let request = format!("{} {} {}", "DEL", user.room, user.apikey,);
     socket.send_text(&request);
     Ok(String::from("DEL Sent!"))
 }
 
 pub async fn remove(
     socket: &mut WebSocket,
-    user : &User,
+    user: &User,
     garbage: &Vec<String>,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let request = format!(
@@ -67,10 +57,7 @@ pub async fn remove(
     Ok(String::from("RMV Sent!"))
 }
 
-pub async fn web_socket_handler(
-    socket: &mut WebSocket,
-    canvas: &mut Canvas,
-) {
+pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
     if let Some(res) = socket.try_recv() {
         let res_text: &str = from_utf8(&res).unwrap();
         let message: Vec<&str> = res_text.split(' ').collect();
@@ -106,4 +93,3 @@ pub async fn web_socket_handler(
         }
     }
 }
-

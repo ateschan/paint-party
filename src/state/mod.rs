@@ -1,5 +1,5 @@
-pub mod canvas;
 pub mod brush;
-pub mod particles;
+pub mod canvas;
 pub mod dot;
+pub mod particles;
 pub mod user;

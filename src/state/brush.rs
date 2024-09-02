@@ -1,56 +1,54 @@
-use macroquad::prelude::*;
 use crate::state::brush::BrushState::Paint;
+use macroquad::prelude::*;
 use macroquad_particles::Emitter;
+use rand::gen_range;
 
-    pub enum BrushState {
-        Off,
-        Paint,
-        Erase
-    }
+pub enum BrushState {
+    Off,
+    Paint,
+    Erase,
+}
 
 //COLOR SIZE
 pub struct Brush {
-    pub eraser_rot: f32,
-    //pub emitter: Emitter,
     pub emitters: Vec<(Emitter, Vec2)>,
-    pub size : f32,
-    pub r : u8,
-    pub g : u8,
-    pub b : u8,
-    pub a : u8,
-    pub hamper_self : bool,
-    pub hamper_particles : bool,
-    pub state : BrushState
+    pub size: f32,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
+    pub hamper_self: bool,
+    pub hamper_particles: bool,
+    pub state: BrushState,
+
+    //SPECIAL
+    pub eraser_rot: f32,
 }
 
 impl Default for Brush {
     fn default() -> Self {
         Brush {
-            eraser_rot: 0.0,
             emitters: Vec::new(), //emitter: Emitter::new(EmitterConfig { ..explosion() }),
-            size : 0.0,
-            r : 0,
-            g : 0,
-            b : 0,
-            a : 255,
-            hamper_self : false,
-            hamper_particles : false,
-            state : Paint
+            size: gen_range(15.0, 300.0),
+            r: gen_range(0, 255),
+            g: gen_range(0, 255),
+            b: gen_range(0, 255),
+            a: gen_range(0, 255),
+            hamper_self: false,
+            hamper_particles: false,
+            state: Paint,
+            eraser_rot: 0.0,
         }
     }
 }
 
 impl Brush {
-    
-
     pub fn render_paintbrush(&self) {
         draw_circle(
             mouse_position().0,
             mouse_position().1,
             self.size,
-            macroquad::color::Color::from_rgba(
-                self.r, self.g, self.b, self.a
-            ),
+            macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
         );
     }
 
@@ -62,17 +60,14 @@ impl Brush {
             self.size,
             self.eraser_rot,
             5.0,
-            macroquad::color::Color::from_rgba(
-                self.r, self.g, self.b, self.a
-            ),
+            macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
         );
     }
 
-    pub fn eraser_update(&mut self, num : f32) {
+    pub fn eraser_update(&mut self, num: f32) {
         if self.eraser_rot <= 360.0 {
             self.eraser_rot += num;
-        }
-        else {
+        } else {
             self.eraser_rot = 0.0;
         }
     }
