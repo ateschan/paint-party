@@ -1,12 +1,13 @@
-use crate::state::brush::BrushState::Paint;
 use macroquad::prelude::*;
 use macroquad_particles::Emitter;
 use rand::gen_range;
+use BrushState::Paintbrush;
 
+//Brush handles what lies behind the cursor, paint color, and particles
 pub enum BrushState {
     Off,
-    Paint,
-    Erase,
+    Paintbrush,
+    Eraser,
 }
 
 //COLOR SIZE
@@ -36,33 +37,13 @@ impl Default for Brush {
             a: gen_range(0, 255),
             hamper_self: false,
             hamper_particles: false,
-            state: Paint,
+            state: Paintbrush,
             eraser_rot: 0.0,
         }
     }
 }
 
 impl Brush {
-    pub fn render_paintbrush(&self) {
-        draw_circle(
-            mouse_position().0,
-            mouse_position().1,
-            self.size,
-            macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
-        );
-    }
-
-    pub fn render_eraser(&self) {
-        draw_poly_lines(
-            mouse_position().0,
-            mouse_position().1,
-            10,
-            self.size,
-            self.eraser_rot,
-            5.0,
-            macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
-        );
-    }
 
     pub fn eraser_update(&mut self, num: f32) {
         if self.eraser_rot <= 360.0 {

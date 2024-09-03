@@ -1,6 +1,6 @@
 use crate::state::brush::BrushState::*;
-use crate::ui::ui_driver::Render;
 use crate::state::canvas::Canvas;
+use crate::ui::ui_driver::Render;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
 #[derive(Default)]
@@ -61,10 +61,10 @@ impl ToolbarTray {
                 .on_hover_text("Change color");
 
             if ui.button("[]").on_hover_text("Eraser").clicked() {
-                canvas.brush.state = Erase;
+                canvas.brush.state = Eraser;
             }
             if ui.button("/").on_hover_text("Paintbrush").clicked() {
-                canvas.brush.state = Paint;
+                canvas.brush.state = Paintbrush;
             }
 
             if ui

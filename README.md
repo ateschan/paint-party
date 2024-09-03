@@ -36,7 +36,7 @@ choco install openssl
 - [X] Opacity slider
 - [x] Eraser tool
 - [X] Particles
-- [ ] Hotkey support
+- [X] Hotkey support
 - [ ] Undo
 - [ ] Intro Animation
 - [ ] Chat

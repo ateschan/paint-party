@@ -1,6 +1,8 @@
 use macroquad::{prelude::*, rand::gen_range};
 use nanoserde::{DeJson, SerJson};
 
+//Dot structure, is serilized and passed through a websocket
+//
 #[derive(Clone, Debug, SerJson, DeJson, PartialEq)]
 pub struct Dot {
     pub x: f32,

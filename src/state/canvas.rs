@@ -1,14 +1,16 @@
 use super::{brush::Brush, user::User /* particles::explosion */};
-use crate::networking::networking_io::remove;
-use crate::state::brush::BrushState::{Erase, Off, Paint};
+use crate::networking;
+use crate::state::brush::BrushState::{Eraser, Off, Paintbrush};
 use crate::state::dot::Dot;
-use crate::state::particles::paint_seep;
+use crate::ui::notifications::notification_tray::NotificationFlag;
 use macroquad::prelude::*;
-use macroquad_particles::{ColorCurve, Emitter, EmitterConfig};
+use macroquad::input::KeyCode;
 use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
 
-use crate::ui::notifications::notification_tray::NotificationFlag;
+//Order of inheritence goes Canvas -> Brush -> Dot
+//Canvas serves as the interface for screeen state, and is used by UI and the websocket client
+//
 
 #[derive(Default)]
 pub struct Canvas {
@@ -19,6 +21,7 @@ pub struct Canvas {
     pub brush: Brush,
     pub user: User,
 
+    pub undo_cache : Vec<String>,
     pub refresh_flag: bool,
     pub clear_flag: bool,
     pub notification_flags: Vec<NotificationFlag>,
@@ -35,124 +38,40 @@ impl Canvas {
         self.brush.render_emitters();
     }
 
+    //Definitions in ./tools/
+    //Entry point for user input 
     pub async fn brush_handler(&mut self, socket: &mut WebSocket) {
+        self.hotkey_handler().await;
+
         match self.brush.state {
-            Paint => {
-                self.brush.render_paintbrush();
-
-                if is_mouse_button_down(MouseButton::Left)
-                    && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
-                    && !self.brush.hamper_self
-                {
-                    let dot = Dot {
-                        x: mouse_position().0,
-                        y: mouse_position().1,
-                        r: self.brush.r,
-                        g: self.brush.g,
-                        b: self.brush.b,
-                        a: self.brush.a,
-                        size: self.brush.size,
-                        id: nanoid::nanoid!(),
-                    };
-
-                    if !self.brush.hamper_particles {
-                        self.brush.spawn_emitter(
-                            Emitter::new(EmitterConfig {
-                                size: dot.size,
-                                colors_curve: ColorCurve {
-                                    start: macroquad::color::Color::from_rgba(
-                                        dot.r, dot.g, dot.b, dot.a,
-                                    ),
-                                    mid: macroquad::color::Color::from_rgba(
-                                        dot.r, dot.g, dot.b, dot.a,
-                                    ),
-                                    end: macroquad::color::Color::from_rgba(
-                                        dot.r, dot.g, dot.b, dot.a,
-                                    ),
-                                },
-                                ..paint_seep()
-                            }),
-                            Vec2 { x: dot.x, y: dot.y },
-                        );
-                    }
-                    self.cache.push(dot);
-                }
+            Paintbrush => {
+                self.paintbrush().await;
             }
 
-            Erase => {
-                self.brush.render_eraser();
-
-                if is_mouse_button_down(MouseButton::Left)
-                    && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
-                    && !self.brush.hamper_self
-                {
-                    let dot = Dot {
-                        x: mouse_position().0,
-                        y: mouse_position().1,
-                        r: self.brush.r,
-                        g: self.brush.g,
-                        b: self.brush.b,
-                        a: self.brush.a,
-                        size: self.brush.size,
-                        ..Dot::default()
-                    };
-
-                    self.garbage.extend(self.is_overlapping(&dot));
-                    if !self.garbage.is_empty() {
-                        self.lines.retain(|dot| {
-                            if !self.garbage.contains(&dot.id) {
-                                true
-                            } else {
-                                // self.brush.spawn_emitter(
-                                //     Emitter::new(EmitterConfig {
-                                //         size: dot.size,
-                                //         colors_curve: ColorCurve {
-                                //             start: macroquad::color::Color::from_rgba(
-                                //                 dot.r, dot.g, dot.b, dot.a,
-                                //             ),
-                                //             mid: macroquad::color::Color::from_rgba(
-                                //                 dot.r, dot.g, dot.b, dot.a,
-                                //             ),
-                                //             end: macroquad::color::Color::from_rgba(
-                                //                 dot.r, dot.g, dot.b, dot.a,
-                                //             ),
-                                //         },
-                                //         ..explosion()
-                                //     }),
-                                //     Vec2 { x: dot.x, y: dot.y },
-                                // );
-                                false
-                            }
-                        });
-                    }
-                    self.brush.eraser_update(5.0);
-                } else {
-                    let comp: Vec<String> = Vec::new();
-                    if self.garbage != comp {
-                        remove(socket, &self.user, &self.garbage).await.unwrap();
-                        self.garbage.clear();
-                    }
-                }
-                self.brush.eraser_update(1.0);
+            Eraser => {
+                self.eraser(socket).await;
             }
 
             Off => {}
         }
     }
 
-    fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
-        let mut res: Vec<String> = Vec::new();
-        for dot in self.lines.iter() {
-            let distance_squared = (circle1.x - dot.x).powi(2) + (circle1.y - dot.y).powi(2);
-            if distance_squared <= (circle1.size + dot.size).powi(2) {
-                res.push(dot.id.to_owned());
-            }
+    pub async fn hotkey_handler(&mut self) {
+        if is_key_pressed(KeyCode::Key1){
+            self.brush.state = Paintbrush;
         }
-        res
-    }
+        if is_key_pressed(KeyCode::E) {
+            self.brush.state = Eraser;
+        }
+        // if is_key_pressed(KeyCode::Left) && self.user.room > 0 && !self.refresh_flag {
+        //     self.user.room -= 1;
+        //     self.refresh_flag = true;
+        // }
+        // if is_key_pressed(KeyCode::Right) && self.user.room < 9999 && !self.refresh_flag{
+        //     self.user.room += 1;
+        //     self.refresh_flag = true;
+        // }
 
-    pub fn remove_dots_by_id(&mut self, ids_to_remove: &[String]) {
-        self.lines.retain(|dot| !ids_to_remove.contains(&dot.id));
     }
 
     pub fn init_state(&self, storage: &mut LocalStorage) {

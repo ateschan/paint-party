@@ -1,5 +1,5 @@
-use crate::ui::ui_driver::Render;
 use crate::state::canvas::Canvas;
+use crate::ui::ui_driver::Render;
 use egui::Align2;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
