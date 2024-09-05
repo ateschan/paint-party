@@ -1,2 +1,3 @@
-pub mod handler;
-pub mod networking_io;
+pub mod canvas_handler;
+pub mod gui_handler;
+pub mod ws;

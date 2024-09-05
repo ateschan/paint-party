@@ -1,16 +1,21 @@
-use crate::state::brush::BrushState::*;
 use crate::state::canvas::Canvas;
-use crate::ui::ui_driver::Render;
+use crate::ui::ui_driver::GuiModule;
+use crate::{networking::ws::WsClient, state::brush::BrushState::*};
+use async_trait::async_trait;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
 #[derive(Default)]
 pub struct ToolbarTray {
     pub tmp_room: i32,
     pub tmp_size: f32,
+
+    pub refresh_flag: bool,
+    pub clear_flag: bool,
 }
 
-impl Render for ToolbarTray {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas) {
+#[async_trait]
+impl GuiModule for ToolbarTray {
+    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc : &mut WsClient) {
         egui::Window::new(RichText::new("Toolbar"))
             .resizable(false)
             .default_pos([250.0, 10.0])
@@ -23,21 +28,39 @@ impl Render for ToolbarTray {
             )
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
-                self.init(canvas);
+                self.init(canvas, wsc);
                 self.mouse_state(egui_ctx, canvas);
 
                 ui.vertical(|ui| {
                     self.brush_1(ui, canvas);
                 });
-                ui.vertical(|ui| self.server_1(ui, canvas));
+                ui.vertical(|ui| self.server_1(ui, canvas, wsc));
                 canvas.brush.size = self.tmp_size;
             });
+    }
+    async fn handle_ws(&mut self, wsc: &mut WsClient) {
+        if self.refresh_flag {
+            wsc.user.room = self.tmp_room;
+            match wsc.canvas_get().await {
+                Ok(a) => println!("{a}"),
+                Err(e) => panic!("{}", e),
+            }
+            self.refresh_flag = false;
+        }
+        if self.clear_flag {
+            wsc.user.room = self.tmp_room;
+            match wsc.canvas_delete().await {
+                Ok(a) => println!("{a}"),
+                Err(e) => panic!("{}", e)
+            }
+            self.clear_flag = false;
+        }
     }
 }
 
 impl ToolbarTray {
-    fn init(&mut self, canvas: &mut Canvas) {
-        self.tmp_room = canvas.user.room;
+    fn init(&mut self, canvas: &mut Canvas, wsc : &mut WsClient) {
+        self.tmp_room = wsc.user.room;
         self.tmp_size = canvas.brush.size;
     }
 
@@ -93,6 +116,7 @@ impl ToolbarTray {
         &mut self,
         ui: &mut egui_macroquad::egui::Ui,
         canvas: &mut Canvas,
+         wsc : &mut WsClient
     ) -> egui_macroquad::egui::Response {
         let result = ui.horizontal(|ui| {
             if ui
@@ -107,14 +131,14 @@ impl ToolbarTray {
                 .lost_focus()
                 || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
             {
-                canvas.user.room = self.tmp_room;
-                canvas.refresh_flag = true;
+                wsc.user.room = self.tmp_room;
+                self.refresh_flag = true;
             }
             if ui.button("CLEAR").on_hover_text("Erase All").clicked() {
-                canvas.clear_flag = true;
+                self.clear_flag = true;
             }
             if ui.button("↺").on_hover_text("Refresh").clicked() {
-                canvas.refresh_flag = true;
+                self.refresh_flag = true;
             }
 
             //ui.add_sized(ui.available_size(), password(&mut self.tmp_pass));

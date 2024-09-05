@@ -1,13 +1,5 @@
-//
-//
-//
-//
-//
-//
-//
 use egui::TextEdit;
 use quad_storage::LocalStorage;
-//WIP
 pub fn socket_ui(
     ui: &mut egui_macroquad::egui::Ui,
     socket: &mut String,
@@ -24,7 +16,8 @@ pub fn socket_ui(
                 storage.set("intro_complete_flag", "true");
             }
             // Show the socket field:
-            ui.add(TextEdit::singleline(socket)).highlight();
+            ui.add(TextEdit::singleline(socket).hint_text("Server Address"))
+                .highlight();
         },
     );
 

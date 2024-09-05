@@ -1,13 +1,12 @@
-use super::{brush::Brush, user::User /* particles::explosion */};
+use super::{brush::Brush, /* particles::explosion */};
 use crate::state::brush::BrushState::{Eraser, Off, Paintbrush};
 use crate::state::dot::Dot;
 use crate::ui::chat::chat_tray::Chat;
 use crate::ui::notifications::notification_tray::NotificationFlag;
 use macroquad::input::KeyCode;
 use macroquad::prelude::*;
-use quad_net::web_socket::WebSocket;
 use quad_storage::LocalStorage;
-
+use crate::networking::ws::WsClient;
 //Order of inheritence for drawing goes Canvas -> Brush -> Dot
 //
 //Canvas serves as the interface for screeen state, and is used by UI and the websocket client
@@ -21,14 +20,25 @@ pub struct Canvas {
     pub garbage: Vec<String>,
     pub frame_count: i32,
     pub brush: Brush,
-    pub user: User,
+
+    //Why does this exist? Canvas -> UI
+    //Canvas -> Websocket Handler
+
+    //  BUG: |||||||||||||||||||||||||||||||||||||||||||||||||\
+    //  What I need
+    //  Ui is able to change canvas settings Canvas -> Ui
+    //  check for changes to ui WSHANDLER CLASS -> Ui
+    //  check for changes to canvas Canvas-> WShandler class
+    //
+    //  Ws class will have functions and will be passed into ws handler functions in gui and in
+    //  canvas
+    //  BUG: |||||||||||||||||||||||||||||||||||||||||||||||||\
 
     //WS glue
-    pub refresh_flag: bool,
-    pub clear_flag: bool,
 
     //Ui glue
-    pub chats: Vec<Chat>,
+    pub inc_chats: Vec<Chat>,
+    pub out_chats: Vec<Chat>,
     pub notification_flags: Vec<NotificationFlag>,
 }
 
@@ -45,7 +55,7 @@ impl Canvas {
 
     //Definitions in ./tools/
     //Entry point for user input
-    pub async fn brush_handler(&mut self, socket: &mut WebSocket) {
+    pub async fn brush_handler(&mut self, wsc : &mut WsClient) {
         self.hotkey_handler().await;
 
         match self.brush.state {
@@ -54,7 +64,7 @@ impl Canvas {
             }
 
             Eraser => {
-                self.eraser(socket).await;
+                self.eraser(wsc).await;
             }
 
             Off => {}

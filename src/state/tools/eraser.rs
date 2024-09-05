@@ -1,13 +1,12 @@
-use crate::networking::networking_io::remove;
 use crate::state::dot::Dot;
 use macroquad::prelude::*;
-use quad_net::web_socket::WebSocket;
+use crate::networking::ws::WsClient;
+
 
 impl super::super::canvas::Canvas {
-    pub async fn eraser(&mut self, socket: &mut WebSocket) {
+    pub async fn eraser(&mut self, socket: &mut WsClient) {
         self.brush.render_eraser();
         self.brush.eraser_update(1.0);
-
 
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
@@ -58,7 +57,6 @@ impl super::super::canvas::Canvas {
                 self.clear_and_del(socket).await;
             }
             self.brush.eraser_update(5.0);
-
         } else {
             self.clear_and_del(socket).await;
         }
@@ -78,9 +76,9 @@ impl super::super::canvas::Canvas {
         res
     }
 
-    async fn clear_and_del(&mut self, socket: &mut WebSocket) {
+    async fn clear_and_del(&mut self, wsc: &mut WsClient) {
         if !self.garbage.is_empty() {
-            remove(socket, &self.user, &self.garbage).await.unwrap();
+            wsc.canvas_remove(&self.garbage).await.unwrap();
             self.garbage.clear();
         }
     }

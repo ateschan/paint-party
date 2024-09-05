@@ -1,5 +1,7 @@
+use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
-use crate::ui::ui_driver::Render;
+use crate::ui::ui_driver::GuiModule;
+use async_trait::async_trait;
 use egui::Align2;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
@@ -30,8 +32,9 @@ impl Default for NotificationTray {
     }
 }
 
-impl Render for NotificationTray {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas) {
+#[async_trait]
+impl GuiModule for NotificationTray {
+    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas,  wsc : &mut WsClient) {
         egui::Window::new(RichText::new("Notifications"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
             .anchor(Align2::CENTER_TOP, (0.0, 10.0))
@@ -59,6 +62,9 @@ impl Render for NotificationTray {
                 });
             });
         self.check_size()
+    }
+    async fn handle_ws(&mut self, wsc: &mut WsClient) {
+        //No use for notiication out
     }
 }
 
