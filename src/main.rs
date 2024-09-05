@@ -14,7 +14,7 @@ use quad_net::web_socket::WebSocket;
 // HACK:
 //
 // *) TODO: Work on chat feature
-// *) TODO: Implement server side chat relay 
+// *) TODO: Implement server side chat relay
 //
 // *) TODO: Polish notification system with colors or some shit
 //

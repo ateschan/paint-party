@@ -18,7 +18,6 @@ pub struct Canvas {
     pub garbage: Vec<String>,
     pub frame_count: i32,
     pub brush: Brush,
-
     //Why does this exist? Canvas -> UI
     //Canvas -> Websocket Handler
 

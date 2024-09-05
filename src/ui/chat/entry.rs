@@ -20,7 +20,8 @@ pub fn chat_entryfield_ui(
             if ui
                 .add(egui_macroquad::egui::Button::new("Send"))
                 .on_hover_text("Send chat")
-                .clicked() || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter)) 
+                .clicked()
+                || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
             {
                 chats.push(Chat {
                     user: "Self".to_owned(),

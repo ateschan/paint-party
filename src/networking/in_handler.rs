@@ -1,9 +1,9 @@
 use crate::networking::ws::WsClient;
-use crate::ui::notifications::notification_tray::NotificationFlag::*;
-use std::str::from_utf8;
 use crate::state::canvas::Canvas;
 use crate::state::dot::Dot;
 use crate::ui::chat::chat_tray::Chat;
+use crate::ui::notifications::notification_tray::NotificationFlag::*;
+use std::str::from_utf8;
 
 impl WsClient {
     pub async fn in_handler(&mut self, canvas: &mut Canvas) {
@@ -54,20 +54,21 @@ impl WsClient {
                 }
                 //TODO
                 //
-                                //TODO
+                //Take in chats one by one
                 "CHT_RES" => {
-                    let chats: Vec<Chat> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
-                    self.chats_inc.extend(chats);
-                    self.notification_flags.push(ChtSuccess);
-
-                    //println!("RECIEVED CHAT : {:?}", chats.clone());
+                    let chat: Chat = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
+                    self.chats_inc.push(chat);
                 }
-                //TODO
+
                 "ERR_RES " => {
                     println!("SERVER ERR RES RECIEVED: {}", message[1]);
                     self.notification_flags.push(Fail(message[1].to_owned()));
                 }
-                _ => println!("UNDEFINED RES"),
+
+                "CHT_SELF_RES" => {
+                    self.notification_flags.push(ChtSuccess);
+                }
+                _ => println!("UNDEFINED RES {:?}", message),
             }
         }
     }

@@ -13,7 +13,7 @@ pub struct ChatTray {
     chats: Vec<Chat>,
     limit: usize,
     current_entry: String,
-    cooldown : i32
+    cooldown: i32,
 }
 
 impl Default for ChatTray {
@@ -22,7 +22,7 @@ impl Default for ChatTray {
             chats: Vec::new(),
             limit: 10,
             current_entry: String::new(),
-            cooldown : 600
+            cooldown: 600,
         }
     }
 }
@@ -75,6 +75,7 @@ impl GuiModule for ChatTray {
             wsc.chats_inc.clear();
         }
 
+        //Implement queuing for internet lag
         if !wsc.chats_out.is_empty() {
             wsc.gui_chat(&wsc.chats_out).await.unwrap();
             self.chats.extend(wsc.chats_out.clone());
@@ -97,14 +98,26 @@ impl Chat {
     //Render out chats with uuid : message format
     //Single bar
     pub fn chat_module(&mut self, ui: &mut egui_macroquad::egui::Ui) {
-        ui.with_layout(
-            egui_macroquad::egui::Layout::left_to_right(Align::TOP),
-            |ui| {
-                ui.add_space(5.0);
-                ui.label(&self.user);
-                ui.label(&self.message);
-                ui.add_space(5.0);
-            },
-        );
+        if self.user.len() > 5 {
+            ui.with_layout(
+                egui_macroquad::egui::Layout::left_to_right(Align::TOP),
+                |ui| {
+                    ui.add_space(5.0);
+                    ui.label(&self.user[&self.user.len() - 5..]);
+                    ui.label(&self.message);
+                    ui.add_space(5.0);
+                },
+            );
+        } else {
+            ui.with_layout(
+                egui_macroquad::egui::Layout::left_to_right(Align::TOP),
+                |ui| {
+                    ui.add_space(5.0);
+                    ui.label(&self.user);
+                    ui.label(&self.message);
+                    ui.add_space(5.0);
+                },
+            );
+        }
     }
 }

@@ -73,7 +73,6 @@ impl WsClient {
             println!("CLEARING CACHE");
         }
     }
-
 }
 // DEL REQUEST TO WEBSOCKET
 //     if canvas.clear_flag {

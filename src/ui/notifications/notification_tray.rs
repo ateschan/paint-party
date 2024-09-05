@@ -96,7 +96,7 @@ impl NotificationTray {
                 &mut "Del recieved!",
             )),
             NotificationFlag::ChtSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Chat recieved!",
+                &mut "Chat sent!",
             )),
             NotificationFlag::InvApi => ui.add(egui_macroquad::egui::TextEdit::singleline(
                 &mut "Inavlid Credentials",
