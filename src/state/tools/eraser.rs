@@ -1,7 +1,6 @@
+use crate::networking::ws::WsClient;
 use crate::state::dot::Dot;
 use macroquad::prelude::*;
-use crate::networking::ws::WsClient;
-
 
 impl super::super::canvas::Canvas {
     pub async fn eraser(&mut self, socket: &mut WsClient) {

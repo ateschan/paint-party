@@ -15,7 +15,7 @@ pub struct ToolbarTray {
 
 #[async_trait]
 impl GuiModule for ToolbarTray {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc : &mut WsClient) {
+    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Toolbar"))
             .resizable(false)
             .default_pos([250.0, 10.0])
@@ -34,9 +34,12 @@ impl GuiModule for ToolbarTray {
                 ui.vertical(|ui| {
                     self.brush_1(ui, canvas);
                 });
-                ui.vertical(|ui| self.server_1(ui, canvas, wsc));
+                ui.vertical(|ui| self.server_1(ui, wsc));
                 canvas.brush.size = self.tmp_size;
             });
+        if self.clear_flag {
+            canvas.lines.clear();
+        }
     }
     async fn handle_ws(&mut self, wsc: &mut WsClient) {
         if self.refresh_flag {
@@ -51,7 +54,7 @@ impl GuiModule for ToolbarTray {
             wsc.user.room = self.tmp_room;
             match wsc.canvas_delete().await {
                 Ok(a) => println!("{a}"),
-                Err(e) => panic!("{}", e)
+                Err(e) => panic!("{}", e),
             }
             self.clear_flag = false;
         }
@@ -59,7 +62,7 @@ impl GuiModule for ToolbarTray {
 }
 
 impl ToolbarTray {
-    fn init(&mut self, canvas: &mut Canvas, wsc : &mut WsClient) {
+    fn init(&mut self, canvas: &mut Canvas, wsc: &mut WsClient) {
         self.tmp_room = wsc.user.room;
         self.tmp_size = canvas.brush.size;
     }
@@ -115,8 +118,7 @@ impl ToolbarTray {
     fn server_1(
         &mut self,
         ui: &mut egui_macroquad::egui::Ui,
-        canvas: &mut Canvas,
-         wsc : &mut WsClient
+        wsc: &mut WsClient,
     ) -> egui_macroquad::egui::Response {
         let result = ui.horizontal(|ui| {
             if ui

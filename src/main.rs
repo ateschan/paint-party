@@ -13,11 +13,10 @@ use quad_net::web_socket::WebSocket;
 
 // HACK:
 //
-// *) FIXME: Fix your bad fucking ideas
-//
 // *) TODO: Work on chat feature
+// *) TODO: Implement server side chat relay 
 //
-// *) TODO: Polish notification system
+// *) TODO: Polish notification system with colors or some shit
 //
 // HACK:
 //
@@ -41,6 +40,9 @@ async fn main() {
             room: 0,
             apikey: storage.get("apikey").unwrap(),
         },
+        chats_inc: Vec::new(),
+        chats_out: Vec::new(),
+        notification_flags: Vec::new(),
     };
 
     //std::mem::drop(storage);
@@ -62,7 +64,7 @@ async fn main() {
         canvas.render_paint();
 
         canvas.brush_handler(&mut wsc).await;
-        
+
         render_gui(&mut gui, &mut canvas, &mut wsc).await;
 
         //Handle incoming canvas websocket requests
@@ -70,7 +72,6 @@ async fn main() {
 
         wsc.canvas_out_handler(&mut canvas).await;
 
-        
         //Pass frame render data to macroquad
         next_frame().await;
     }

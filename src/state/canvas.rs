@@ -1,12 +1,10 @@
-use super::{brush::Brush, /* particles::explosion */};
+use super::{brush::Brush /* particles::explosion */};
+use crate::networking::ws::WsClient;
 use crate::state::brush::BrushState::{Eraser, Off, Paintbrush};
 use crate::state::dot::Dot;
-use crate::ui::chat::chat_tray::Chat;
-use crate::ui::notifications::notification_tray::NotificationFlag;
 use macroquad::input::KeyCode;
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
-use crate::networking::ws::WsClient;
 //Order of inheritence for drawing goes Canvas -> Brush -> Dot
 //
 //Canvas serves as the interface for screeen state, and is used by UI and the websocket client
@@ -27,19 +25,16 @@ pub struct Canvas {
     //  BUG: |||||||||||||||||||||||||||||||||||||||||||||||||\
     //  What I need
     //  Ui is able to change canvas settings Canvas -> Ui
-    //  check for changes to ui WSHANDLER CLASS -> Ui
-    //  check for changes to canvas Canvas-> WShandler class
+    //  check for changes to ui wshandler class -> ui
+    //  check for changes to canvas canvas-> wshandler class
     //
-    //  Ws class will have functions and will be passed into ws handler functions in gui and in
+    //  ws class will have functions and will be passed into ws handler functions in gui and in
     //  canvas
-    //  BUG: |||||||||||||||||||||||||||||||||||||||||||||||||\
+    //  bug: |||||||||||||||||||||||||||||||||||||||||||||||||\
 
-    //WS glue
+    //ws glue
 
-    //Ui glue
-    pub inc_chats: Vec<Chat>,
-    pub out_chats: Vec<Chat>,
-    pub notification_flags: Vec<NotificationFlag>,
+    //ui glue
 }
 
 impl Canvas {
@@ -55,7 +50,7 @@ impl Canvas {
 
     //Definitions in ./tools/
     //Entry point for user input
-    pub async fn brush_handler(&mut self, wsc : &mut WsClient) {
+    pub async fn brush_handler(&mut self, wsc: &mut WsClient) {
         self.hotkey_handler().await;
 
         match self.brush.state {

@@ -6,11 +6,14 @@ use async_trait::async_trait;
 use egui::{Align, Align2};
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use nanoserde::{DeJson, SerJson};
+
 //WIP
+#[allow(dead_code)]
 pub struct ChatTray {
     chats: Vec<Chat>,
     limit: usize,
     current_entry: String,
+    cooldown : i32
 }
 
 impl Default for ChatTray {
@@ -19,20 +22,20 @@ impl Default for ChatTray {
             chats: Vec::new(),
             limit: 10,
             current_entry: String::new(),
+            cooldown : 600
         }
     }
 }
 
-#[derive(Clone, SerJson, DeJson)]
+#[derive(Clone, SerJson, DeJson, Debug)]
 pub struct Chat {
     pub message: String,
     pub user: String,
 }
 
-//FIXME: Just remove canvas b and integrate chats stright from the attributes like a sane person
 #[async_trait]
 impl GuiModule for ChatTray {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas,  wsc : &mut WsClient) {
+    fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Live Chat"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
             .anchor(Align2::RIGHT_TOP, (-250.0, 10.0))
@@ -47,11 +50,6 @@ impl GuiModule for ChatTray {
                     .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::WHITE)),
             )
             .show(egui_ctx, |ui| {
-                if !canvas.inc_chats.is_empty() {
-                    self.chats.extend(canvas.inc_chats.clone());
-                    canvas.inc_chats.clear();
-                }
-
                 //Handle current chats
                 ui.vertical(|ui| {
                     for chat in self.chats.iter_mut() {
@@ -63,19 +61,25 @@ impl GuiModule for ChatTray {
                 ui.vertical(|ui| {
                     ui.add(super::entry::chat_entryfield(
                         &mut self.current_entry,
-                        &mut canvas.out_chats,
+                        &mut wsc.chats_out,
                     ));
-                    if !canvas.out_chats.is_empty() {
-                        self.chats.extend(canvas.out_chats.clone());
-                    }
                 });
             });
         self.check_size();
     }
 
-    //Handle chat out 
+    //Handle chat out
     async fn handle_ws(&mut self, wsc: &mut WsClient) {
-        
+        if !wsc.chats_inc.is_empty() {
+            self.chats.extend(wsc.chats_inc.clone());
+            wsc.chats_inc.clear();
+        }
+
+        if !wsc.chats_out.is_empty() {
+            wsc.gui_chat(&wsc.chats_out).await.unwrap();
+            self.chats.extend(wsc.chats_out.clone());
+            wsc.chats_out.clear();
+        }
     }
 }
 

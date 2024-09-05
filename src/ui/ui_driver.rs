@@ -9,7 +9,7 @@ use super::{
 
 #[async_trait]
 pub trait GuiModule {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas,  wsc : &mut WsClient);
+    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient);
     async fn handle_ws(&mut self, wsc: &mut WsClient);
 }
 
@@ -36,7 +36,6 @@ pub fn tray_builder() -> Vec<Box<dyn GuiModule>> {
     let modules: Vec<Box<dyn GuiModule>> = vec![
         Box::new(ChatTray::default()),
         Box::new(ToolbarTray::default()),
-        #[cfg(test)]
         Box::new(NotificationTray::default()),
     ];
     modules

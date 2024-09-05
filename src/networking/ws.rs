@@ -1,11 +1,17 @@
 use crate::state::user::User;
+use crate::ui::chat::chat_tray::Chat;
+use crate::ui::notifications::notification_tray::NotificationFlag;
 use quad_net::web_socket::WebSocket;
 
-//TODO: I need definiteions for canvas_out(var)
-//TODO: I need definiteions for canvas_in(var)
-//TODO: I need definiteions for gui_out(var)
-
+//canvas_handler = canvas out
+//gui_handler = gui_out
 pub struct WsClient {
     pub socket: WebSocket,
     pub user: User,
+
+    pub chats_inc: Vec<Chat>,
+    pub chats_out: Vec<Chat>,
+
+    //TODO: Notifications will go here as well
+    pub notification_flags: Vec<NotificationFlag>,
 }

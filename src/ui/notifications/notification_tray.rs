@@ -12,6 +12,7 @@ pub enum NotificationFlag {
     DelSuccess,
     UpdSuccess,
     ClrSuccess,
+    ChtSuccess,
     RmvSuccess,
     InvApi,
     Fail(String),
@@ -32,9 +33,10 @@ impl Default for NotificationTray {
     }
 }
 
+//TODO: Refactor to remove canvas
 #[async_trait]
 impl GuiModule for NotificationTray {
-    fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas,  wsc : &mut WsClient) {
+    fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Notifications"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
             .anchor(Align2::CENTER_TOP, (0.0, 10.0))
@@ -51,10 +53,10 @@ impl GuiModule for NotificationTray {
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
                 ui.vertical(|ui| {
-                    if !canvas.notification_flags.is_empty() {
+                    if !wsc.notification_flags.is_empty() {
                         self.current_notifications
-                            .extend(canvas.notification_flags.clone());
-                        canvas.notification_flags.clear();
+                            .extend(wsc.notification_flags.clone());
+                        wsc.notification_flags.clear();
                     }
                     for not in self.current_notifications.clone().iter_mut() {
                         self.notificaton_module(ui, not);
@@ -63,7 +65,7 @@ impl GuiModule for NotificationTray {
             });
         self.check_size()
     }
-    async fn handle_ws(&mut self, wsc: &mut WsClient) {
+    async fn handle_ws(&mut self, _wsc: &mut WsClient) {
         //No use for notiication out
     }
 }
@@ -92,6 +94,9 @@ impl NotificationTray {
             )),
             NotificationFlag::DelSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
                 &mut "Del recieved!",
+            )),
+            NotificationFlag::ChtSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
+                &mut "Chat recieved!",
             )),
             NotificationFlag::InvApi => ui.add(egui_macroquad::egui::TextEdit::singleline(
                 &mut "Inavlid Credentials",
