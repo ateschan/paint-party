@@ -43,7 +43,7 @@ impl super::super::canvas::Canvas {
 
 //SELF AS CURSOR
 impl super::super::brush::Brush {
-        pub fn render_paintbrush(&self) {
+    pub fn render_paintbrush(&self) {
         draw_circle(
             mouse_position().0,
             mouse_position().1,

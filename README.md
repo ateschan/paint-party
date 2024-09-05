@@ -38,7 +38,6 @@ choco install openssl
 - [X] Particles
 - [X] Hotkey support
 - [ ] Undo
-- [ ] Intro Animation
 - [ ] Chat
 - [ ] Graceful error handling
 - [ ] Showcase website

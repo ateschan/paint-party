@@ -5,6 +5,7 @@ use crate::ui::notifications::notification_tray::NotificationFlag::*;
 use quad_net::web_socket::WebSocket;
 use std::str::from_utf8;
 
+//Outgoing requests
 pub async fn get(
     socket: &mut WebSocket,
     user: &User,
@@ -58,6 +59,7 @@ pub async fn remove(
     Ok(String::from("RMV Sent!"))
 }
 
+//Incoming requests
 pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
     if let Some(res) = socket.try_recv() {
         let res_text: &str = from_utf8(&res).unwrap();
@@ -66,6 +68,7 @@ pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
         match message[0] {
             // Server response abstractions
             "GET_RES" => {
+                #[cfg(test)]
                 println!("SERVER GET RES RECIEVED");
                 let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                 canvas.lines.clear();
@@ -73,6 +76,7 @@ pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
                 canvas.notification_flags.push(GetSuccess);
             }
             "UPD_RES" => {
+                #[cfg(test)]
                 println!("SERVER UPD RES RECIEVED");
                 if message[1] == canvas.user.room.to_string() {
                     let new: Vec<Dot> = nanoserde::DeJson::deserialize_json(message[2]).unwrap();
@@ -81,30 +85,47 @@ pub async fn web_socket_handler(socket: &mut WebSocket, canvas: &mut Canvas) {
                 canvas.notification_flags.push(UpdSuccess);
             }
             "CLR_RES" => {
+                #[cfg(test)]
                 println!("SERVER CLR RES RECIEVED");
                 canvas.lines.clear();
                 canvas.notification_flags.push(ClrSuccess);
             }
             "PUT_RES" => {
+                #[cfg(test)]
                 println!("SERVER PUT RES RECIEVED: {}", message[1]);
                 canvas.notification_flags.push(UpdSuccess);
             }
             "DEL_RES" => {
+                #[cfg(test)]
                 println!("SERVER DEL RES RECIEVED: {}", message[1]);
                 canvas.notification_flags.push(DelSuccess);
             }
             "RMV_RES" => {
+                #[cfg(test)]
                 println!("SERVER RMV RES RECIEVED: {}", message[1]);
                 let ids: Vec<String> = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
                 canvas.remove_dots_by_id(&ids);
                 canvas.notification_flags.push(RmvSuccess);
             }
             //TODO
-            "INV_API" => {
+            "INV_KEY" => {
                 canvas.notification_flags.push(InvApi);
             }
             //TODO
+            //
+            //TODO
+            //
+            "CHT_RES" => {
+                //message 1 = user uuid
+                //mesage 2 = message
+                //chat = user id + message
+                println!("SERVER CHT RES RECIEVED: {}", message[2])
+                //canvas.refresh_flag
+            }
+            //
+            //TODO
             "ERR_RES " => {
+                #[cfg(test)]
                 println!("SERVER ERR RES RECIEVED: {}", message[1]);
                 canvas.notification_flags.push(Fail(message[1].to_owned()));
             }

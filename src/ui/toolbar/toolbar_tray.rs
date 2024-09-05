@@ -11,9 +11,9 @@ pub struct ToolbarTray {
 
 impl Render for ToolbarTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas) {
-        egui::Window::new(RichText::new("PAINT PARTY"))
+        egui::Window::new(RichText::new("Toolbar"))
             .resizable(false)
-            .default_pos([10.0, 10.0])
+            .default_pos([250.0, 10.0])
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -29,9 +29,7 @@ impl Render for ToolbarTray {
                 ui.vertical(|ui| {
                     self.brush_1(ui, canvas);
                 });
-
                 ui.vertical(|ui| self.server_1(ui, canvas));
-
                 canvas.brush.size = self.tmp_size;
             });
     }
@@ -60,10 +58,10 @@ impl ToolbarTray {
             ui.color_edit_button_srgba(&mut color_button)
                 .on_hover_text("Change color");
 
-            if ui.button("[]").on_hover_text("Eraser").clicked() {
+            if ui.button("O").on_hover_text("Eraser").clicked() {
                 canvas.brush.state = Eraser;
             }
-            if ui.button("/").on_hover_text("Paintbrush").clicked() {
+            if ui.button("//").on_hover_text("Paintbrush").clicked() {
                 canvas.brush.state = Paintbrush;
             }
 
@@ -80,7 +78,7 @@ impl ToolbarTray {
 
             ui.add_sized(
                 ui.available_size(),
-                egui::Slider::new(&mut self.tmp_size, 0.0..=300.0).trailing_fill(true),
+                egui::Slider::new(&mut self.tmp_size, 1.0..=600.0).trailing_fill(true),
             )
             .on_hover_text("Brush Size");
             canvas.brush.r = egui_macroquad::egui::Color32::to_srgba_unmultiplied(&color_button)[0];

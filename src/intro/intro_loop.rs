@@ -1,5 +1,6 @@
 use super::password::password;
-use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32, TextEdit};
+use crate::intro::socket::socket;
+use egui_macroquad::egui::{self, epaint::Shadow, Align2, Color32};
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
 
@@ -98,22 +99,16 @@ pub async fn render_intro(
                 egui::Frame::default()
                     .inner_margin(4.0)
                     .shadow(Shadow::NONE)
-                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::BLACK)),
+                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::TRANSPARENT)),
             )
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
                 ui.horizontal(|ui| {
                     ui.vertical(|ui| {
-                        ui.add(TextEdit::singleline(&mut tmp_socket)).highlight();
+                        ui.add(socket(&mut tmp_socket, storage)).highlight();
+                        ui.add_space(8.0);
                         ui.add(password(&mut tmp_pass)).highlight();
                     });
-                    if ui
-                        .add(egui_macroquad::egui::Button::new("connect"))
-                        .on_hover_text("Connect to server")
-                        .clicked()
-                    {
-                        storage.set("intro_complete_flag", "true");
-                    }
                 });
             });
     });

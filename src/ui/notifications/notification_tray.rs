@@ -17,7 +17,7 @@ pub enum NotificationFlag {
 
 #[derive(Clone)]
 pub struct NotificationTray {
-    current_notifications: Vec<NotificationFlag>,
+    pub current_notifications: Vec<NotificationFlag>,
     limit: usize,
 }
 
@@ -47,17 +47,18 @@ impl Render for NotificationTray {
             )
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
-                if !canvas.notification_flags.is_empty() {
-                    self.current_notifications
-                        .extend(canvas.notification_flags.clone())
-                };
                 ui.vertical(|ui| {
+                    if !canvas.notification_flags.is_empty() {
+                        self.current_notifications
+                            .extend(canvas.notification_flags.clone());
+                        canvas.notification_flags.clear();
+                    }
                     for not in self.current_notifications.clone().iter_mut() {
                         self.notificaton_module(ui, not);
                     }
                 });
             });
-        self.check_size(canvas)
+        self.check_size()
     }
 }
 
@@ -99,11 +100,11 @@ impl NotificationTray {
         };
     }
 
-    fn check_size(&mut self, canvas: &mut Canvas) {
-        if canvas.notification_flags.len() > self.limit {
-            canvas.notification_flags.reverse();
-            canvas.notification_flags.pop();
-            canvas.notification_flags.reverse();
+    fn check_size(&mut self) {
+        if self.current_notifications.len() > self.limit {
+            self.current_notifications.reverse();
+            self.current_notifications.pop();
+            self.current_notifications.reverse();
         }
     }
 }

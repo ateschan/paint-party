@@ -6,6 +6,8 @@ use quad_net::web_socket::WebSocket;
 impl super::super::canvas::Canvas {
     pub async fn eraser(&mut self, socket: &mut WebSocket) {
         self.brush.render_eraser();
+        self.brush.eraser_update(1.0);
+
 
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
@@ -28,6 +30,7 @@ impl super::super::canvas::Canvas {
                     if !self.garbage.contains(&dot.id) {
                         true
                     } else {
+                        // Unimplemnted emitter config
                         // self.brush.spawn_emitter(
                         //     Emitter::new(EmitterConfig {
                         //         size: dot.size,
@@ -50,15 +53,15 @@ impl super::super::canvas::Canvas {
                     }
                 });
             }
-            self.brush.eraser_update(5.0);
-        } else {
-            let comp: Vec<String> = Vec::new();
-            if self.garbage != comp {
-                remove(socket, &self.user, &self.garbage).await.unwrap();
-                self.garbage.clear();
+            // Counter at 99 for chunking
+            if self.garbage.len() >= 99 {
+                self.clear_and_del(socket).await;
             }
+            self.brush.eraser_update(5.0);
+
+        } else {
+            self.clear_and_del(socket).await;
         }
-        self.brush.eraser_update(1.0);
     }
     pub fn remove_dots_by_id(&mut self, ids_to_remove: &[String]) {
         self.lines.retain(|dot| !ids_to_remove.contains(&dot.id));
@@ -73,6 +76,13 @@ impl super::super::canvas::Canvas {
             }
         }
         res
+    }
+
+    async fn clear_and_del(&mut self, socket: &mut WebSocket) {
+        if !self.garbage.is_empty() {
+            remove(socket, &self.user, &self.garbage).await.unwrap();
+            self.garbage.clear();
+        }
     }
 }
 

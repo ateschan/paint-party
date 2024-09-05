@@ -11,7 +11,7 @@ pub fn paint_seep() -> particles::EmitterConfig {
         explosiveness: 0.96,
         amount: 5,
         initial_direction_spread: 2.0 * std::f32::consts::PI,
-        initial_velocity: 16.0,
+        initial_velocity: 25.0,
         gravity: vec2(0.0, 30.0),
         atlas: Some(AtlasConfig::new(4, 4, 8..)),
         blend_mode: BlendMode::Alpha,

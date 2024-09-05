@@ -44,7 +44,6 @@ impl Default for Brush {
 }
 
 impl Brush {
-
     pub fn eraser_update(&mut self, num: f32) {
         if self.eraser_rot <= 360.0 {
             self.eraser_rot += num;
