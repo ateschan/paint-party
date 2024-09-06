@@ -31,6 +31,7 @@ impl Default for ChatTray {
 pub struct Chat {
     pub message: String,
     pub user: String,
+    pub color: (u8, u8, u8),
 }
 
 #[async_trait]
@@ -103,8 +104,13 @@ impl Chat {
                 egui_macroquad::egui::Layout::left_to_right(Align::TOP),
                 |ui| {
                     ui.add_space(5.0);
-                    ui.label(&self.user[&self.user.len() - 5..]);
-                    ui.label(&self.message);
+                    ui.label(
+                        RichText::new(&self.user[&self.user.len() - 5..]).background_color(
+                            Color32::from_rgb(self.color.0, self.color.1, self.color.2),
+                        ),
+                    );
+
+                    ui.label(RichText::new(&self.message).background_color(Color32::LIGHT_GRAY));
                     ui.add_space(5.0);
                 },
             );
@@ -113,8 +119,14 @@ impl Chat {
                 egui_macroquad::egui::Layout::left_to_right(Align::TOP),
                 |ui| {
                     ui.add_space(5.0);
-                    ui.label(&self.user);
-                    ui.label(&self.message);
+                    ui.label(
+                        RichText::new(&self.user).background_color(Color32::from_rgb(
+                            self.color.0,
+                            self.color.1,
+                            self.color.2,
+                        )),
+                    );
+                    ui.label(RichText::new(&self.message).background_color(Color32::LIGHT_GRAY));
                     ui.add_space(5.0);
                 },
             );

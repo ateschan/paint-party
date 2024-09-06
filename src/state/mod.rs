@@ -3,4 +3,3 @@ pub mod canvas;
 pub mod dot;
 pub mod particles;
 pub mod tools;
-pub mod user;

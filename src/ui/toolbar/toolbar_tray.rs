@@ -131,7 +131,7 @@ impl ToolbarTray {
                 .on_hover_text("Server room")
                 .on_hover_cursor(egui::CursorIcon::Default)
                 .lost_focus()
-                || ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
+                && ui.input(|i| i.key_pressed(egui_macroquad::egui::Key::Enter))
             {
                 wsc.user.room = self.tmp_room;
                 self.refresh_flag = true;

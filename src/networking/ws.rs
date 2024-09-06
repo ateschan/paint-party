@@ -1,4 +1,4 @@
-use crate::state::user::User;
+use super::user::User;
 use crate::ui::chat::chat_tray::Chat;
 use crate::ui::notifications::notification_tray::NotificationFlag;
 use quad_net::web_socket::WebSocket;

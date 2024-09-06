@@ -35,7 +35,7 @@ async fn main() {
 
     let mut wsc = WsClient {
         socket: connsocket,
-        user: state::user::User {
+        user: crate::networking::user::User {
             uuid: 0,
             room: 0,
             apikey: storage.get("apikey").unwrap(),
