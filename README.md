@@ -4,6 +4,7 @@
 1. Download the latest release at https://github.com/ateschan/paint-party/releases
 2. Place the binary in source folder root
 
+## Compile from source 
 ### Prerequisites
 You need rust installed, follow directions on https://rustup.rs/
 
