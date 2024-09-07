@@ -44,13 +44,11 @@ choco install openssl
 - [X] Hotkey support
 - [ ] Undo
 - [X] Chat
-- [ ] Graceful error handling
-- [ ] Showcase website
-- [ ] Deploy to steam
-
- # Extend Paint Toolkit x10 
+- [X] Graceful (ish) error handling
 - [ ] Color Shifting
 - [ ] Size Oscillator
+- [ ] Trig Tool
+
 
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).

@@ -11,14 +11,13 @@ use macroquad::prelude::*;
 use networking::ws::WsClient;
 use quad_net::web_socket::WebSocket;
 
+
 // HACK:
-//
-// *) TODO: Work on chat feature
-// *) TODO: Implement server side chat relay
 //
 // *) TODO: Polish notification system with colors or some shit
 //
 // HACK:
+//
 //
 //Driver
 #[macroquad::main("Paint Party")]
@@ -32,6 +31,7 @@ async fn main() {
     let connsocket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
     let mut gui = crate::ui::ui_driver::tray_builder();
+
 
     let mut wsc = WsClient {
         socket: connsocket,

@@ -22,6 +22,7 @@ pub enum NotificationFlag {
 pub struct NotificationTray {
     pub current_notifications: Vec<NotificationFlag>,
     limit: usize,
+    timer : usize
 }
 
 impl Default for NotificationTray {
@@ -29,6 +30,7 @@ impl Default for NotificationTray {
         NotificationTray {
             current_notifications: Vec::new(),
             limit: 5,
+            timer: 300
         }
     }
 }
@@ -37,22 +39,23 @@ impl Default for NotificationTray {
 #[async_trait]
 impl GuiModule for NotificationTray {
     fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
-        egui::Window::new(RichText::new("Notifications"))
+        egui::Window::new(RichText::new(" Notifications"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .anchor(Align2::CENTER_TOP, (0.0, 10.0))
+            .collapsible(true)
+            .anchor(Align2::RIGHT_TOP, (-8.0, 8.0))
+            .title_bar(false)
             .resizable(false)
             .movable(false)
-            .default_open(false)
+            .default_open(true)
             .frame(
                 egui::Frame::default()
-                    .inner_margin(4.0)
+                    .multiply_with_opacity(20.0)
                     .shadow(Shadow::NONE)
-                    .fill(Color32::WHITE)
-                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::WHITE)),
+                    .fill(Color32::TRANSPARENT)
             )
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
-                ui.vertical(|ui| {
+                ui.horizontal(|ui| {
                     if !wsc.notification_flags.is_empty() {
                         self.current_notifications
                             .extend(wsc.notification_flags.clone());
@@ -63,7 +66,8 @@ impl GuiModule for NotificationTray {
                     }
                 });
             });
-        self.check_size()
+        self.check_size();
+        self.timer -= 1;
     }
     async fn handle_ws(&mut self, _wsc: &mut WsClient) {
         //No use for notiication out
@@ -77,32 +81,33 @@ impl NotificationTray {
         not: &mut NotificationFlag,
     ) {
         match not {
-            NotificationFlag::GetSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Get recieved!",
-            )),
-            NotificationFlag::PutSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Put recieved!",
-            )),
-            NotificationFlag::UpdSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Upd recieved!",
-            )),
-            NotificationFlag::ClrSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Clr recieved!",
-            )),
-            NotificationFlag::RmvSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Rmv recieved!",
-            )),
-            NotificationFlag::DelSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Del recieved!",
-            )),
-            NotificationFlag::ChtSuccess => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Chat sent!",
-            )),
-            NotificationFlag::InvApi => ui.add(egui_macroquad::egui::TextEdit::singleline(
-                &mut "Inavlid Credentials",
-            )),
-            NotificationFlag::Fail(e) => ui.add_sized(
-                ui.available_size(),
+            NotificationFlag::GetSuccess => ui.label(RichText::new(
+                "Get recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::PutSuccess => ui.label(RichText::new(
+                "Put recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::UpdSuccess => ui.label(RichText::new(
+                "Upd recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::ClrSuccess => ui.label(RichText::new(
+                "Clr recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::RmvSuccess => ui.label(RichText::new(
+                "Rmv recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::DelSuccess => ui.label(RichText::new(
+                "Del recieved!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::ChtSuccess => ui.label(RichText::new(
+                "Chat sent!",
+            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+
+            NotificationFlag::InvApi => ui.label(RichText::new(
+                "Inavlid Credentials",
+            ).size(16.0).strong().background_color(Color32::LIGHT_RED)),
+
+            NotificationFlag::Fail(e) => ui.add_sized( ui.available_size(),
                 egui_macroquad::egui::TextEdit::singleline(&mut format!(
                     "Failiure recieved: {}",
                     e
@@ -112,10 +117,11 @@ impl NotificationTray {
     }
 
     fn check_size(&mut self) {
-        if self.current_notifications.len() > self.limit {
+        if self.current_notifications.len() > self.limit || self.timer == 0 {
             self.current_notifications.reverse();
             self.current_notifications.pop();
             self.current_notifications.reverse();
+            self.timer = 300;
         }
     }
 }

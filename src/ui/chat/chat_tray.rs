@@ -3,7 +3,7 @@ use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
 use crate::ui::ui_driver::GuiModule;
 use async_trait::async_trait;
-use egui::{Align, Align2};
+use egui::{Align, Align2, Rounding};
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use nanoserde::{DeJson, SerJson};
 
@@ -39,7 +39,7 @@ impl GuiModule for ChatTray {
     fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Live Chat"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .anchor(Align2::RIGHT_TOP, (-250.0, 10.0))
+            .anchor(Align2::CENTER_TOP, (0.0,0.0))
             .resizable(false)
             .movable(false)
             .default_open(false)
@@ -47,8 +47,9 @@ impl GuiModule for ChatTray {
                 egui::Frame::default()
                     .inner_margin(4.0)
                     .shadow(Shadow::NONE)
-                    .fill(Color32::WHITE)
-                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::WHITE)),
+                    .fill(Color32::TRANSPARENT)
+                    .rounding(Rounding::same(10.0))
+                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::TRANSPARENT)),
             )
             .show(egui_ctx, |ui| {
                 //Handle current chats
@@ -107,7 +108,7 @@ impl Chat {
                     ui.label(
                         RichText::new(&self.user[&self.user.len() - 5..]).background_color(
                             Color32::from_rgb(self.color.0, self.color.1, self.color.2),
-                        ),
+                        ).strong().text_style(egui::TextStyle::Button),
                     );
 
                     ui.label(RichText::new(&self.message).background_color(Color32::LIGHT_GRAY));

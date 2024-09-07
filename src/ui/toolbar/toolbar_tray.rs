@@ -13,12 +13,18 @@ pub struct ToolbarTray {
     pub clear_flag: bool,
 }
 
+
+
+// TODO:  ADD drop down panels for control sections
+// TODO:  Add correspingng tools for it. First up: Color oscillator
+//  
+ 
 #[async_trait]
 impl GuiModule for ToolbarTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Toolbar"))
             .resizable(false)
-            .default_pos([250.0, 10.0])
+            .default_pos([150.0, 10.0])
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
