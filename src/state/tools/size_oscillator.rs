@@ -53,6 +53,20 @@ impl Canvas {
                 self.brush.a,
             ),
         );
+        draw_poly_lines(
+            mouse_position().0,
+            mouse_position().1,
+            12,
+            self.brush.size_osc_minmax.1,
+            self.brush.rot,
+            5.0,
+            macroquad::color::Color::from_rgba(
+                self.brush.r,
+                self.brush.g,
+                self.brush.b,
+                self.brush.a,
+            ),
+        );
         draw_poly(
             mouse_position().0,
             mouse_position().1,
@@ -63,6 +77,19 @@ impl Canvas {
                 255 - self.brush.r,
                 255 - self.brush.g,
                 255 - self.brush.b,
+                self.brush.a,
+            ),
+        );
+        draw_poly(
+            mouse_position().0,
+            mouse_position().1,
+            12,
+            self.brush.size_osc_minmax.0,
+            -self.brush.rot,
+            macroquad::color::Color::from_rgba(
+                self.brush.r,
+                self.brush.g,
+                self.brush.b,
                 self.brush.a,
             ),
         );

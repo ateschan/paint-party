@@ -23,7 +23,7 @@ impl ToolbarTray {
                     }
 
                 });
-                                    ui.horizontal(|ui| {
+                    ui.horizontal(|ui| {
                         ui.add(
                             egui::Slider::new(
                                 &mut canvas.brush.r,
