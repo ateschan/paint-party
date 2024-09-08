@@ -4,8 +4,7 @@ use macroquad::prelude::*;
 
 impl super::super::canvas::Canvas {
     pub async fn eraser(&mut self, socket: &mut WsClient) {
-        self.brush.render_eraser();
-        self.brush.eraser_update(1.0);
+
 
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)

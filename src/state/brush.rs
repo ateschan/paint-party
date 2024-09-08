@@ -4,6 +4,7 @@ use rand::gen_range;
 use BrushState::Paintbrush;
 
 //Brush handles what lies behind the cursor, paint color, and particles
+#[derive(Clone)]
 pub enum BrushState {
     Off,
     Paintbrush,
@@ -21,8 +22,8 @@ pub struct Brush {
     pub hamper_self: bool,
     pub hamper_particles: bool,
     pub state: BrushState,
-
     //SPECIAL
+    pub add_size_osc : bool,
     pub eraser_rot: f32,
 }
 
@@ -38,6 +39,7 @@ impl Default for Brush {
             hamper_self: false,
             hamper_particles: false,
             state: Paintbrush,
+            add_size_osc : false,
             eraser_rot: 0.0,
         }
     }

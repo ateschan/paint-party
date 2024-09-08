@@ -22,17 +22,19 @@ use quad_net::web_socket::WebSocket;
 //Driver
 #[macroquad::main("Paint Party")]
 async fn main() {
-    let mut canvas: Canvas = Canvas::default();
     #[allow(clippy::await_holding_lock)]
     let mut storage = quad_storage::STORAGE.lock().unwrap();
 
     intro_loop::enter_intro(&mut storage).await;
 
+    //Raw connection, BUG: Needs error handling
     let connsocket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
+   
+
+    //DEF GUI CANVAS WEBSOCKET
     let mut gui = crate::ui::ui_driver::tray_builder();
-
-
+    let mut canvas: Canvas = Canvas::default();
     let mut wsc = WsClient {
         socket: connsocket,
         user: crate::networking::user::User {
@@ -45,14 +47,15 @@ async fn main() {
         notification_flags: Vec::new(),
     };
 
-    //std::mem::drop(storage);
+    //Check for socket disconnect
+    while !wsc.socket.connected() {}
+    std::mem::drop(storage);
 
     //Canvas directly handles rendering paint state.
     //Web socket takes in a mutable reference to canvas
     //Gui takes in a mutable reference to canvas
 
-    //Check for socket disconnect
-    while !wsc.socket.connected() {}
+
     loop {
         //Reset camera
         set_default_camera();
@@ -62,14 +65,15 @@ async fn main() {
 
         //Render lines, cache, particles to frame
         canvas.render_paint();
-
+        
+        //Render current brush
         canvas.brush_handler(&mut wsc).await;
-
+        
+        //Render gui, in handler is handled per module (chat)
         render_gui(&mut gui, &mut canvas, &mut wsc).await;
 
-        //Handle incoming canvas websocket requests
+        //Handle incoming & outgoing canvas websocket requests
         wsc.in_handler(&mut canvas).await;
-
         wsc.canvas_out_handler(&mut canvas).await;
 
         //Pass frame render data to macroquad

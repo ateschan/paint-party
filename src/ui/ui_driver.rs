@@ -11,6 +11,9 @@ use super::{
 pub trait GuiModule {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient);
     async fn handle_ws(&mut self, wsc: &mut WsClient);
+    fn mouse_state(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas) {
+        canvas.brush.hamper_self = egui_ctx.is_using_pointer() || egui_ctx.is_pointer_over_area();
+    }
 }
 
 //Not just rendering, but calling all nessesary functions
@@ -28,7 +31,6 @@ pub async fn render_gui(
     for item in modules.iter_mut() {
         item.handle_ws(wsc).await;
     }
-    //Call handlers individually fucker
     egui_macroquad::draw();
 }
 

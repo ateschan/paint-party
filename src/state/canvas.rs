@@ -1,6 +1,6 @@
 use super::{brush::Brush /* particles::explosion */};
 use crate::networking::ws::WsClient;
-use crate::state::brush::BrushState::{Eraser, Off, Paintbrush};
+use crate::state::brush::BrushState::*;
 use crate::state::dot::Dot;
 use macroquad::input::KeyCode;
 use macroquad::prelude::*;
@@ -54,10 +54,13 @@ impl Canvas {
 
         match self.brush.state {
             Paintbrush => {
+                self.brush.render_paintbrush();
                 self.paintbrush().await;
             }
 
             Eraser => {
+                self.brush.render_eraser();
+                self.brush.eraser_update(1.0);
                 self.eraser(wsc).await;
             }
 

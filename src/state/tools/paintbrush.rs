@@ -5,7 +5,6 @@ use macroquad_particles::*;
 //BEHAVIOR
 impl super::super::canvas::Canvas {
     pub async fn paintbrush(&mut self) {
-        self.brush.render_paintbrush();
 
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
