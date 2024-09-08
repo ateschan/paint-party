@@ -66,6 +66,10 @@ impl Canvas {
 
             Off => {}
         }
+
+        if self.brush.add_size_osc {
+            self.brush.render_size_oscillator();
+        }
     }
 
     pub async fn hotkey_handler(&mut self) {

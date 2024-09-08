@@ -19,17 +19,17 @@ impl ToolbarTray {
             }
 
             ui.add(
-                egui::Slider::new(&mut self.size_osc_minmax.0, 1.0..=self.size_osc_minmax.1).trailing_fill(true),
+                egui::Slider::new(&mut canvas.brush.size_osc_minmax.0, 1.0..=canvas.brush.size_osc_minmax.1).trailing_fill(true),
             )
             .on_hover_text("Osc Min");
 
             ui.add(
-                egui::Slider::new(&mut self.size_osc_minmax.1,self.size_osc_minmax.0..=600.0).trailing_fill(true),
+                egui::Slider::new(&mut canvas.brush.size_osc_minmax.1,canvas.brush.size_osc_minmax.0..=600.0).trailing_fill(true),
             )
             .on_hover_text("Osc Max");
 
             ui.add(
-                egui::Slider::new(&mut self.size_osc_speed, 0.001..=5.0).trailing_fill(true),
+                egui::Slider::new(&mut canvas.brush.size_osc_speed, 0.001..=5.0).trailing_fill(true),
             )
             .on_hover_text("Osc Speed");
 
@@ -44,16 +44,15 @@ impl ToolbarTray {
     }
 
     fn size_oscillate(&mut self, canvas : &mut Canvas) {
-        
-       if self.size_osc_goingup {
-            canvas.brush.size += self.size_osc_speed;
+       if canvas.brush.size_osc_goingup {
+            canvas.brush.size += canvas.brush.size_osc_speed;
         }
         else {
-            canvas.brush.size -= self.size_osc_speed;
+            canvas.brush.size -= canvas.brush.size_osc_speed;
         }
 
-        if canvas.brush.size <= self.size_osc_minmax.0 || canvas.brush.size >= self.size_osc_minmax.1{
-            self.size_osc_goingup = !self.size_osc_goingup;
+        if canvas.brush.size <= canvas.brush.size_osc_minmax.0 || canvas.brush.size >= canvas.brush.size_osc_minmax.1{
+            canvas.brush.size_osc_goingup = !canvas.brush.size_osc_goingup;
         }
     }
 }

@@ -15,9 +15,7 @@ pub struct ToolbarTray {
     //Color oscillator r, g, b, speeds, r, g, b, ranges
     //
     //Size oscillator min, max, speed
-    pub size_osc_minmax : (f32, f32),
-    pub size_osc_speed : f32,
-    pub size_osc_goingup : bool,
+
 
     //Server util
     pub refresh_flag: bool,
@@ -45,6 +43,7 @@ impl GuiModule for ToolbarTray {
                 egui_ctx.set_visuals(egui::Visuals::light());
                 self.init(canvas, wsc);
                 self.mouse_state(egui_ctx, canvas);
+
 
                 ui.vertical(|ui| {
                     ui.collapsing("PAINT_BASIC",|ui| {
