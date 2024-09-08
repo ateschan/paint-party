@@ -5,11 +5,6 @@ use crate::state::dot::Dot;
 use macroquad::input::KeyCode;
 use macroquad::prelude::*;
 use quad_storage::LocalStorage;
-//Order of inheritence for drawing goes Canvas -> Brush -> Dot
-//
-//Canvas serves as the interface for screeen state, and is used by UI and the websocket client
-//
-//Canvas sits between the websockets and the UI acting as a middleman
 
 #[derive(Default)]
 pub struct Canvas {
@@ -18,22 +13,6 @@ pub struct Canvas {
     pub garbage: Vec<String>,
     pub frame_count: i32,
     pub brush: Brush,
-    //Why does this exist? Canvas -> UI
-    //Canvas -> Websocket Handler
-
-    //  BUG: |||||||||||||||||||||||||||||||||||||||||||||||||\
-    //  What I need
-    //  Ui is able to change canvas settings Canvas -> Ui
-    //  check for changes to ui wshandler class -> ui
-    //  check for changes to canvas canvas-> wshandler class
-    //
-    //  ws class will have functions and will be passed into ws handler functions in gui and in
-    //  canvas
-    //  bug: |||||||||||||||||||||||||||||||||||||||||||||||||\
-
-    //ws glue
-
-    //ui glue
 }
 
 impl Canvas {
@@ -47,37 +26,62 @@ impl Canvas {
         self.brush.render_emitters();
     }
 
-    //Definitions in ./tools/
-    //Entry point for user input
+    //Why not put functionalty in brush? Since all dots are being handled by canvas, so will the
+    //brush behavior for interop with the outer enviroment.
+
     pub async fn brush_handler(&mut self, wsc: &mut WsClient) {
         self.hotkey_handler().await;
 
-        match self.brush.state {
-            Paintbrush => {
-                self.brush.render_paintbrush();
-                self.paintbrush().await;
-            }
+        //Cease used for pausing all brush rendering and input, independent from hamper_self which
+        //is used for gui state
+        if !self.brush.cease {
 
-            Eraser => {
-                self.brush.render_eraser();
-                self.brush.eraser_update(1.0);
-                self.eraser(wsc).await;
-            }
+            match self.brush.state {
+                Paintbrush => {
+                    self.brush.render_paintbrush();
+                    self.paintbrush().await;
+                }
 
-            Off => {}
+                Eraser => {
+                    self.brush.render_eraser();
+                    self.eraser(wsc).await;
+                }
+
+                Off => {}
+            }
+        }
+
+        if self.brush.add_cmodulate {
+            if self.brush.r_speed != 0 {
+                self.r_modulate();
+            }
+            if self.brush.g_speed != 0 {
+                self.g_modulate();
+            }
+            if self.brush.b_speed != 0 {
+                self.b_modulate();
+            }
+            if self.brush.a_speed != 0 {
+                self.a_modulate();
+            }
         }
 
         if self.brush.add_size_osc {
-            self.brush.render_size_oscillator();
+            self.render_size_oscillator();
+            self.size_oscillate();
         }
+
         if self.brush.add_mark {
-            self.brush.mark().await;
-            self.brush.render_size_oscillator();
+            self.mark().await;
+            self.render_size_oscillator();
         }
+
         if self.brush.add_rev_mark {
-            self.brush.rev_mark().await;
-            self.brush.render_size_oscillator();
+            self.rev_mark().await;
+            self.render_size_oscillator();
         }
+
+        self.brush.rotation_update(1.0);
     }
 
     pub async fn hotkey_handler(&mut self) {

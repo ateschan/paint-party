@@ -52,7 +52,7 @@ impl super::super::canvas::Canvas {
             if self.garbage.len() >= 99 {
                 self.clear_and_del(socket).await;
             }
-            self.brush.eraser_update(5.0);
+            self.brush.rotation_update(5.0);
         } else {
             self.clear_and_del(socket).await;
         }
@@ -87,7 +87,7 @@ impl super::super::brush::Brush {
             mouse_position().1,
             10,
             self.size,
-            self.eraser_rot,
+            self.rot,
             5.0,
             macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
         );

@@ -36,17 +36,20 @@ choco install openssl
 
 <!-- ROADMAP -->
 ## Roadmap
-- [X] Hide api key
-- [X] Websockets
-- [X] Opacity slider
 - [x] Eraser tool
 - [X] Particles
 - [X] Hotkey support
 - [ ] Undo
 - [X] Chat
 - [X] Graceful (ish) error handling
-- [ ] Color Shifting
-- [ ] Size Oscillator
+- [ ] Chromatic Modulator
+- [X] Size Oscillator
+- [ ] Tail
+- [ ] Spitter 
+- [ ] Magnet
+- [ ] Tractor Beam 
+- [ ] Blast
+- [ ] Orbit
 - [ ] Trig Tool
 
 

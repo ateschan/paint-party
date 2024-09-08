@@ -18,8 +18,6 @@ pub struct ToolbarTray {
     pub clear_flag: bool,
 }
 
-// TODO:  Add correspingng tools for it. First up: Color oscillator
-
 #[async_trait]
 impl GuiModule for ToolbarTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient) {
@@ -41,6 +39,9 @@ impl GuiModule for ToolbarTray {
                 ui.vertical(|ui| {
                     ui.collapsing("PAINT_BASIC", |ui| {
                         self.toolset_1(ui, canvas);
+                    });
+                    ui.collapsing("CHROMATIC MODULATOR", |ui| {
+                        self.chromatic_modulator(ui, canvas);
                     });
                     ui.collapsing("SIZE_OSCILLATOR", |ui| {
                         self.size_oscillator(ui, canvas);

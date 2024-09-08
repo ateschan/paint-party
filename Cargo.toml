@@ -15,7 +15,6 @@ nanoid = "0.4.0"
 openssl = {version = "0.10", features=["vendored"]}
 macroquad-particles = "0.2.1"
 async-trait = "0.1.82"
-paint-party-server = {git = "https://github.com/ateschan/paint-party-server.git"}
 
 [profile.dev.package.'*']
 opt-level = 3

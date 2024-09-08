@@ -30,9 +30,25 @@ pub struct Brush {
     pub add_mark: bool,
     pub add_rev_mark: bool,
     pub add_size_osc: bool,
+    pub cease: bool,
+
+    //Chromatic mod
+    pub add_cmodulate : bool,
+    pub r_speed: u8,
+    pub r_minmax: (u8, u8),
+    pub r_goingup: bool,
+    pub g_speed: u8,
+    pub g_minmax: (u8, u8),
+    pub g_goingup: bool,
+    pub b_speed: u8,
+    pub b_minmax: (u8, u8),
+    pub b_goingup: bool,
+    pub a_speed: u8,
+    pub a_minmax: (u8, u8),
+    pub a_goingup: bool,
 
     //Eraser
-    pub eraser_rot: f32,
+    pub rot: f32,
 }
 
 impl Default for Brush {
@@ -47,23 +63,42 @@ impl Default for Brush {
             hamper_self: false,
             hamper_particles: false,
             state: Paintbrush,
+
+            //Size Osc
             size_osc_minmax: (1.0, 15.0),
             size_osc_speed: 1.0,
             size_osc_goingup: false,
             add_mark: false,
             add_rev_mark: false,
             add_size_osc: false,
-            eraser_rot: 0.0,
+            cease: false,
+
+            //Chromatic mod
+            add_cmodulate : false,
+            r_speed: 0,
+            r_minmax: (0, 255),
+            r_goingup: false,
+            g_speed: 0,
+            g_minmax: (0, 255),
+            g_goingup: false,
+            b_speed: 0,
+            b_minmax: (0, 255),
+            b_goingup: false,
+            a_speed: 0,
+            a_minmax: (0, 255),
+            a_goingup: false,
+
+            rot: 0.0,
         }
     }
 }
 
 impl Brush {
-    pub fn eraser_update(&mut self, num: f32) {
-        if self.eraser_rot <= 360.0 {
-            self.eraser_rot += num;
+    pub fn rotation_update(&mut self, num: f32) {
+        if self.rot <= 360.0 {
+            self.rot += num;
         } else {
-            self.eraser_rot = 0.0;
+            self.rot = 0.0;
         }
     }
 
