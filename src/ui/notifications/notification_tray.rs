@@ -22,7 +22,7 @@ pub enum NotificationFlag {
 pub struct NotificationTray {
     pub current_notifications: Vec<NotificationFlag>,
     limit: usize,
-    timer : usize
+    timer: usize,
 }
 
 impl Default for NotificationTray {
@@ -30,7 +30,7 @@ impl Default for NotificationTray {
         NotificationTray {
             current_notifications: Vec::new(),
             limit: 5,
-            timer: 300
+            timer: 300,
         }
     }
 }
@@ -51,7 +51,7 @@ impl GuiModule for NotificationTray {
                 egui::Frame::default()
                     .multiply_with_opacity(20.0)
                     .shadow(Shadow::NONE)
-                    .fill(Color32::TRANSPARENT)
+                    .fill(Color32::TRANSPARENT),
             )
             .show(egui_ctx, |ui| {
                 egui_ctx.set_visuals(egui::Visuals::light());
@@ -81,33 +81,58 @@ impl NotificationTray {
         not: &mut NotificationFlag,
     ) {
         match not {
-            NotificationFlag::GetSuccess => ui.label(RichText::new(
-                "Get recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::PutSuccess => ui.label(RichText::new(
-                "Put recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::UpdSuccess => ui.label(RichText::new(
-                "Upd recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::ClrSuccess => ui.label(RichText::new(
-                "Clr recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::RmvSuccess => ui.label(RichText::new(
-                "Rmv recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::DelSuccess => ui.label(RichText::new(
-                "Del recieved!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
-            NotificationFlag::ChtSuccess => ui.label(RichText::new(
-                "Chat sent!",
-            ).size(16.0).strong().background_color(Color32::TRANSPARENT)),
+            NotificationFlag::GetSuccess => ui.label(
+                RichText::new("Get recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::PutSuccess => ui.label(
+                RichText::new("Put recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::UpdSuccess => ui.label(
+                RichText::new("Upd recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::ClrSuccess => ui.label(
+                RichText::new("Clr recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::RmvSuccess => ui.label(
+                RichText::new("Rmv recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::DelSuccess => ui.label(
+                RichText::new("Del recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
+            NotificationFlag::ChtSuccess => ui.label(
+                RichText::new("Chat sent!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
 
-            NotificationFlag::InvApi => ui.label(RichText::new(
-                "Inavlid Credentials",
-            ).size(16.0).strong().background_color(Color32::LIGHT_RED)),
+            NotificationFlag::InvApi => ui.label(
+                RichText::new("Inavlid Credentials")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::LIGHT_RED),
+            ),
 
-            NotificationFlag::Fail(e) => ui.add_sized( ui.available_size(),
+            NotificationFlag::Fail(e) => ui.add_sized(
+                ui.available_size(),
                 egui_macroquad::egui::TextEdit::singleline(&mut format!(
                     "Failiure recieved: {}",
                     e

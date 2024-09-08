@@ -39,7 +39,7 @@ impl GuiModule for ChatTray {
     fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
         egui::Window::new(RichText::new("Live Chat"))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .anchor(Align2::CENTER_TOP, (0.0,0.0))
+            .anchor(Align2::CENTER_TOP, (0.0, 0.0))
             .resizable(false)
             .movable(false)
             .default_open(false)
@@ -106,9 +106,14 @@ impl Chat {
                 |ui| {
                     ui.add_space(5.0);
                     ui.label(
-                        RichText::new(&self.user[&self.user.len() - 5..]).background_color(
-                            Color32::from_rgb(self.color.0, self.color.1, self.color.2),
-                        ).strong().text_style(egui::TextStyle::Button),
+                        RichText::new(&self.user[&self.user.len() - 5..])
+                            .background_color(Color32::from_rgb(
+                                self.color.0,
+                                self.color.1,
+                                self.color.2,
+                            ))
+                            .strong()
+                            .text_style(egui::TextStyle::Button),
                     );
 
                     ui.label(RichText::new(&self.message).background_color(Color32::LIGHT_GRAY));

@@ -11,7 +11,6 @@ use macroquad::prelude::*;
 use networking::ws::WsClient;
 use quad_net::web_socket::WebSocket;
 
-
 // HACK:
 //
 // *) TODO: Polish notification system with colors or some shit
@@ -30,7 +29,6 @@ async fn main() {
     //Raw connection, BUG: Needs error handling
     let connsocket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
-   
 
     //DEF GUI CANVAS WEBSOCKET
     let mut gui = crate::ui::ui_driver::tray_builder();
@@ -55,7 +53,6 @@ async fn main() {
     //Web socket takes in a mutable reference to canvas
     //Gui takes in a mutable reference to canvas
 
-
     loop {
         //Reset camera
         set_default_camera();
@@ -65,10 +62,10 @@ async fn main() {
 
         //Render lines, cache, particles to frame
         canvas.render_paint();
-        
+
         //Render current brush
         canvas.brush_handler(&mut wsc).await;
-        
+
         //Render gui, in handler is handled per module (chat)
         render_gui(&mut gui, &mut canvas, &mut wsc).await;
 

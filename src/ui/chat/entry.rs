@@ -20,7 +20,8 @@ pub fn chat_entryfield_ui(
             if ui
                 .add(egui_macroquad::egui::Button::new("Send"))
                 .on_hover_text("Send chat")
-                .clicked() && !entry.is_empty()
+                .clicked()
+                && !entry.is_empty()
             {
                 chats.push(Chat {
                     user: "Self".to_owned(),
@@ -31,8 +32,13 @@ pub fn chat_entryfield_ui(
                 //crate::networking::networking_io::chat(socket, user, msg)
             }
             ui.add_space(5.0);
-            ui.add(TextEdit::singleline(entry).desired_width(300.0).char_limit(60).hint_text("ENTER CHAT"))
-                .highlight();
+            ui.add(
+                TextEdit::singleline(entry)
+                    .desired_width(300.0)
+                    .char_limit(60)
+                    .hint_text("ENTER CHAT"),
+            )
+            .highlight();
             ui.add_space(5.0);
         },
     );

@@ -5,7 +5,6 @@ use macroquad_particles::*;
 //BEHAVIOR
 impl super::super::canvas::Canvas {
     pub async fn paintbrush(&mut self) {
-
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
             && !self.brush.hamper_self
@@ -44,11 +43,13 @@ impl super::super::canvas::Canvas {
 //SELF AS CURSOR
 impl super::super::brush::Brush {
     pub fn render_paintbrush(&self) {
-        draw_circle(
-            mouse_position().0,
-            mouse_position().1,
-            self.size,
-            macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
-        );
+        if !self.hamper_self {
+            draw_circle(
+                mouse_position().0,
+                mouse_position().1,
+                self.size,
+                macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
+            );
+        }
     }
 }

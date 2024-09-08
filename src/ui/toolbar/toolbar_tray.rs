@@ -1,9 +1,6 @@
-use std::borrow::{Borrow, BorrowMut};
-
-use crate::state::canvas;
+use crate::networking::ws::WsClient;
 use crate::state::{brush::BrushState, canvas::Canvas};
 use crate::ui::ui_driver::GuiModule;
-use crate::networking::ws::WsClient;
 use async_trait::async_trait;
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 
@@ -16,16 +13,13 @@ pub struct ToolbarTray {
     //
     //Size oscillator min, max, speed
 
-
     //Server util
     pub refresh_flag: bool,
     pub clear_flag: bool,
 }
 
-
-
 // TODO:  Add correspingng tools for it. First up: Color oscillator
- 
+
 #[async_trait]
 impl GuiModule for ToolbarTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient) {
@@ -44,15 +38,14 @@ impl GuiModule for ToolbarTray {
                 self.init(canvas, wsc);
                 self.mouse_state(egui_ctx, canvas);
 
-
                 ui.vertical(|ui| {
-                    ui.collapsing("PAINT_BASIC",|ui| {
+                    ui.collapsing("PAINT_BASIC", |ui| {
                         self.toolset_1(ui, canvas);
                     });
-                    ui.collapsing("SIZE_OSCILLATOR",|ui| {
+                    ui.collapsing("SIZE_OSCILLATOR", |ui| {
                         self.size_oscillator(ui, canvas);
                     });
-                    ui.collapsing("SERVER_UTILS",|ui| {
+                    ui.collapsing("SERVER_UTILS", |ui| {
                         self.server_util(ui, wsc);
                         canvas.brush.size = self.tmp_size;
                     });
@@ -89,6 +82,6 @@ impl ToolbarTray {
     }
 }
 
-    pub fn swap_brush_state(canvas : &mut Canvas, state : BrushState){
-        canvas.brush.state = state;
-    }
+pub fn swap_brush_state(canvas: &mut Canvas, state: BrushState) {
+    canvas.brush.state = state;
+}

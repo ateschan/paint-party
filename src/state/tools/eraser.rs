@@ -4,8 +4,6 @@ use macroquad::prelude::*;
 
 impl super::super::canvas::Canvas {
     pub async fn eraser(&mut self, socket: &mut WsClient) {
-
-
         if is_mouse_button_down(MouseButton::Left)
             && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
             && !self.brush.hamper_self

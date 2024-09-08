@@ -70,6 +70,14 @@ impl Canvas {
         if self.brush.add_size_osc {
             self.brush.render_size_oscillator();
         }
+        if self.brush.add_mark {
+            self.brush.mark().await;
+            self.brush.render_size_oscillator();
+        }
+        if self.brush.add_rev_mark {
+            self.brush.rev_mark().await;
+            self.brush.render_size_oscillator();
+        }
     }
 
     pub async fn hotkey_handler(&mut self) {

@@ -23,11 +23,15 @@ pub struct Brush {
     pub hamper_particles: bool,
     pub state: BrushState,
 
-    pub size_osc_minmax : (f32, f32),
-    pub size_osc_speed : f32,
-    pub size_osc_goingup : bool,
-    //SPECIAL
-    pub add_size_osc : bool,
+    //Size Osc
+    pub size_osc_minmax: (f32, f32),
+    pub size_osc_speed: f32,
+    pub size_osc_goingup: bool,
+    pub add_mark: bool,
+    pub add_rev_mark: bool,
+    pub add_size_osc: bool,
+
+    //Eraser
     pub eraser_rot: f32,
 }
 
@@ -43,10 +47,12 @@ impl Default for Brush {
             hamper_self: false,
             hamper_particles: false,
             state: Paintbrush,
-            size_osc_minmax : (1.0, 15.0),
+            size_osc_minmax: (1.0, 15.0),
             size_osc_speed: 1.0,
-            size_osc_goingup : false,
-            add_size_osc : false,
+            size_osc_goingup: false,
+            add_mark: false,
+            add_rev_mark: false,
+            add_size_osc: false,
             eraser_rot: 0.0,
         }
     }

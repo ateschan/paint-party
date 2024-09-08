@@ -1,7 +1,6 @@
-use crate::ui::toolbar::toolbar_tray::ToolbarTray;
-use crate::state::canvas::Canvas;
 use crate::state::brush::BrushState::*;
-
+use crate::state::canvas::Canvas;
+use crate::ui::toolbar::toolbar_tray::ToolbarTray;
 
 //TODO: How do I spawn an additional window off of an already existing one?
 impl ToolbarTray {
