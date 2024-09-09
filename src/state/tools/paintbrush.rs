@@ -21,7 +21,13 @@ impl super::super::canvas::Canvas {
                 id: nanoid::nanoid!(),
             };
 
-            if !self.brush.hamper_particles {
+            //BUG: Memory Leak with spawning emitters using oscillator and modulator tools
+            if !self.brush.hamper_particles
+                && !self.brush.add_cmodulate
+                && !self.brush.add_rev_mark
+                && !self.brush.add_mark
+                && !self.brush.add_size_osc
+            {
                 self.brush.spawn_emitter(
                     Emitter::new(EmitterConfig {
                         size: dot.size,

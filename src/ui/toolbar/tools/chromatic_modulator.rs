@@ -1,5 +1,6 @@
 use super::super::toolbar_tray::ToolbarTray;
 use crate::state::canvas::Canvas;
+use crate::state::brush::Brush;
 
 impl ToolbarTray {
     // pub fn color_oscillator (&mut self,ui: &mut egui_macroquad::egui::Ui,canvas: &mut Canvas) -> egui_macroquad::egui::Response {
@@ -21,45 +22,23 @@ impl ToolbarTray {
                     if ui.radio(canvas.brush.add_cmodulate, "Modulate").clicked() {
                         canvas.brush.add_cmodulate = !canvas.brush.add_cmodulate;
                     }
-
+                    if ui.button("RESET BRUSH").clicked() {
+                        canvas.brush = Brush::default();
+                    }
                 });
-                    ui.horizontal(|ui| {
-                        ui.add(
-                            egui::Slider::new(
-                                &mut canvas.brush.r,
-                                0..=255,
-                            )
-                            .trailing_fill(true),
-                        )
+                ui.horizontal(|ui| {
+                    ui.add(egui::Slider::new(&mut canvas.brush.r, 0..=255).trailing_fill(true))
                         .on_hover_text("R");
 
-                        ui.add(
-                            egui::Slider::new(
-                                &mut canvas.brush.g,
-                                0..=255,
-                            )
-                            .trailing_fill(true),
-                        )
+                    ui.add(egui::Slider::new(&mut canvas.brush.g, 0..=255).trailing_fill(true))
                         .on_hover_text("G");
 
-                        ui.add(
-                            egui::Slider::new(
-                                &mut canvas.brush.b,
-                                0..=255,
-                            )
-                            .trailing_fill(true),
-                        )
+                    ui.add(egui::Slider::new(&mut canvas.brush.b, 0..=255).trailing_fill(true))
                         .on_hover_text("B");
 
-                        ui.add(
-                            egui::Slider::new(
-                                &mut canvas.brush.a,
-                                0..=255,
-                            )
-                            .trailing_fill(true),
-                        )
+                    ui.add(egui::Slider::new(&mut canvas.brush.a, 0..=255).trailing_fill(true))
                         .on_hover_text("A");
-                    });
+                });
                 ui.horizontal(|ui| {
                     ui.vertical(|ui| {
                         ui.add(

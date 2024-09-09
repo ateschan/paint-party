@@ -35,7 +35,6 @@ impl Canvas {
         //Cease used for pausing all brush rendering and input, independent from hamper_self which
         //is used for gui state
         if !self.brush.cease {
-
             match self.brush.state {
                 Paintbrush => {
                     self.brush.render_paintbrush();
@@ -80,7 +79,7 @@ impl Canvas {
             self.rev_mark().await;
             self.render_size_oscillator();
         }
-
+        
         self.brush.rotation_update(1.0);
     }
 

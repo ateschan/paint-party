@@ -9,17 +9,14 @@ impl Canvas {
             let inc = self.brush.r as i32 + self.brush.r_speed as i32;
             if inc >= 255 || inc >= self.brush.r_minmax.1 as i32 {
                 self.brush.r_goingup = false
-            }
-            else {
+            } else {
                 self.brush.r = (inc % 256) as u8;
             }
-        }
-        else {
+        } else {
             let inc = self.brush.r as i32 - self.brush.r_speed as i32;
             if inc <= 0 || inc <= self.brush.r_minmax.0 as i32 {
                 self.brush.r_goingup = true
-            }
-            else {
+            } else {
                 self.brush.r = (inc % 256) as u8;
             }
         }
@@ -30,17 +27,14 @@ impl Canvas {
             let inc = self.brush.g as i32 + self.brush.g_speed as i32;
             if inc >= 255 || inc >= self.brush.g_minmax.1 as i32 {
                 self.brush.g_goingup = false
-            }
-            else {
+            } else {
                 self.brush.g = (inc % 256) as u8;
             }
-        }
-        else {
+        } else {
             let inc = self.brush.g as i32 - self.brush.g_speed as i32;
             if inc <= 0 || inc <= self.brush.g_minmax.0 as i32 {
                 self.brush.g_goingup = true
-            }
-            else {
+            } else {
                 self.brush.g = (inc % 256) as u8;
             }
         }
@@ -51,38 +45,32 @@ impl Canvas {
             let inc = self.brush.b as i32 + self.brush.b_speed as i32;
             if inc >= 255 || inc >= self.brush.b_minmax.1 as i32 {
                 self.brush.b_goingup = false
-            }
-            else {
+            } else {
                 self.brush.b = (inc % 256) as u8;
             }
-        }
-        else {
+        } else {
             let inc = self.brush.b as i32 - self.brush.b_speed as i32;
             if inc <= 0 || inc <= self.brush.b_minmax.0 as i32 {
                 self.brush.b_goingup = true
-            }
-            else {
+            } else {
                 self.brush.b = (inc % 256) as u8;
             }
         }
-    } 
+    }
 
     pub fn a_modulate(&mut self) {
         if self.brush.a_goingup {
             let inc = self.brush.a as i32 + self.brush.a_speed as i32;
             if inc >= 255 || inc >= self.brush.a_minmax.1 as i32 {
                 self.brush.a_goingup = false
-            }
-            else {
+            } else {
                 self.brush.a = (inc % 256) as u8;
             }
-        }
-        else {
+        } else {
             let inc = self.brush.a as i32 - self.brush.a_speed as i32;
             if inc <= 0 || inc <= self.brush.a_minmax.0 as i32 {
                 self.brush.a_goingup = true
-            }
-            else {
+            } else {
                 self.brush.a = (inc % 256) as u8;
             }
         }

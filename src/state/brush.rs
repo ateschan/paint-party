@@ -4,7 +4,7 @@ use rand::gen_range;
 use BrushState::Paintbrush;
 
 //Brush handles what lies behind the cursor, paint color, and particles
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum BrushState {
     Off,
     Paintbrush,
@@ -33,7 +33,7 @@ pub struct Brush {
     pub cease: bool,
 
     //Chromatic mod
-    pub add_cmodulate : bool,
+    pub add_cmodulate: bool,
     pub r_speed: u8,
     pub r_minmax: (u8, u8),
     pub r_goingup: bool,
@@ -74,7 +74,7 @@ impl Default for Brush {
             cease: false,
 
             //Chromatic mod
-            add_cmodulate : false,
+            add_cmodulate: false,
             r_speed: 0,
             r_minmax: (0, 255),
             r_goingup: false,
@@ -111,5 +111,6 @@ impl Brush {
             emitter.0.draw(emitter.1);
         }
         self.emitters.retain(|(emitter, _)| emitter.config.emitting);
+        //println!("{:?}",self.emitters);
     }
 }

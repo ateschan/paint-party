@@ -73,6 +73,8 @@ async fn main() {
         wsc.in_handler(&mut canvas).await;
         wsc.canvas_out_handler(&mut canvas).await;
 
+        //println!("{:?}",canvas);
+
         //Pass frame render data to macroquad
         next_frame().await;
     }

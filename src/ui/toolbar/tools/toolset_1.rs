@@ -1,4 +1,4 @@
-use crate::state::brush::{Brush, BrushState::*};
+use crate::state::brush::BrushState::*;
 use crate::state::canvas::Canvas;
 use crate::ui::toolbar::toolbar_tray::ToolbarTray;
 
@@ -38,9 +38,7 @@ impl ToolbarTray {
             {
                 canvas.brush.hamper_particles = !canvas.brush.hamper_particles;
             }
-            if ui.button("RESET BRUSH").clicked() {
-                canvas.brush = Brush::default();
-            }
+
             ui.add_sized(
                 ui.available_size(),
                 egui::Slider::new(&mut self.tmp_size, 1.0..=600.0).trailing_fill(true),
