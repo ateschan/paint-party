@@ -29,6 +29,7 @@ impl ToolbarTray {
                     canvas.brush.add_rev_mark = !canvas.brush.add_rev_mark;
                     canvas.brush.add_mark = false;
                     canvas.brush.add_size_osc = false;
+                    canvas.brush.size = canvas.brush.size_osc_minmax.0;
                     println!("{:?}", canvas.brush.add_rev_mark);
                 }
             });

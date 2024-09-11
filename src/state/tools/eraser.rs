@@ -4,13 +4,13 @@ use macroquad::prelude::*;
 
 impl super::super::canvas::Canvas {
     pub async fn eraser(&mut self, socket: &mut WsClient) {
-        if is_mouse_button_down(MouseButton::Left)
-            && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
+        if self.brush.active
+            && self.calulate_delta_pos() != (0.0, 0.0)
             && !self.brush.hamper_self
         {
             let dot = Dot {
-                x: mouse_position().0,
-                y: mouse_position().1,
+                x: self.brush.pos.0,
+                y: self.brush.pos.1,
                 r: self.brush.r,
                 g: self.brush.g,
                 b: self.brush.b,
@@ -56,6 +56,7 @@ impl super::super::canvas::Canvas {
         } else {
             self.clear_and_del(socket).await;
         }
+        self.brush.pos_last = self.brush.pos;
     }
     pub fn remove_dots_by_id(&mut self, ids_to_remove: &[String]) {
         self.lines.retain(|dot| !ids_to_remove.contains(&dot.id));
@@ -83,8 +84,8 @@ impl super::super::canvas::Canvas {
 impl super::super::brush::Brush {
     pub fn render_eraser(&self) {
         draw_poly_lines(
-            mouse_position().0,
-            mouse_position().1,
+            self.pos.0,
+            self.pos.1,
             10,
             self.size,
             self.rot,

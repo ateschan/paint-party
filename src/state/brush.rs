@@ -4,7 +4,7 @@ use rand::gen_range;
 use BrushState::Paintbrush;
 
 //Brush handles what lies behind the cursor, paint color, and particles
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum BrushState {
     Off,
     Paintbrush,
@@ -13,13 +13,19 @@ pub enum BrushState {
 
 //COLOR SIZE
 pub struct Brush {
+
+    pub pos : (f32, f32),
+    pub pos_last : (f32, f32),
+    pub active : bool,
+
     pub emitters: Vec<(Emitter, Vec2)>,
     pub size: f32,
     pub r: u8,
     pub g: u8,
     pub b: u8,
     pub a: u8,
-    pub hamper_self: bool,
+
+    pub hamper_self: bool, // For ui
     pub hamper_particles: bool,
     pub state: BrushState,
 
@@ -30,7 +36,7 @@ pub struct Brush {
     pub add_mark: bool,
     pub add_rev_mark: bool,
     pub add_size_osc: bool,
-    pub cease: bool,
+    pub mark_cease: bool, // For size osc mark
 
     //Chromatic mod
     pub add_cmodulate: bool,
@@ -47,6 +53,12 @@ pub struct Brush {
     pub a_minmax: (u8, u8),
     pub a_goingup: bool,
 
+
+    //Etch static
+    pub is_using_mouse : bool,
+
+    //Etch Fluid
+
     //Eraser
     pub rot: f32,
 }
@@ -54,6 +66,11 @@ pub struct Brush {
 impl Default for Brush {
     fn default() -> Self {
         Brush {
+            pos : mouse_position(),
+            pos_last : (0.0,0.0),
+
+            active : false,
+
             emitters: Vec::new(), //emitter: Emitter::new(EmitterConfig { ..explosion() }),
             size: gen_range(15.0, 300.0),
             r: gen_range(0, 255),
@@ -71,7 +88,7 @@ impl Default for Brush {
             add_mark: false,
             add_rev_mark: false,
             add_size_osc: false,
-            cease: false,
+            mark_cease: false,
 
             //Chromatic mod
             add_cmodulate: false,
@@ -87,6 +104,11 @@ impl Default for Brush {
             a_speed: 0,
             a_minmax: (0, 255),
             a_goingup: false,
+
+            //Etch static
+            is_using_mouse : true,
+
+            //Etch Fluid
 
             rot: 0.0,
         }
@@ -111,6 +133,5 @@ impl Brush {
             emitter.0.draw(emitter.1);
         }
         self.emitters.retain(|(emitter, _)| emitter.config.emitting);
-        //println!("{:?}",self.emitters);
     }
 }

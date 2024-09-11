@@ -5,14 +5,15 @@ use macroquad_particles::*;
 //BEHAVIOR
 impl super::super::canvas::Canvas {
     pub async fn paintbrush(&mut self) {
-        if is_mouse_button_down(MouseButton::Left)
-            && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
+        if self.brush.active
+            && self.calulate_delta_pos() != (0.0, 0.0)
             && !self.brush.hamper_self
             && self.brush.a != 0
+            && !self.brush.mark_cease
         {
             let dot = Dot {
-                x: mouse_position().0,
-                y: mouse_position().1,
+                x: self.brush.pos.0,
+                y: self.brush.pos.1,
                 r: self.brush.r,
                 g: self.brush.g,
                 b: self.brush.b,
@@ -43,6 +44,7 @@ impl super::super::canvas::Canvas {
             }
             self.cache.push(dot);
         }
+        self.brush.pos_last = self.brush.pos;
     }
 }
 
@@ -51,8 +53,8 @@ impl super::super::brush::Brush {
     pub fn render_paintbrush(&self) {
         if !self.hamper_self {
             draw_circle(
-                mouse_position().0,
-                mouse_position().1,
+                self.pos.0,
+                self.pos.1,
                 self.size,
                 macroquad::color::Color::from_rgba(self.r, self.g, self.b, self.a),
             );

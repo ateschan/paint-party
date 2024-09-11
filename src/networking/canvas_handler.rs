@@ -1,7 +1,10 @@
+use std::any::Any;
+
 use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
 use crate::state::dot::Dot;
 use macroquad::prelude::*;
+use macroquad::ui::KeyCode;
 
 //I feel like user and apikey should be instansiated on websockets instead of canvas
 
@@ -55,7 +58,7 @@ impl WsClient {
 impl WsClient {
     pub async fn canvas_out_handler(&self, canvas: &mut Canvas) {
         // PUT REQUEST TO WEBSOCKET
-        if !canvas.cache.is_empty() && !is_mouse_button_down(MouseButton::Left) {
+        if !canvas.cache.is_empty() && !is_key_down(miniquad::KeyCode::LeftControl) && !is_mouse_button_down(MouseButton::Left) {
             canvas.lines.extend(canvas.cache.clone());
             #[cfg(test)]
             println!("EXTENDING LINES");

@@ -3,18 +3,12 @@ use crate::state::canvas::Canvas;
 use crate::state::brush::Brush;
 
 impl ToolbarTray {
-    // pub fn color_oscillator (&mut self,ui: &mut egui_macroquad::egui::Ui,canvas: &mut Canvas) -> egui_macroquad::egui::Response {
-    // }
-    //
     pub fn chromatic_modulator(
         &mut self,
         ui: &mut egui_macroquad::egui::Ui,
         canvas: &mut Canvas,
     ) -> egui_macroquad::egui::Response {
         let result = ui.horizontal(|ui| {
-            // if ui.button("o-O-o-O").on_hover_text("Oscillate Size").clicked() {
-            //     canvas.brush.add_size_osc = !canvas.b
-            // }
 
             //I think I should add a bigger ring to preview
             ui.vertical(|ui| {
@@ -147,15 +141,3 @@ impl ToolbarTray {
         result.response
     }
 }
-
-// Range r MAX
-// Range g MAX
-// Range b MAX
-//
-// Range r MIN
-// Range g MIN
-// Range b MIN
-//
-// Speed r
-// Speed g
-// Speed b

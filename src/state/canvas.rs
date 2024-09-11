@@ -26,29 +26,8 @@ impl Canvas {
         self.brush.render_emitters();
     }
 
-    //Why not put functionalty in brush? Since all dots are being handled by canvas, so will the
-    //brush behavior for interop with the outer enviroment.
-
     pub async fn brush_handler(&mut self, wsc: &mut WsClient) {
         self.hotkey_handler().await;
-
-        //Cease used for pausing all brush rendering and input, independent from hamper_self which
-        //is used for gui state
-        if !self.brush.cease {
-            match self.brush.state {
-                Paintbrush => {
-                    self.brush.render_paintbrush();
-                    self.paintbrush().await;
-                }
-
-                Eraser => {
-                    self.brush.render_eraser();
-                    self.eraser(wsc).await;
-                }
-
-                Off => {}
-            }
-        }
 
         if self.brush.add_cmodulate {
             if self.brush.r_speed != 0 {
@@ -79,8 +58,43 @@ impl Canvas {
             self.rev_mark().await;
             self.render_size_oscillator();
         }
+
         
         self.brush.rotation_update(1.0);
+
+
+
+        if self.brush.active && !self.brush.mark_cease {
+            match self.brush.state {
+                Paintbrush => {
+                    self.paintbrush().await;
+                }
+
+                Eraser => {
+                    self.eraser(wsc).await;
+                }
+
+                Off => {}
+            }
+        }
+
+        if !self.brush.mark_cease {
+            match self.brush.state {
+                Paintbrush => {
+                    self.brush.render_paintbrush();
+                }
+
+                Eraser => {
+                    self.brush.render_eraser();
+                }
+
+                Off => {}
+            }
+
+            if !self.brush.is_using_mouse {
+                self.brush.render_etch();
+            }
+        }
     }
 
     pub async fn hotkey_handler(&mut self) {
@@ -90,14 +104,49 @@ impl Canvas {
         if is_key_pressed(KeyCode::E) {
             self.brush.state = Eraser;
         }
-        // if is_key_pressed(KeyCode::Left) && self.user.room > 0 && !self.refresh_flag {
-        //     self.user.room -= 1;
-        //     self.refresh_flag = true;
-        // }
-        // if is_key_pressed(KeyCode::Right) && self.user.room < 9999 && !self.refresh_flag{
-        //     self.user.room += 1;
-        //     self.refresh_flag = true;
-        // }
+        if is_key_down(KeyCode::LeftControl) {
+            self.brush.active = true;
+            self.brush.is_using_mouse = false;
+            
+            if is_key_down(KeyCode::Up) {
+                self.brush.pos.1 -= 10.0;
+            }
+            if is_key_down(KeyCode::Down) {
+                self.brush.pos.1 += 10.0;
+            }
+            if is_key_down(KeyCode::Left) {
+                self.brush.pos.0 -= 10.0;
+            }
+            if is_key_down(KeyCode::Right) {
+                self.brush.pos.0 += 10.0;
+            }
+        }
+        else {
+            self.brush.active = is_mouse_button_down(MouseButton::Left);
+        }
+
+        if !self.brush.is_using_mouse && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0) {
+            self.brush.is_using_mouse = true;
+        }
+
+        if self.brush.is_using_mouse {
+            self.brush.pos = mouse_position();
+        }
+
+
+        if is_key_released(KeyCode::LeftControl) || is_mouse_button_released(MouseButton::Left){
+            if self.brush.add_mark {
+                self.brush.size = self.brush.size_osc_minmax.1;
+            }
+            if self.brush.add_rev_mark {
+                self.brush.size = self.brush.size_osc_minmax.0;
+            }
+            self.brush.mark_cease = false;
+        }
+    }
+
+    pub fn calulate_delta_pos(&mut self) -> (f32, f32) {
+        (self.brush.pos_last.0 - self.brush.pos.0, self.brush.pos_last.1 - self.brush.pos.1)
     }
 
     pub fn init_state(&self, storage: &mut LocalStorage) {

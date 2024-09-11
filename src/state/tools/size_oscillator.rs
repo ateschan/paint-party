@@ -6,42 +6,35 @@ use macroquad::prelude::*;
 impl Canvas {
     //Goes from BIG --> SMALL
     pub async fn mark(&mut self) {
-        if self.brush.size > self.brush.size_osc_minmax.0 && !self.brush.cease {
-            self.brush.size -= self.brush.size_osc_speed;
-        } else {
-            self.brush.cease = true;
-        }
-        if is_mouse_button_pressed(MouseButton::Left) {
-            self.brush.size = self.brush.size_osc_minmax.1;
-            self.brush.cease = false;
-        }
-        if is_mouse_button_released(MouseButton::Left) {
-            self.brush.size = self.brush.size_osc_minmax.0;
+        if self.brush.active && !self.brush.mark_cease{
+            if self.brush.size > self.brush.size_osc_minmax.0  {
+               self.brush.size -= self.brush.size_osc_speed; 
+            }
+            else {
+                self.brush.mark_cease = true;
+                self.brush.size = 0.0;
+            }
         }
     }
 
     //Goes from SMALL --> BIG
     pub async fn rev_mark(&mut self) {
-        if self.brush.size <= self.brush.size_osc_minmax.1 && !self.brush.cease {
-            self.brush.size += self.brush.size_osc_speed;
-        } else {
+        if self.brush.active && !self.brush.mark_cease{
+            if self.brush.size < self.brush.size_osc_minmax.1  {
+                self.brush.size += self.brush.size_osc_speed; 
+            }
+        else {
+            self.brush.mark_cease = true;
             self.brush.size = self.brush.size_osc_minmax.0;
-            self.brush.cease = true;
         }
-        if is_mouse_button_pressed(MouseButton::Left) {
-            self.brush.size = self.brush.size_osc_minmax.0;
-            self.brush.cease = false;
-        }
-        if is_mouse_button_released(MouseButton::Left) {
-            self.brush.size = self.brush.size_osc_minmax.1;
         }
     }
 
     //Render BIG HOLLOW POLY AROUND SMALL SOLID POLY
     pub fn render_size_oscillator(&self) {
         draw_poly_lines(
-            mouse_position().0,
-            mouse_position().1,
+            self.brush.pos.0,
+            self.brush.pos.1,
             12,
             self.brush.size_osc_minmax.1,
             -self.brush.rot,
@@ -54,8 +47,8 @@ impl Canvas {
             ),
         );
         draw_poly_lines(
-            mouse_position().0,
-            mouse_position().1,
+            self.brush.pos.0,
+            self.brush.pos.1,
             12,
             self.brush.size_osc_minmax.1,
             self.brush.rot,
@@ -68,8 +61,8 @@ impl Canvas {
             ),
         );
         draw_poly(
-            mouse_position().0,
-            mouse_position().1,
+            self.brush.pos.0,
+            self.brush.pos.1,
             12,
             self.brush.size_osc_minmax.0,
             self.brush.rot,
@@ -81,8 +74,8 @@ impl Canvas {
             ),
         );
         draw_poly(
-            mouse_position().0,
-            mouse_position().1,
+            self.brush.pos.0,
+            self.brush.pos.1,
             12,
             self.brush.size_osc_minmax.0,
             -self.brush.rot,
