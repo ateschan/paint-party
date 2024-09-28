@@ -3,7 +3,7 @@ use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
 use crate::ui::ui_driver::GuiModule;
 use async_trait::async_trait;
-use egui::{Align, Align2, Rounding};
+use egui::{Align, Align2, Pos2, Rounding};
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use nanoserde::{DeJson, SerJson};
 
@@ -14,6 +14,7 @@ pub struct ChatTray {
     limit: usize,
     current_entry: String,
     cooldown: i32,
+    players_online : u32
 }
 
 impl Default for ChatTray {
@@ -23,6 +24,7 @@ impl Default for ChatTray {
             limit: 10,
             current_entry: String::new(),
             cooldown: 600,
+            players_online: 0
         }
     }
 }
@@ -37,12 +39,12 @@ pub struct Chat {
 #[async_trait]
 impl GuiModule for ChatTray {
     fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
-        egui::Window::new(RichText::new("Live Chat"))
+        egui::Window::new(RichText::new("  Live Chat  |  👤Online - ".to_owned() + &self.players_online.to_string()))
             //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .anchor(Align2::CENTER_TOP, (0.0, 0.0))
+            .default_pos(Pos2::new(egui_ctx.screen_rect().size().x, 40.0))
             .resizable(false)
-            .movable(false)
-            .default_open(false)
+            .movable(true)
+            .default_open(true)
             .frame(
                 egui::Frame::default()
                     .inner_margin(4.0)
@@ -82,6 +84,10 @@ impl GuiModule for ChatTray {
             wsc.gui_chat(&wsc.chats_out).await.unwrap();
             self.chats.extend(wsc.chats_out.clone());
             wsc.chats_out.clear();
+        }
+
+        if wsc.players_online != self.players_online {
+            self.players_online = wsc.players_online
         }
     }
 }

@@ -28,17 +28,6 @@ impl ToolbarTray {
                 super::super::toolbar_tray::swap_brush_state(canvas, Paintbrush);
             }
 
-            if ui
-                .add(egui_macroquad::egui::SelectableLabel::new(
-                    canvas.brush.hamper_particles,
-                    "*",
-                ))
-                .on_hover_text("Particles Toggle")
-                .clicked()
-            {
-                canvas.brush.hamper_particles = !canvas.brush.hamper_particles;
-            }
-
             ui.add_sized(
                 ui.available_size(),
                 egui::Slider::new(&mut self.tmp_size, 1.0..=600.0).trailing_fill(true),

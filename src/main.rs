@@ -43,6 +43,7 @@ async fn main() {
         chats_inc: Vec::new(),
         chats_out: Vec::new(),
         notification_flags: Vec::new(),
+        players_online : 0
     };
 
     //Check for socket disconnect

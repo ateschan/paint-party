@@ -56,8 +56,7 @@ impl WsClient {
                 //
                 //Take in chats one by one
                 "CHT_RES" => {
-                    let chat: Chat = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
-                    self.chats_inc.push(chat);
+                    self.chats_inc.push(nanoserde::DeJson::deserialize_json(message[1]).unwrap());
                 }
 
                 "ERR_RES " => {
@@ -68,6 +67,15 @@ impl WsClient {
                 "CHT_SELF_RES" => {
                     self.notification_flags.push(ChtSuccess);
                 }
+
+                "PLR_CNT" => {
+                    self.players_online = nanoserde::DeJson::deserialize_json(message[1]).unwrap();
+                    match nanoserde::DeJson::deserialize_json(message[1]) {
+                        Ok(a) => self.players_online = a,
+                        Err(e) => println!("{}", e),
+                    }
+                }
+                
                 _ => println!("UNDEFINED RES {:?}", message),
             }
         }

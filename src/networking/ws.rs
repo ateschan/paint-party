@@ -12,6 +12,8 @@ pub struct WsClient {
     pub chats_inc: Vec<Chat>,
     pub chats_out: Vec<Chat>,
 
-    //TODO: Notifications will go here as well
     pub notification_flags: Vec<NotificationFlag>,
+
+    //TODO: UserCount update will go here as well
+    pub players_online : u32
 }

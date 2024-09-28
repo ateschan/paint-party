@@ -23,7 +23,6 @@ impl Canvas {
         for dot in self.cache.iter() {
             dot.render();
         }
-        self.brush.render_emitters();
     }
 
     pub async fn brush_handler(&mut self, wsc: &mut WsClient) {

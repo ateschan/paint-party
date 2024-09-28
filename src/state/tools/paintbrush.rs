@@ -1,6 +1,5 @@
-use crate::state::{dot::Dot, particles::*};
+use crate::state::{dot::Dot};
 use macroquad::prelude::*;
-use macroquad_particles::*;
 
 //BEHAVIOR
 impl super::super::canvas::Canvas {
@@ -22,26 +21,6 @@ impl super::super::canvas::Canvas {
                 id: nanoid::nanoid!(),
             };
 
-            //BUG: Memory Leak with spawning emitters using oscillator and modulator tools
-            if !self.brush.hamper_particles
-                && !self.brush.add_cmodulate
-                && !self.brush.add_rev_mark
-                && !self.brush.add_mark
-                && !self.brush.add_size_osc
-            {
-                self.brush.spawn_emitter(
-                    Emitter::new(EmitterConfig {
-                        size: dot.size,
-                        colors_curve: ColorCurve {
-                            start: macroquad::color::Color::from_rgba(dot.r, dot.g, dot.b, dot.a),
-                            mid: macroquad::color::Color::from_rgba(dot.r, dot.g, dot.b, dot.a),
-                            end: macroquad::color::Color::from_rgba(dot.r, dot.g, dot.b, dot.a),
-                        },
-                        ..paint_seep()
-                    }),
-                    Vec2 { x: dot.x, y: dot.y },
-                );
-            }
             self.cache.push(dot);
         }
         self.brush.pos_last = self.brush.pos;

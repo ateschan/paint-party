@@ -1,5 +1,4 @@
 use macroquad::prelude::*;
-use macroquad_particles::Emitter;
 use rand::gen_range;
 use BrushState::Paintbrush;
 
@@ -18,7 +17,6 @@ pub struct Brush {
     pub pos_last : (f32, f32),
     pub active : bool,
 
-    pub emitters: Vec<(Emitter, Vec2)>,
     pub size: f32,
     pub r: u8,
     pub g: u8,
@@ -71,7 +69,6 @@ impl Default for Brush {
 
             active : false,
 
-            emitters: Vec::new(), //emitter: Emitter::new(EmitterConfig { ..explosion() }),
             size: gen_range(15.0, 300.0),
             r: gen_range(0, 255),
             g: gen_range(0, 255),
@@ -122,16 +119,5 @@ impl Brush {
         } else {
             self.rot = 0.0;
         }
-    }
-
-    pub fn spawn_emitter(&mut self, emitter: Emitter, Vec2 { x, y }: Vec2) {
-        self.emitters.push((emitter, vec2(x, y)));
-    }
-
-    pub fn render_emitters(&mut self) {
-        for emitter in self.emitters.iter_mut() {
-            emitter.0.draw(emitter.1);
-        }
-        self.emitters.retain(|(emitter, _)| emitter.config.emitting);
     }
 }

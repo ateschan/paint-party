@@ -39,11 +39,11 @@ choco install openssl
 - [x] Eraser tool
 - [X] Particles
 - [X] Hotkey support
-- [ ] Undo
 - [X] Chat
 - [X] Graceful (ish) error handling
-- [ ] Chromatic Modulator
+- [X] Chromatic Modulator
 - [X] Size Oscillator
+- [X] Arrow movment
 - [ ] Tail
 - [ ] Spitter 
 - [ ] Magnet
