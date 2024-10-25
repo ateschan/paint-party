@@ -1,6 +1,6 @@
 use super::super::toolbar_tray::ToolbarTray;
-use crate::state::canvas::Canvas;
 use crate::state::brush::Brush;
+use crate::state::canvas::Canvas;
 
 impl ToolbarTray {
     pub fn chromatic_modulator(
@@ -9,8 +9,8 @@ impl ToolbarTray {
         canvas: &mut Canvas,
     ) -> egui_macroquad::egui::Response {
         let result = ui.horizontal(|ui| {
-
             //I think I should add a bigger ring to preview
+
             ui.vertical(|ui| {
                 ui.horizontal(|ui| {
                     if ui.radio(canvas.brush.add_cmodulate, "Modulate").clicked() {

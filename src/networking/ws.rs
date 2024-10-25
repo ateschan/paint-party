@@ -15,5 +15,5 @@ pub struct WsClient {
     pub notification_flags: Vec<NotificationFlag>,
 
     //TODO: UserCount update will go here as well
-    pub players_online : u32
+    pub players_online: u32,
 }

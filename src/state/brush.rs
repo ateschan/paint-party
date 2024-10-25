@@ -1,3 +1,4 @@
+use crate::state::tools::tractor_beam::BeamNode;
 use macroquad::prelude::*;
 use rand::gen_range;
 use BrushState::Paintbrush;
@@ -7,15 +8,20 @@ use BrushState::Paintbrush;
 pub enum BrushState {
     Off,
     Paintbrush,
+    TractorCut,
+    TractorCopy,
+    TractorMagnet,
+    TractorMutate,
+    TractorOrbit,
+    TractorFluid,
     Eraser,
 }
 
 //COLOR SIZE
 pub struct Brush {
-
-    pub pos : (f32, f32),
-    pub pos_last : (f32, f32),
-    pub active : bool,
+    pub pos: (f32, f32),
+    pub pos_last: (f32, f32),
+    pub active: bool,
 
     pub size: f32,
     pub r: u8,
@@ -24,7 +30,6 @@ pub struct Brush {
     pub a: u8,
 
     pub hamper_self: bool, // For ui
-    pub hamper_particles: bool,
     pub state: BrushState,
 
     //Size Osc
@@ -51,23 +56,28 @@ pub struct Brush {
     pub a_minmax: (u8, u8),
     pub a_goingup: bool,
 
-
     //Etch static
-    pub is_using_mouse : bool,
+    pub is_using_mouse: bool,
 
-    //Etch Fluid
+    //Tractor Beam
+    pub beam_cache: Vec<String>,
+    pub beam_nodes: Vec<BeamNode>,
+    pub beam_rope_toggle: bool,
+    pub tractor_vel_x: f32,
+    pub tractor_vel_y: f32,
+    pub beam_randomness : f32,
 
-    //Eraser
+    //Eraser (garbage in canvas)
     pub rot: f32,
 }
 
 impl Default for Brush {
     fn default() -> Self {
         Brush {
-            pos : mouse_position(),
-            pos_last : (0.0,0.0),
+            pos: mouse_position(),
+            pos_last: (0.0, 0.0),
 
-            active : false,
+            active: true,
 
             size: gen_range(15.0, 300.0),
             r: gen_range(0, 255),
@@ -75,7 +85,6 @@ impl Default for Brush {
             b: gen_range(0, 255),
             a: gen_range(0, 255),
             hamper_self: false,
-            hamper_particles: false,
             state: Paintbrush,
 
             //Size Osc
@@ -103,10 +112,15 @@ impl Default for Brush {
             a_goingup: false,
 
             //Etch static
-            is_using_mouse : true,
+            is_using_mouse: true,
 
-            //Etch Fluid
+            beam_cache: Vec::new(),
+            beam_nodes: Vec::new(),
+            beam_rope_toggle: false,
+            beam_randomness: 0.0,
 
+            tractor_vel_x: 1.0,
+            tractor_vel_y: 1.0,
             rot: 0.0,
         }
     }

@@ -1,4 +1,5 @@
 use crate::networking::ws::WsClient;
+//use crate::state::brush::BrushState::*;
 use crate::state::{brush::BrushState, canvas::Canvas};
 use crate::ui::ui_driver::GuiModule;
 use async_trait::async_trait;
@@ -21,6 +22,15 @@ pub struct ToolbarTray {
 #[async_trait]
 impl GuiModule for ToolbarTray {
     fn render(&mut self, egui_ctx: &egui::Context, canvas: &mut Canvas, wsc: &mut WsClient) {
+        // let toolbar_title: String = match canvas.brush.state {
+        //     Paintbrush => "Paint Brush".to_owned(),
+        //     Eraser => "Eraser".to_owned(),
+        //     TractorCut => "Cut".to_owned(),
+        //     TractorCopy => "Copy".to_owned(),
+        //     TractorMagnet => "Magnet".to_owned(),
+        //     Off => "Off".to_owned(),
+        // };
+
         egui::Window::new(RichText::new("Toolbar"))
             .resizable(false)
             .default_pos([150.0, 10.0])
@@ -46,6 +56,7 @@ impl GuiModule for ToolbarTray {
                     ui.collapsing("SIZE_OSCILLATOR", |ui| {
                         self.size_oscillator(ui, canvas);
                     });
+                    ui.collapsing("TRACTOR_BEAM", |ui| self.tractor_beam(ui, canvas));
                     ui.collapsing("SERVER_UTILS", |ui| {
                         self.server_util(ui, wsc);
                         canvas.brush.size = self.tmp_size;

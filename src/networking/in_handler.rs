@@ -1,7 +1,6 @@
 use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
 use crate::state::dot::Dot;
-use crate::ui::chat::chat_tray::Chat;
 use crate::ui::notifications::notification_tray::NotificationFlag::*;
 use std::str::from_utf8;
 
@@ -48,15 +47,14 @@ impl WsClient {
                     canvas.remove_dots_by_id(&ids);
                     self.notification_flags.push(RmvSuccess);
                 }
-                //TODO
+
                 "INV_API" => {
                     self.notification_flags.push(InvApi);
                 }
-                //TODO
-                //
-                //Take in chats one by one
                 "CHT_RES" => {
-                    self.chats_inc.push(nanoserde::DeJson::deserialize_json(message[1]).unwrap());
+                    self.chats_inc
+                        .push(nanoserde::DeJson::deserialize_json(message[1]).unwrap());
+                    self.notification_flags.push(ChtRcvSuccess);
                 }
 
                 "ERR_RES " => {
@@ -65,7 +63,7 @@ impl WsClient {
                 }
 
                 "CHT_SELF_RES" => {
-                    self.notification_flags.push(ChtSuccess);
+                    self.notification_flags.push(ChtSndSuccess);
                 }
 
                 "PLR_CNT" => {
@@ -75,7 +73,7 @@ impl WsClient {
                         Err(e) => println!("{}", e),
                     }
                 }
-                
+
                 _ => println!("UNDEFINED RES {:?}", message),
             }
         }

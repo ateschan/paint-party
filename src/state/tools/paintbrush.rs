@@ -1,4 +1,4 @@
-use crate::state::{dot::Dot};
+use crate::state::dot::Dot;
 use macroquad::prelude::*;
 
 //BEHAVIOR
@@ -23,7 +23,6 @@ impl super::super::canvas::Canvas {
 
             self.cache.push(dot);
         }
-        self.brush.pos_last = self.brush.pos;
     }
 }
 

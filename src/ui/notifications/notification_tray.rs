@@ -12,9 +12,10 @@ pub enum NotificationFlag {
     DelSuccess,
     UpdSuccess,
     ClrSuccess,
-    ChtSuccess,
+    ChtSndSuccess,
+    ChtRcvSuccess,
     RmvSuccess,
-    InvApi,
+    InvApi, //Invalid api access attempt
     Fail(String),
 }
 
@@ -117,13 +118,18 @@ impl NotificationTray {
                     .strong()
                     .background_color(Color32::TRANSPARENT),
             ),
-            NotificationFlag::ChtSuccess => ui.label(
+            NotificationFlag::ChtSndSuccess => ui.label(
                 RichText::new("Chat sent!")
                     .size(16.0)
                     .strong()
                     .background_color(Color32::TRANSPARENT),
             ),
-
+            NotificationFlag::ChtRcvSuccess => ui.label(
+                RichText::new("Chat recieved!")
+                    .size(16.0)
+                    .strong()
+                    .background_color(Color32::TRANSPARENT),
+            ),
             NotificationFlag::InvApi => ui.label(
                 RichText::new("Inavlid Credentials")
                     .size(16.0)

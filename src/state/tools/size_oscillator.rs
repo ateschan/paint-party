@@ -6,11 +6,10 @@ use macroquad::prelude::*;
 impl Canvas {
     //Goes from BIG --> SMALL
     pub async fn mark(&mut self) {
-        if self.brush.active && !self.brush.mark_cease{
-            if self.brush.size > self.brush.size_osc_minmax.0  {
-               self.brush.size -= self.brush.size_osc_speed; 
-            }
-            else {
+        if self.brush.active && !self.brush.mark_cease {
+            if self.brush.size > self.brush.size_osc_minmax.0 {
+                self.brush.size -= self.brush.size_osc_speed;
+            } else {
                 self.brush.mark_cease = true;
                 self.brush.size = 0.0;
             }
@@ -19,14 +18,13 @@ impl Canvas {
 
     //Goes from SMALL --> BIG
     pub async fn rev_mark(&mut self) {
-        if self.brush.active && !self.brush.mark_cease{
-            if self.brush.size < self.brush.size_osc_minmax.1  {
-                self.brush.size += self.brush.size_osc_speed; 
+        if self.brush.active && !self.brush.mark_cease {
+            if self.brush.size < self.brush.size_osc_minmax.1 {
+                self.brush.size += self.brush.size_osc_speed;
+            } else {
+                self.brush.mark_cease = true;
+                self.brush.size = self.brush.size_osc_minmax.0;
             }
-        else {
-            self.brush.mark_cease = true;
-            self.brush.size = self.brush.size_osc_minmax.0;
-        }
         }
     }
 

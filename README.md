@@ -46,8 +46,6 @@ choco install openssl
 - [X] Arrow movment
 - [ ] Tail
 - [ ] Spitter 
-- [ ] Magnet
-- [ ] Tractor Beam 
 - [ ] Blast
 - [ ] Orbit
 - [ ] Trig Tool

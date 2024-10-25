@@ -3,7 +3,7 @@ use crate::networking::ws::WsClient;
 use crate::state::canvas::Canvas;
 use crate::ui::ui_driver::GuiModule;
 use async_trait::async_trait;
-use egui::{Align, Align2, Pos2, Rounding};
+use egui::{Align, Pos2, Rounding};
 use egui_macroquad::egui::{self, epaint::Shadow, Color32, RichText};
 use nanoserde::{DeJson, SerJson};
 
@@ -14,7 +14,7 @@ pub struct ChatTray {
     limit: usize,
     current_entry: String,
     cooldown: i32,
-    players_online : u32
+    players_online: u32,
 }
 
 impl Default for ChatTray {
@@ -24,7 +24,7 @@ impl Default for ChatTray {
             limit: 10,
             current_entry: String::new(),
             cooldown: 600,
-            players_online: 0
+            players_online: 0,
         }
     }
 }
@@ -39,36 +39,38 @@ pub struct Chat {
 #[async_trait]
 impl GuiModule for ChatTray {
     fn render(&mut self, egui_ctx: &egui::Context, _canvas: &mut Canvas, wsc: &mut WsClient) {
-        egui::Window::new(RichText::new("  Live Chat  |  👤Online - ".to_owned() + &self.players_online.to_string()))
-            //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
-            .default_pos(Pos2::new(egui_ctx.screen_rect().size().x, 40.0))
-            .resizable(false)
-            .movable(true)
-            .default_open(true)
-            .frame(
-                egui::Frame::default()
-                    .inner_margin(4.0)
-                    .shadow(Shadow::NONE)
-                    .fill(Color32::TRANSPARENT)
-                    .rounding(Rounding::same(10.0))
-                    .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::TRANSPARENT)),
-            )
-            .show(egui_ctx, |ui| {
-                //Handle current chats
-                ui.vertical(|ui| {
-                    for chat in self.chats.iter_mut() {
-                        chat.chat_module(ui);
-                    }
-                });
-
-                //Handle entry func
-                ui.vertical(|ui| {
-                    ui.add(super::entry::chat_entryfield(
-                        &mut self.current_entry,
-                        &mut wsc.chats_out,
-                    ));
-                });
+        egui::Window::new(RichText::new(
+            "  Live Chat  |  👤Online - ".to_owned() + &self.players_online.to_string(),
+        ))
+        //.to_owned() + &storage.get("socket").unwrap()).size(14.0).strong()
+        .default_pos(Pos2::new(egui_ctx.screen_rect().size().x, 40.0))
+        .resizable(false)
+        .movable(true)
+        .default_open(true)
+        .frame(
+            egui::Frame::default()
+                .inner_margin(4.0)
+                .shadow(Shadow::NONE)
+                .fill(Color32::TRANSPARENT)
+                .rounding(Rounding::same(10.0))
+                .stroke(egui_macroquad::egui::Stroke::new(1.0, Color32::TRANSPARENT)),
+        )
+        .show(egui_ctx, |ui| {
+            //Handle current chats
+            ui.vertical(|ui| {
+                for chat in self.chats.iter_mut() {
+                    chat.chat_module(ui);
+                }
             });
+
+            //Handle entry func
+            ui.vertical(|ui| {
+                ui.add(super::entry::chat_entryfield(
+                    &mut self.current_entry,
+                    &mut wsc.chats_out,
+                ));
+            });
+        });
         self.check_size();
     }
 

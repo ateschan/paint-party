@@ -3,11 +3,8 @@ use crate::state::dot::Dot;
 use macroquad::prelude::*;
 
 impl super::super::canvas::Canvas {
-    pub async fn eraser(&mut self, socket: &mut WsClient) {
-        if self.brush.active
-            && self.calulate_delta_pos() != (0.0, 0.0)
-            && !self.brush.hamper_self
-        {
+    pub async fn eraser(&mut self) {
+        if self.brush.active && self.calulate_delta_pos() != (0.0, 0.0) && !self.brush.hamper_self {
             let dot = Dot {
                 x: self.brush.pos.0,
                 y: self.brush.pos.1,
@@ -49,20 +46,15 @@ impl super::super::canvas::Canvas {
                 });
             }
             // Counter at 99 for chunking
-            if self.garbage.len() >= 99 {
-                self.clear_and_del(socket).await;
-            }
-            self.brush.rotation_update(5.0);
-        } else {
-            self.clear_and_del(socket).await;
+            self.brush.pos_last = self.brush.pos;
         }
-        self.brush.pos_last = self.brush.pos;
     }
+
     pub fn remove_dots_by_id(&mut self, ids_to_remove: &[String]) {
         self.lines.retain(|dot| !ids_to_remove.contains(&dot.id));
     }
 
-    fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
+    pub fn is_overlapping(&self, circle1: &Dot) -> Vec<String> {
         let mut res: Vec<String> = Vec::new();
         for dot in self.lines.iter() {
             let distance_squared = (circle1.x - dot.x).powi(2) + (circle1.y - dot.y).powi(2);
@@ -73,7 +65,7 @@ impl super::super::canvas::Canvas {
         res
     }
 
-    async fn clear_and_del(&mut self, wsc: &mut WsClient) {
+    pub async fn clear_and_del(&mut self, wsc: &mut WsClient) {
         if !self.garbage.is_empty() {
             wsc.canvas_remove(&self.garbage).await.unwrap();
             self.garbage.clear();

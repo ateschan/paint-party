@@ -26,7 +26,6 @@ async fn main() {
 
     intro_loop::enter_intro(&mut storage).await;
 
-    //Raw connection, BUG: Needs error handling
     let connsocket = WebSocket::connect(storage.get("socket").unwrap())
         .expect("ERROR: Failed to connect to websocket, validate address");
 
@@ -43,7 +42,7 @@ async fn main() {
         chats_inc: Vec::new(),
         chats_out: Vec::new(),
         notification_flags: Vec::new(),
-        players_online : 0
+        players_online: 0,
     };
 
     //Check for socket disconnect
@@ -73,8 +72,6 @@ async fn main() {
         //Handle incoming & outgoing canvas websocket requests
         wsc.in_handler(&mut canvas).await;
         wsc.canvas_out_handler(&mut canvas).await;
-
-        //println!("{:?}",canvas);
 
         //Pass frame render data to macroquad
         next_frame().await;

@@ -1,4 +1,4 @@
-use super::{brush::Brush /* particles::explosion */};
+use super::brush::Brush;
 use crate::networking::ws::WsClient;
 use crate::state::brush::BrushState::*;
 use crate::state::dot::Dot;
@@ -16,6 +16,7 @@ pub struct Canvas {
 }
 
 impl Canvas {
+    //TODO: -------------------------------------------__RENDER BEAM NODE INSTANCES
     pub fn render_paint(&mut self) {
         for dot in self.lines.iter() {
             dot.render();
@@ -23,6 +24,11 @@ impl Canvas {
         for dot in self.cache.iter() {
             dot.render();
         }
+        for node in self.brush.beam_nodes.iter() {
+            node.render();
+        }
+
+        self.brush.pos_last = self.brush.pos;
     }
 
     pub async fn brush_handler(&mut self, wsc: &mut WsClient) {
@@ -58,29 +64,88 @@ impl Canvas {
             self.render_size_oscillator();
         }
 
-        
         self.brush.rotation_update(1.0);
 
-
-
-        if self.brush.active && !self.brush.mark_cease {
+        if self.brush.active
+            && !self.brush.mark_cease
+            && !self.brush.hamper_self
+            && self.brush.a != 0
+        {
             match self.brush.state {
                 Paintbrush => {
                     self.paintbrush().await;
                 }
 
+                TractorCut => {
+                    self.tractor_beam().await;
+                }
+
+                TractorCopy => {
+                    self.tractor_beam().await;
+                }
+
+                TractorMagnet => {
+                    self.tractor_beam().await;
+                }
+
+                TractorMutate => {
+                    self.tractor_beam().await;
+                }
+
+                TractorOrbit => {
+                    self.tractor_beam().await;
+                }
+
+                TractorFluid => {
+                    self.tractor_beam().await;
+                }
+
                 Eraser => {
-                    self.eraser(wsc).await;
+                    self.eraser().await;
                 }
 
                 Off => {}
             }
+        } else {
+            self.beam_recover().await;
         }
 
         if !self.brush.mark_cease {
             match self.brush.state {
                 Paintbrush => {
                     self.brush.render_paintbrush();
+                }
+
+                TractorCut => {
+                    if self.brush.active {
+                        self.render_tractor_beam_active().await;
+                    } else {
+                        self.render_tractor_beam_idle().await;
+                    }
+                }
+
+                TractorCopy => {
+                    if self.brush.active {
+                        self.render_tractor_beam_active().await;
+                    } else {
+                        self.render_tractor_beam_idle().await;
+                    }
+                }
+
+                TractorMagnet => {
+                    self.render_tractor_beam_idle().await;
+                }
+
+                TractorMutate => {
+                    self.render_tractor_beam_idle().await;
+                }
+
+                TractorOrbit => {
+                    self.render_tractor_beam_idle().await;
+                }
+
+                TractorFluid => {
+                    self.render_tractor_beam_idle().await;
                 }
 
                 Eraser => {
@@ -94,6 +159,10 @@ impl Canvas {
                 self.brush.render_etch();
             }
         }
+
+        if self.garbage.len() >= 99 || !self.brush.active {
+            self.clear_and_del(wsc).await;
+        }
     }
 
     pub async fn hotkey_handler(&mut self) {
@@ -106,7 +175,7 @@ impl Canvas {
         if is_key_down(KeyCode::LeftControl) {
             self.brush.active = true;
             self.brush.is_using_mouse = false;
-            
+
             if is_key_down(KeyCode::Up) {
                 self.brush.pos.1 -= 10.0;
             }
@@ -119,12 +188,13 @@ impl Canvas {
             if is_key_down(KeyCode::Right) {
                 self.brush.pos.0 += 10.0;
             }
-        }
-        else {
+        } else {
             self.brush.active = is_mouse_button_down(MouseButton::Left);
         }
 
-        if !self.brush.is_using_mouse && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0) {
+        if !self.brush.is_using_mouse
+            && mouse_delta_position() != macroquad::math::Vec2::new(0.0, 0.0)
+        {
             self.brush.is_using_mouse = true;
         }
 
@@ -132,8 +202,7 @@ impl Canvas {
             self.brush.pos = mouse_position();
         }
 
-
-        if is_key_released(KeyCode::LeftControl) || is_mouse_button_released(MouseButton::Left){
+        if is_key_released(KeyCode::LeftControl) || is_mouse_button_released(MouseButton::Left) {
             if self.brush.add_mark {
                 self.brush.size = self.brush.size_osc_minmax.1;
             }
@@ -142,10 +211,19 @@ impl Canvas {
             }
             self.brush.mark_cease = false;
         }
+
+        //DEBUG
+        // println!("NODE LENGTH {} ", self.brush.beam_nodes.len());
+        // println!("NODE CACHE LENGTH {} ", self.brush.beam_cache.len());
+        // println!("LINES {} ", self.lines.len());
+        // println!("CACHE TO OUTPUT {} ", self.cache.len());
     }
 
     pub fn calulate_delta_pos(&mut self) -> (f32, f32) {
-        (self.brush.pos_last.0 - self.brush.pos.0, self.brush.pos_last.1 - self.brush.pos.1)
+        (
+            self.brush.pos_last.0 - self.brush.pos.0,
+            self.brush.pos_last.1 - self.brush.pos.1,
+        )
     }
 
     pub fn init_state(&self, storage: &mut LocalStorage) {
