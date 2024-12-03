@@ -130,8 +130,7 @@ impl Canvas {
             //Magnet nodes are NOT dependent on cursor
             //TODO: Magnet needs improving
             if self.brush.state == TractorMutate {
-                let distance =
-                    (node.x - self.brush.pos.0).powf(2.0) + (node.y - self.brush.pos.1).powf(2.0) - 10.;
+                //let distance = (node.x - self.brush.pos.0).powf(2.0) + (node.y - self.brush.pos.1).powf(2.0) - 10.;
                     node.vel_x += (self.brush.pos.0 - node.x) / 300.0 * self.brush.tractor_vel_x;
                     node.vel_y += (self.brush.pos.1 - node.y) / 300.0 * self.brush.tractor_vel_y;
                     node.y += node.vel_y;
@@ -140,7 +139,27 @@ impl Canvas {
                 //This value needs to scale with distance from the center
                 // node.vel_y *= 0.95;
                 // node.vel_x *= 0.95;
-            } 
+            }
+            else if self.brush.state == TractorMagnet {
+
+                if node.x > self.brush.pos.0 {
+                    node.vel_x -= 0.001 * (node.x + self.brush.pos.0); 
+                }
+                if node.y > self.brush.pos.1 {
+                    node.vel_y -= 0.001 * (node.y + self.brush.pos.1);
+                }
+                if node.x < self.brush.pos.0 {
+                    node.vel_x += 0.001 * (self.brush.pos.0 + node.x);
+                }
+                if node.y < self.brush.pos.1 {
+                    node.vel_y += 0.001 * (self.brush.pos.1 + node.y);
+                }
+
+                node.x += node.vel_x * 0.5 * self.brush.tractor_vel_x;
+                node.y += node.vel_y * 0.5 * self.brush.tractor_vel_y;
+                node.vel_y *= 0.3;
+                node.vel_x *= 0.3;
+            }
             else {
                 node.x += self.brush.pos.0 - self.brush.pos_last.0;
                 node.y += self.brush.pos.1 - self.brush.pos_last.1;
