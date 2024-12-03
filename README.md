@@ -22,11 +22,8 @@ dnf install libX11-devel libXi-devel mesa-libGL-devel alsa-lib-devel
 ```
 
 ### Windows 
-Openssl is a required dependency of quad-net, to compile on windows you need openssl installed
-```
-choco install openssl
-```
-
+Openssl is a required dependency of quad-net, to compile on windows you need perl installed
+https://strawberryperl.com/
 <!-- USAGE EXAMPLES -->
 ## Usage
 1. Enter the designated server in main menu
