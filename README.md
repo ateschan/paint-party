@@ -2,7 +2,8 @@
 
 ## Installation
 1. Download the latest release at https://github.com/ateschan/paint-party/releases
-2. Place the binary in source folder root
+3. Place the binary in source folder root
+4. Join a server or see https://github.com/ateschan/paint-party-server for local installation
 
 ## Compile from source 
 ### Prerequisites
@@ -46,8 +47,6 @@ https://strawberryperl.com/
 - [ ] Blast
 - [ ] Orbit
 - [ ] Trig Tool
-
-
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
