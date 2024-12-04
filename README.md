@@ -3,7 +3,7 @@
 ## Installation
 1. Download the latest release at https://github.com/ateschan/paint-party/releases
 3. Place the binary in source folder root
-4. Join a server or see https://github.com/ateschan/paint-party-server for local installation
+4. Join a server or spawn a local one, see https://github.com/ateschan/paint-party/tree/v0.1.3 for compilation
 
 ## Compile from source 
 ### Prerequisites
