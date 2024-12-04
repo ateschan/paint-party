@@ -1,9 +1,8 @@
 # paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/ateschan/paint-party/latest?include_prereleases) ![](https://tokei.rs/b1/github/ateschan/paint-party)
 
 ## Installation
-1. Download the latest release at https://github.com/ateschan/paint-party/releases
-3. Place the binary in source folder root
-4. Join a server or spawn a local one, see https://github.com/ateschan/paint-party/tree/v0.1.3 for compilation
+1. Download the latest release at [https://github.com/ateschan/paint-party/releases](https://github.com/ateschan/paint-party/tree/v0.1.3)
+2. Join a server or spawn a local one, see [https://github.com/ateschan/paint-party/tree/v0.1.3](https://github.com/ateschan/paint-party-server) for compilation
 
 ## Compile from source 
 ### Prerequisites
