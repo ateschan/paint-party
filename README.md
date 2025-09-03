@@ -1,4 +1,4 @@
-# paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/ateschan/paint-party/latest?include_prereleases) ![](https://tokei.rs/b1/github/ateschan/paint-party)
+⁷# paint-party [![Cargo Build & Test](https://github.com/ateschan/paint-party/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ateschan/paint-party/actions/workflows/test.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/ateschan/paint-party/latest?include_prereleases) ![](https://tokei.rs/b1/github/ateschan/paint-party)
 
 ## Installation
 1. Download the latest release at https://github.com/ateschan/paint-party/tree/v0.1.3
@@ -30,22 +30,6 @@ https://strawberryperl.com/
 2. Enter the correspnding password in toolbar, if there is none set skip this step
 3. Select a canvas or "room" by entering a number between 0 and 9999
 4. Select a color and start painting!
-
-<!-- ROADMAP -->
-## Roadmap
-- [x] Eraser tool
-- [X] Particles
-- [X] Hotkey support
-- [X] Chat
-- [X] Graceful (ish) error handling
-- [X] Chromatic Modulator
-- [X] Size Oscillator
-- [X] Arrow movment
-- [ ] Tail
-- [ ] Spitter 
-- [ ] Blast
-- [ ] Orbit
-- [ ] Trig Tool
 
 See the [open issues](https://github.com/ateschan/paint-party/issues) for a full list of proposed features (and known issues).
 
